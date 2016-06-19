@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <title>CMPD</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/2.2.0/fuse.js"></script>
+        <script   src="https://code.jquery.com/jquery-3.0.0.min.js"   integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="   crossorigin="anonymous"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            var wordbank = {{wordbank | safe}};
+            var fuse = new Fuse(wordbank, {threshold: 0.4});
+
+            $(document).ready(function() {
+
+                // set up socketio
+                var target = 'http://' + document.domain + ':' + location.port + '/base'
+                console.log('connecting to ' + target)
+                socket = io.connect(target);
+
+                // display insults and replies
+                socket.on('message', function(data) {
+                    var new_div = '<div class="insult">' + data.insult + '</div>'
+                    $('#convo').html( $('#convo').html() + new_div);
+                    var new_div = '<div class="reply">'  + data.reply + '</div>'
+                    $('#convo').html( $('#convo').html() + new_div);
+                    $('#output').scrollTop($('#output')[0].scrollHeight);
+
+                    // requires style="display:none" in div
+                    // $('#convo .reply:last').fadeIn('slow')
+                });
+
+                // initializes wordbank from server
+                socket.on('update_wordbank', function(data) {
+                    wordbank = data.msg
+                })
+
+                // submits first matching insult
+                $('#input-input').keypress(function(e) {
+                    var code = e.keyCode || e.which;
+                    if (code == 13) {
+                        var text = $('#input-input').val();
+                        var word = $('#wordbank .word').html();
+                        if (word) {
+                            socket.emit('insult', {
+                                insult: word
+                            })
+                            $('#input-input').val('')
+                            $('#input-input').keyup()
+                        }
+                    }
+                });
+
+                // displays first N matched words in wordbank
+                update_wordbank = function (words) {
+                    $('#wordbank').html('')
+
+                    words_to_show = _.first(words, 30)
+                    $.each(words_to_show, function(index, word) {
+                        $('#wordbank').html($('#wordbank').html() + '<div class="word">' + word + '</div>')
+                    })
+                }
+
+                // updates the wordbank as you type
+                $('#input-input').keyup(function(){
+                    var text = $('#input-input').val()
+                    if (text==''){
+                        update_wordbank(_.shuffle(wordbank))
+                    }
+                    else {
+                        var indices = fuse.search(text)
+                    update_wordbank(_.map(indices, 
+                        function(i){return wordbank[i]}))
+                    }
+                    
+                })
+
+                update_wordbank(wordbank)
+                $('#input-input').focus()
+            });
+        </script>
+    </head>
+
+    <body>
+        <div id="main">
+            <div id="header">
+                <img id="enemy" src="{{enemy}}" alt="an enemy"></img>
+            </div>
+            <div id="output">
+                <div id="convo">
+                </div>
+            </div>
+            <div id="input">
+                <input id="input-input"><br><br>
+            </div>
+            <div id="wordbank">
+            </div>
+        </div>
+    </body>
+</html>
+
