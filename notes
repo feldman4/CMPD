@@ -1,0 +1,57 @@
+design
+
+front-end
+- master divs
+- 
+
+back-end
+- word2vec other databases -- blackwood's, urbandictionary, wiki, 
+- WordNet.lemmatize not as good as web search (men, errand boys)
+- get wordnet understanding and python interface up to spee=
+- web matching: unelected yahoo => https://ryanjonsyrek.wordpress.com/2014/06/02/tilting-at-windmills-in-a-state-that-has-too-few-of-them/
+
+embeddings
+- find more pre-trained, https://www.quora.com/Where-can-I-find-some-pre-trained-word-vectors-for-natural-language-processing-understanding
+- alternate word2vec
+- continuous bag of words
+
+british library sounds
+
+comparative table of simple adj/noun pairs (JJ NN)
+	- in synnet, GN w2v?
+	- clustering
+	- http://irsrv2.cs.biu.ac.il:9998/?word=sycophant
+
+faithlife corp: https://www.logos.com/
+premature balding and ectopic organs
+
+
+PENN tags
+
+def is_noun(tag):
+    return tag in ['NN', 'NNS', 'NNP', 'NNPS']
+
+
+def is_verb(tag):
+    return tag in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+
+
+def is_adverb(tag):
+    return tag in ['RB', 'RBR', 'RBS']
+
+
+def is_adjective(tag):
+    return tag in ['JJ', 'JJR', 'JJS']
+
+
+
+word2vec
+http://streamhacker.com/2014/12/29/word2vec-nltk/
+
+https://wordnet.princeton.edu/
+
+http://www.nltk.org/book/ch02.html
+http://www.nltk.org/book/ch05.html
+
+mad cavern, robots instructed by foul-mouthed mechanic from north new jersey
+more tropes
