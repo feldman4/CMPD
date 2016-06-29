@@ -19,7 +19,7 @@ def hello_world():
 @app.route('/fuckyou')
 def another_function():
     return 'fuck you'
-
+ 
 @socketio.on('insult', namespace='/base')
 def reply(insult):
 
@@ -27,6 +27,8 @@ def reply(insult):
     phrase = cmpd.singular(phrase)
     if phrase == insult['insult']:
         phrase = random.choice(phrases)
+
+    phrase = random.choice(phrases)
 
     emit('message', {'insult': insult['insult'],
                      'reply': phrase})
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     
 
     
-    db = cmpd.get_db()
+    # db = cmpd.get_db()
 
     socketio.run(app)
 
