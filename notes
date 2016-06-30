@@ -1,9 +1,17 @@
-interface for scoring rule:
+### flight to-do
+- adjective synsets
+
+
+
+
+
+
+
+### interface for scoring rule
  - it insults, you insult
  - how many it tests and takes the best from
 
-interface for limit break, "fucking"
-
+### interface for limit break, "fucking"
 - options for showing p.o.s., etc
 - allow all words, subsets
 

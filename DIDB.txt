@@ -1,45 +1,48 @@
 “The new clean ecology has become a murky reservoir for a cohabitation of monarchists, monarchs (isn’t Prince Charles himself officially a vegetarian?), fascists, secret services, pacifists and punks.”
 
-### Organizations
-Tribe, Band, Parliament, Corporation, Syndicate, Clan
+### Criminal Professions
+Disingenuous Hitmen, Common Thugs, Preposterous Highwaymen, Alcoholic Criminals, Jackbooted Accomplices, Ineffectual Mercenaries, Small-Time Assassins, Rented Executioners, Careless Arsonists, Malignant Squatters, Reckless Lawbreakers, Obsequious Pimps, Indiscreet Murderers, Retired Slave-Traders, Well-Fed Scoundrels, Bucktoothed Swindlers, Flesh-Eating Goons, Craven Warlords, Clumsy Villains, Embarrassing Backstabbers, Unwashed Kidnappers; Cabal Of Man-Hunters, Launderers, Politically Illiterate Gangsters, Crooks, Sidekicks, Henchmen, Stooges, Extortionists, Hoodlums, Street Toughs, Delinquents, Marauders, Blackamoors, Vandals, Carpetbaggers, Killers, Racketeers
 
-### Place Names
-Den, Hive, Nest
+### Lowly Professions
+Incontinent Meat-Packers, Sniveling Ratcatchers,  Breastfed Academics, Kowtowing Swineherds, Apprentice Spooks, Hoity-Toity Intellectuals, Insufferable Clerks, Spineless Middle-Managers, Backwoods Trappers, Impotent Fish-Cleaners, Unwitting Peasants, Insignificant Garbagemen, Self-Satisfied Undertakers, Bearded Mystics, Dishonest Morticians, Simpering Priests, Pallid Functionaries, Melancholy Organ-Grinders, Deranged Pornographers, Ill-Tempered Philanthropists, Misinformed Yes-Men, Hairless Dignitaries, Medicated Stenographers, Orthodox Gravediggers, Dimwitted Philosophers; Dog Catchers, A Circle Of Coke-Sniffing Adulterers, Shoeshiners, IB Coordinator, Comedians, Psychoanalysts, Errand Boys, Colonists, Journalists, Tin Soldiers, Hecklers, Moribund Horse Thieves,  Reluctant Whipping Boys, Cold-Blooded Money Changers, Sniggering Wine Merchants, 
+
+### Sexual
+Disgraced Pederasts, Listless Masturbators, Limp-wristed Onanists, Daft Cuckolds, Gilded Concubines, Self-Appointed Rapists; Harlots, Witches, Tarts, Jezebels, Harpies, Molestors, Philanderers, Syndicate Of Rapists, 
+
+### Political
+Unprincipled Marxists, Political Insects, Mistaken Demagogues, Closet Communists, Garden-Variety Reactionaries, Diseased Collaborators, Jilted Counter-Revolutionaries, Drugstore Fascists, Dirty Trotskyites, Crass Individualists, Feather-Brained Idealists; Kulaks, Peddlers Of Ideological Mildew, Capitalists, Jingoists, Baathists, Libertarians, Maoists, Sympathizers, Ultra-Rightists, Traditionalists, Centrists, Running Dogs, Mealy-Mouthed Political Scientists
+
+### Southern
+Overfunded Mouth-Breathers, Backwater Racists, Ill-Bred Yokels, Oxygen-Deprived Rednecks, Prejudiced Swamp-Dwellers, Officious Transients, Fear-Mongering Cowards, Mean Turncoats, Odious Riffraff, Meddlesome Fanatics, Armchair Rapists, Atrophied Sponges, Free-Range Morons, Unemployed Fetishists, Variegated Cretins, Vindictive Abusers, Synthetic Ape-Men, Asthmatic Geldings, Intellectual Centipedes, Nauseating Hypocrites, Irrelevant Bigmouths, Underqualified Drunks, Bankrupt Losers, Insincere Hucksters, Unregenerate Philistines, Antediluvian Trash, Pompous Narcissists, Disorganized Pushovers, Tendentious Boobs, Scheming Crackpots, Drug-Addled Parasites, Egg-Sucking Cavemen; Human Scum, Infrequent Bathers, 
+
+### Religious
+Fraudulent Monks, Bigoted Soothsayers, Defrocked Witchdoctors, Luckless Zealots, Forsaken Apostates, Morose Cultists, White-Collar Simonists; Fakirs
+
+### Animal
+Garish Reptiles, Overpaid Invertebrates, Loathsome Creatures; Heavily Armed Baboons, Simian, Porcine, Snakes, Dogs, Rats, Hyenas, Jackals, Sharks, Vultures, Loons, Weasels, Hellhounds, Wolves, Chimps, Lice, Locusts
+
+### Uncategorized I
+ Irreligious Latecomers, Jaded Miscreants, Predatory Liars, Lonely Regurgitators, Disguised Carrion, Candy-Assed Filth, Unsuccessful Looters, Talentless Hacks, Floundering Engimas, Licentious Turds, Renegade Dwarfs, Underhanded Sinners, Deceased Tyrants, Celebrated Nincompoops, Avaricious Poltergeists, Constipated Moochers, Tufted Eunuchs, Low-ranking Sycophants, Inveterate Plagiarizers, Cantankerous Poltroons, Impoverished Lunatics, Clamorous Weaklings, Unelected Yahoos, Despicable Bastards, Sweaty Pygmies, Gutless Traitors, Defenceless Neophytes, Sinister Halfwits, Poisonous Fools, Self-Promoting Judases, Treacherous Failures, Subservient Wimps, Botched Experiments, Powdered Fops, Monied Aristocrats, Litigious Upstarts, Ignorant Amateurs, Worm-Eaten Pilferers; Querulous Ne’er-do-wells
+
+### Uncategorized II
+Human Tapeworms, Self-Righteous, Unethical, Scurrilous, Slovenly, Festooned, Turgid Welter Of Schoolboy Pornography, Reprobrates, Deserters, Lethargic, Half-Baked, Lamentable, Ridiculous, Plunderers, Terrors, Monsters, Namby-Pamby, Decadent, Retromingent, Hackneyed, Sodden, Flat, Derivative, Tired, Uninspired, Prodigious, Middling, Repetitious, Phoned-In, Venal, Stodgy, Foul, Insipid, Flaccid, Vulgar, Incoherent, Tedious, Plebeian, Wretched, Heinous, Irrational, Somnambulants, Wretched, Confrontational, Puerile, Vain, Sanguine, Betrayers, Pestilent, Faithless, No-Goodniks, 
+
+### Uncategorized III
+Mormons, Mennonites, Ramshackle, Indigent, Laughable, Ill-Conceived, Benighted, Idolatrists, Hedonists, Worthless, Disreputable, Pusillanimous, Redolent Of The Meat-Grinder, Boneless Grist, Dingy, Ornery, 
+
+### Uncategorized IV
+Predictable, Corrupt, One-Horse, Small Town, Flimsy, Dirty Dogs, Dandies, Militarists, Industrial-Strength Douchebags, Menaces, Dweebs, Boobies, Booby-Trapped Rhetoric, Emotional Sadists, Wiccans, Bilious, Cheap And Nasty, Prevaricators, Sordid, Crummy, Meretricious, Superficial, Addicts, Hot-Tempered, Unkempt, Goody-Two-Shoes, Janissaries, Solicitous, Provocateurs, Moneygrubbing Whores, Hideous, Pathetic, Possessed
+
+---
 
 ###Words Regarding Us
 Invincible Heroes, World-Conquerors, Peerlessly Great Men, World-Historical Geniuses
 
-### Animals
-Simian, Porcine etc., Snakes, Dogs, Rats, Hyenas, Jackals, Sharks, Vultures, Loons, Weasels, Hellhounds, Wolves, Chimps
+### Organizations
+Tribe, Band, Parliament, Corporation, Syndicate, Clan, Mob
 
-### Criminal Professions
-Politically Illiterate Gangsters, Disingenuous Hitmen,  Crooks, Common Thugs, Sidekicks, Henchmen, Stooges, Goons, Preposterous Highwaymen, Alcoholic Criminals, Jackbooted Accomplices, Ineffectual Mercenaries, Extortionists, Small-Time Assassins, Rented Executioners, Street Toughs, Hoodlums, Careless Arsonists, Delinquents, Malignant Squatters, Reckless Lawbreakers, Obsequious Pimps, Indiscreet Murderers, Retired Slave-Traders, Marauders, Blackamoors, Well-Fed Scoundrels, Vandals, Bucktoothed Swindlers, Kidnappers, Carpetbaggers, Killers, Racketeers, Cabal Of Man-Hunters, Launderers	
-
-### Lowly Professions
-Incontinent Meat-Packers, Errand Boys, Sniveling Ratcatchers, Pornographers, Breastfed Academics, Kowtowing Swineherds, Moribund Horse Thieves, Colonists, Journalists, Apprentice Spooks, Hoity-Toity Intellectuals, Insufferable Clerks, Whipping Boys, Spineless Middle Managers, Backwoods Trappers, Impotent Fish-Cleaners, Cold-Blooded Money Changers, A Circle Of Coke-Sniffing Adulterers, Peasants, Hecklers, Insignificant Garbagemen, Self-Satisfied Undertakers, Comedians, Psychoanalysts, Bearded Mystics, Shoeshiners, Dishonest Morticians, IB Coordinator, Simpering Priests, Pallid Functionaries, Melancholy Organ-Grinders
-
-### Sexual
-Disgraced Pederasts, Listless Masturbators, Limp-wristed Onanists, Syndicate Of Rapists, Daft Cuckolds, Gilded Concubines, Harlots, Witches, Tarts, Jezebels, Harpies, Self-Appointed Rapists, Molestors
-
-### Political
-Ultra-Rightists, Kulaks, Unprincipled Marxists, Peddlers Of Ideological Mildew, Political Insects, Mistaken Demagogues, Capitalists, Jingoists, Baathists, Closet Communists, Libertarians,  Mealy-Mouthed Political Scientists, Garden-Variety Reactionaries, Centrists, Traditionalists, Diseased Collaborators, Jilted Counter-Revolutionaries, Sympathizers, Drugstore Fascists, Maoists, Dirty Trotskyites
-
-### Southern
-Overfunded Mouth-Breathers, Backwater Racists, Ill-Bred Yokels, Oxygen-Deprived Rednecks, Prejudiced Swamp-Dwellers, Officious Transients, Infrequent Bathers,  Fear-Mongering Cowards, Mean Turncoats, Odious Riffraff, Meddlesome Fanatics, Armchair Rapists, Atrophied Sponges, Free-Range Morons, Unemployed Fetishists, Variegated Cretins, Vindictive Abusers, Synthetic Ape-Men, Asthmatic Geldings, Intellectual Centipedes, Nauseating Hypocrites
-
-### Uncategorized I
-Hackneyed, Sodden, Flat, Derivative, Tired, Uninspired, Prodigious, Middling, Repetitious, Phoned-In, Overpaid Invertebrates, Venal, Stodgy, Foul, Insipid, Flaccid, Vulgar, Incoherent, Crass Individualists, Philistine, Tedious, Plebeian, Wretched, Lonely Regurgitators, Heinous, Irrational, Running Dogs, Disguised Carrion, Wretched, Feather-Brained Idealists, Confrontational, Puerile, Vain, Sanguine, Candy-Assed Filth, Betrayers, White Collar, Lice, Pestilent, Simonists, Philanderer, Querulous, Hairless Dignitaries, Faithless, Irreligious, Bigoted Soothsayers, Fakirs, Defrocked Witchdoctors, Looters, Luckless Zealots, Ill-Tempered Philanthropists, Misinformed Yes-Men, No-Goodniks, Ne’er-do-wells, Human Scum, Talentless Hacks, Floundering Engimas
-
-### Uncategorized II
-Human Tapeworms, Self-Righteous, Unethical, Scurrilous, Pompous, Festooned, Turgid Welter Of Schoolboy Pornography, Jaded Miscreants, Predatory Liars, Reprobrate, Loathsome Creatures, Garish Reptiles, Deserters, Slovenly Narcissists, Lethargic, Cantankerous, Lamentable, Ridiculous, Plunderers, Pilferers, Half-Baked Poltroons, Avaricious Poltergeists, Constipated Moochers, Tufted Eunuchs, Low-ranking Sycophants, Inveterate Plagiarizers, Terrors, Monsters, Renegade Dwarfs, Namby-Pamby, Underhanded Sinners, Deceased Tyrants, Celebrated Nincompoops, Decadent, Worm-Eaten, Retromingent, Antediluvian Trash, Licentious Turds, Sniggering Wine Merchants
-
-### Uncategorized III
-Mormons, Mennonites, Ramshackle, Odorous Pigsty, Indigent, Laughable, Ill-Conceived, Benighted, Embarrassing Backstabbers, Unelected Yahoos, Idolatrists, Heavily Armed Baboons, Hedonists, Worthless, Disreputable, Pusillanimous, Redolent Of The Meat-Grinder, Orthodox Gravediggers, Boneless Grist, Litigious Upstarts, Dingy, Ornery, Clamorous Weaklings, Despicable Bastards
-
-### Uncategorized IV
-Predictable, Corrupt, Clumsy Villains, Disorganized Pushovers, One-Horse, Small Town, Ignorant Amateurs, Flimsy, Dirty Dogs, Somnambulants, Powdered Fops, Dandies, Militarists, Industrial-Strength Douchebags, Treacherous Failures, Menaces, Drug-Addled Parasites, Dweebs, Boobies, Tendentious Boobs, Booby-Trapped Rhetoric, Emotional Sadists, Sinister Halfwits, Wiccans, Poisonous Fools, Bilious, Sweaty Pygmies, Cheap And Nasty, Morose Cultists, Subservient Wimps, Prevaricators, Defenceless Neophytes, Sordid, Botched Experiments, Crummy, Meretricious, Superficial, Dimwitted Philosophers, Addicts, Scheming Crackpots, Self-Promoting Judases, Hot-Tempered, Unkempt, Goody-Two-Shoes, Janissaries, Gutless Traitors, Monied Aristocrats, Solicitous, Provocateurs, Moneygrubbing Whores, Hideous, Pathetic
-
----
+### Place Names
+Den, Hive, Nest, Odorous Pigsty, 
 
 Fascist Clique, Unpaid Window-Washers For X, Slaughterhouse For Truth, Literary Harem (half-digested Ayn Rand), Irresponsible Mayhem, "Jobless Masturbator", Pathological Drivel, Déclassé Losers, Bounders, Freshwater, Dunderheaded, Lightweights
 
@@ -100,7 +103,7 @@ Why Don’t You Take It Up With The Lice-Infested Bean Counters Over At UW Corpo
 The Cadaverous Opinions Of The Late Mr. Wung (author has passed away, his life work unfinished, we the dedicated write column via ouija board//OR//If One Is Permitted To Recall Certain Cadaverous Opinions Expressed By The Late Mr. Russ Wung)
 
 ### New (not sorted)
-Charlatans, Knuckleheads, Institutionalized Chucks, mountebanks, scamps, cads, depraved, spiritually/morally/ethically/academically bankrupt, baleful, bankrupt losers, Infirm, flatterers, lepers, urchins, necrophiliacs, daycamp for X, tactless, unscrupulous bathers, reluctant, unwashed, dog catchers, fiendish, maniacs, fly-by-night, fleshy, flesh-eating, swarthy, enemies of X, locusts, poseurs, nitwits, nimrods, curmudgeons, bunglers, consumptive, choleric, unsuccessful latecomers, saucy, jackanapes, underqualified drunks, irrelevant bigmouths, gossips, swaggering, snitches, informers, stool-pigeons, medieval, unclean, aggressors, cursed implements of hell residing in infernal mansions, craven warlords, suboptimal, crumby, mephistophelian, fraudulent monks, insincere hucksters, snake-oil salesmen, dingbat, coxcomb, good-for-nothing, frantic, uncomprehending, indignant, stingy, impoverished lunatics, egg-sucking, headless, faulty, puppets, forsaken apostates, tin soldiers, medicated, stenographers, reanimated corpses, scabrous, decaying, scaley, cavemen, breathtakingly inane, brutal, X evidently hails from a civilization of arboreal nematodes who occasionally deign to lean out of their tree-houses and throw faeces on the rest of us, poobahs, milquetoasts, small-minded, minions, authoritarian, compendium of X, phonies, exhibitionists, travelling circus of X, low-rent, pall-bearers, paupers, numbnuts, halitosis
+Charlatans, Knuckleheads, Institutionalized Chucks, mountebanks, scamps, cads, depraved, spiritually/morally/ethically/academically bankrupt, baleful, Infirm, flatterers, lepers, urchins, necrophiliacs, daycamp for X, tactless, unscrupulous bathers, fiendish, maniacs, fly-by-night, fleshy, swarthy, enemies of X, poseurs, nitwits, nimrods, curmudgeons, bunglers, consumptive, choleric, saucy, jackanapes, gossips, swaggering, snitches, informers, stool-pigeons, medieval, unclean, aggressors, cursed implements of hell residing in infernal mansions, suboptimal, crumby, mephistophelian, snake-oil salesmen, dingbat, coxcomb, good-for-nothing, frantic, uncomprehending, indignant, stingy, headless, faulty, puppets, reanimated corpses, scabrous, decaying, scaley, breathtakingly inane, brutal, X evidently hails from a civilization of arboreal nematodes who occasionally deign to lean out of their tree-houses and throw faeces on the rest of us, poobahs, milquetoasts, small-minded, minions, authoritarian, compendium of X, phonies, exhibitionists, travelling circus of X, low-rent, pall-bearers, paupers, numbnuts, halitosis, unannounced, noisy
 
 ### Attacks
 drown on a tincture of stupidity and guilt

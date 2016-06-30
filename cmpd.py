@@ -9,13 +9,24 @@ def load_DIDB():
     flag = None
     for line in open('DIDB.txt', 'r'):
         if flag:
-            cats[flag] = [s.strip() for s in line.split(',')]
+            cats[flag] = [[s.strip() for s in part.split(',')] 
+                                     for part in line.split(';')]
             flag = None
         if line.startswith('###'):
             flag = line.split('###')[1].strip()
     words = [b for a in cats.values() for b in a]
     return cats
 
+
+def load_DIDB_pairs():
+    """Load two word insults only.
+    """
+    categories = load_DIDB()
+    categories = {k: v[0] for k,v in categories.items() if len(v)>1}
+    phrases = sum(categories.values(), [])
+    phrases = [singular(phrase) for phrase in phrases 
+                    if ' of ' not in phrase.lower()]
+    return phrases
 
 def singular(phrase):
     """Accepts either a list of words, or a string of space-separated words.
@@ -192,4 +203,50 @@ def make_pairs(phrases):
     return df
 
 
-        
+def show(s):
+    if isinstance(s, nltk.corpus.reader.wordnet.Lemma):
+        print 'Lemma: %s (%s)' % (s.name(), s.unicode_repr()[7:-2])
+        if s.antonyms():
+            print 'Antonyms: %s' % s.antonyms()
+    elif isinstance(s, nltk.corpus.reader.wordnet.Synset):
+        if s.lexname() == 'adj.all':
+            lemmas = s.lemmas()
+            print 'Lemmas:' 
+
+
+def cluster_features(features, names, distance=None, orientation='top'):
+    """Cluster features according to distance function. Should be superseded
+    by something in scipy. 
+    """
+    import pandas as pd
+    import scipy
+    if distance is None:
+        distance = lambda n, n_: len(set(n) & set(n_))/float(len(set(n)|set(n_)))
+    
+    arr = []
+    for n, w in zip(features, names):
+        for n_, w_ in zip(features, names):
+            arr += [[w, w_, distance(n, n_)]]
+    df = pd.DataFrame(arr)
+    df[2] = df[2].astype(float)
+    M = df.pivot_table(index=0, columns=1, values=2)
+    Z = scipy.cluster.hierarchy.linkage(M)
+    def plot_cluster():
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        sns.set(style='white', font_scale=1.5)
+        fs = (4,len(features)/3.5)
+        fig, ax = plt.subplots()
+        x = scipy.cluster.hierarchy.dendrogram(Z, labels=M.index, 
+            ax=ax, orientation=orientation);
+        if orientation in ('top', 'bottom'):
+            ax.set_xticklabels(ax.get_xticklabels(), {'size': 15});
+            fig.set_figheight(fs[0])
+            fig.set_figwidth(fs[1])
+        else:
+            ax.set_yticklabels(ax.get_yticklabels(), {'size': 15});
+            fig.set_figheight(fs[1])
+            fig.set_figwidth(fs[0])
+        fig.tight_layout()
+        return ax
+    return M, Z, plot_cluster

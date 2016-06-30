@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, redirect, session
 from flask_socketio import emit, SocketIO
 import cmpd
 import random
@@ -11,46 +11,52 @@ socketio.init_app(app)
 
 phrases = []
 
-@app.route('/')
-def hello_world():
-    return render_template('index.html', wordbank=phrases,
-        enemy=url_for('static', filename='images/buddha-1.jpg'))
+flag = 'JJ'
+lastword = ''
 
-@app.route('/fuckyou')
-def another_function():
-    return 'fuck you'
- 
+
+@app.route('/')
+def index():
+    return redirect(url_for('base'))
+
+@app.route('/base')
+def base():
+    JJ = [p.split(' ')[0] for p in phrases]
+    return render_template('index.html', wordbank=JJ,
+        enemy=url_for('static', filename='images/cyclops.jpg'))
+
+
 @socketio.on('insult', namespace='/base')
 def reply(insult):
+    print session
+    global flag, lastword
+    JJ = [p.split(' ')[0] for p in phrases]
+    NN = [p.split(' ')[-1] for p in phrases]
+    if flag == 'JJ':
+      emit('update_wordbank', {'wordbank': NN})
+      flag = 'NN'
+      lastword = insult['insult']
+    else:
+      emit('update_wordbank', {'wordbank': JJ})
+      flag = 'JJ'
 
-    phrase = cmpd.similar_phrase(insult['insult'])
-    phrase = cmpd.singular(phrase)
-    if phrase == insult['insult']:
-        phrase = random.choice(phrases)
 
-    phrase = random.choice(phrases)
+      phrase = cmpd.similar_phrase(insult['insult'])
+      phrase = cmpd.singular(phrase)
+      if phrase == insult['insult']:
+          phrase = random.choice(phrases)
 
-    emit('message', {'insult': insult['insult'],
-                     'reply': phrase})
+      phrase = random.choice(phrases)
+      retort = {'insult': lastword + ' ' + insult['insult'],
+                       'reply': phrase}
+  
+      emit('retort', retort)
+      with open('record', 'a') as fh:
+        import time
+        fh.write('%f\n%s %s\n' % (time.time(), lastword, insult['insult']))
 
 if __name__ == '__main__':
-    categories = cmpd.load_DIDB()
-    phrases = categories['Criminal Professions'] + \
-              categories['Southern'] + \
-              categories['Lowly Professions'] + \
-              categories['Sexual'] + \
-              categories['Political'] + \
-              categories['Uncategorized I'] + \
-              categories['Uncategorized II'] + \
-              categories['Uncategorized III'] + \
-              categories['Uncategorized IV']
-    phrases = [cmpd.singular(phrase) for phrase in phrases 
-                    if ' of ' not in phrase.lower()]
-    
-
-    
-    # db = cmpd.get_db()
-
+    phrases = cmpd.load_DIDB_pairs()
     socketio.run(app)
 
 
