@@ -35,32 +35,28 @@ def versus():
 
 @socketio.on('insult', namespace='/base')
 def reply(insult):
-    global flag, lastword
+
+    global flag
     JJ = [p.split(' ')[0] for p in phrases]
     NN = [p.split(' ')[-1] for p in phrases]
     if flag == 'JJ':
         emit('update_wordbank', {'wordbank': NN})
         flag = 'NN'
-        lastword = insult['insult']
+        session['lastword'] = insult['insult']
+        print session, session['lastword']
     else:
         emit('update_wordbank', {'wordbank': JJ[:10]})
         flag = 'JJ'
 
-
-        # phrase = cmpd.similar_phrase(insult['insult'])
-        # phrase = cmpd.singular(phrase)
-        # if phrase == insult['insult']:
-        #   phrase = random.choice(phrases)
-
         phrase = random.choice(phrases)
-        retort = {'insult': lastword + ' ' + insult['insult'],
+        retort = {'insult': session['lastword'] + ' ' + insult['insult'],
                        'reply': phrase}
         print retort
         emit('retort', retort, namespace='/base')
 
         # with open('record', 'a') as fh:
         #   import time
-        #   fh.write('%f\n%s %s\n' % (time.time(), lastword, insult['insult']))
+        #   fh.write('%f\n%s\n' % (time.time(), retort['retort']))
 
 if __name__ == '__main__':
     phrases = cmpd.load_DIDB_pairs()
