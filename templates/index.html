@@ -7,16 +7,17 @@
         <script type="text/javascript" src="/static/socket.io.min.js"></script>
         <script type="text/javascript" src="/static/underscore-min.js"></script>
         <script type="text/javascript" charset="utf-8">
-            var socket;
+            var socket, ws;
             var wordbank = {{wordbank | safe}};
             var wordbank_size = 30
             var fuse_opts = {threshold: 0.4}
-            var fuse = new Fuse(wordbank, fuse_opts);
-            var $wordbank 
+            ws.fuse = new Fuse(wordbank, fuse_opts);
+            var $wordbank, $convo
 
             $(document).ready(function() {
 
                 $wordbank = $('#wordbank')
+                $convo    = $('#convo')
 
                 // set up socketio
                 var target = 'http://' + document.domain + ':' + location.port + '/base'
@@ -26,10 +27,10 @@
                 // display insults and replies
                 socket.on('retort', function(data) {
                     var new_div = '<div class="insult">' + data.insult + '</div>'
-                    $('#convo').html( $('#convo').html() + new_div);
+                    $convo.html( $convo.html() + new_div);
                     var new_div = '<div class="reply">'  + data.reply + '</div>'
-                    $('#convo').html( $('#convo').html() + new_div);
-                    $('#output').scrollTop($('#output')[0].scrollHeight);
+                    $convo.html( $convo.html() + new_div);
+                    $convo.parent().scrollTop($('#output')[0].scrollHeight);
 
                     // requires style="display:none" in div
                     // $('#convo .reply:last').fadeIn('slow')
@@ -40,7 +41,7 @@
                 socket.on('update_wordbank', function(data) {
                     wordbank = data.wordbank
                     display_wordbank(wordbank, $wordbank)
-                    fuse = new Fuse(wordbank, fuse_opts);
+                    ws.fuse = new Fuse(wordbank, fuse_opts);
                 })
 
                 // displays entries from words, up to wordbank_size

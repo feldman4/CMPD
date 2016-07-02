@@ -1,9 +1,7 @@
 ### flight to-do
 - adjective synsets
-
-
-
-
+    + clustering w/ WN is iffy, GN W2V does better
+    + expanding synset?
 
 
 
@@ -163,3 +161,7 @@ http://www.nltk.org/book/ch05.html
 
 mad cavern, robots instructed by foul-mouthed mechanic from north new jersey
 more tropes
+
+
+
+elm-live elm-app/base.elm --output=static/elm-base.js
