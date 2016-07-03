@@ -84,7 +84,8 @@ extra_plural = {'kulaks': 'kulak',
                 'somnambulants': 'somnambulant',
                 'regurgitators': 'regurgitator',
                 'enigmas': 'enigma',
-                'witchdoctors': 'witchdoctor'
+                'witchdoctors': 'witchdoctor',
+                'bigmouths': 'bigmouth'
                 }
 
 def isplural(word):

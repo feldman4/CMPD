@@ -1,3 +1,19 @@
+### elm integration
+
+1. flask routes web pages
+2. templates
+    1. UI powered by elm
+    2. set up same socket.io subscriptions everywhere?
+        1. global ports module in elm 
+        2. global js library invoking socket.io w/ template namespace
+        3. case-by-case python socket.io
+    3. maximal CSS in separate file
+3. one elm app per page
+    1. reusable components
+
+
+
+
 ### flight to-do
 - adjective synsets
     + clustering w/ WN is iffy, GN W2V does better

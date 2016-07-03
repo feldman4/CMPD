@@ -11,7 +11,7 @@
             var wordbank = {{wordbank | safe}};
             var wordbank_size = 30
             var fuse_opts = {threshold: 0.4}
-            ws.fuse = new Fuse(wordbank, fuse_opts);
+            var fuse = new Fuse(wordbank, fuse_opts);
             var $wordbank, $convo
 
             $(document).ready(function() {
@@ -25,10 +25,10 @@
                 socket = io.connect(target);
 
                 // display insults and replies
-                socket.on('retort', function(data) {
+                socket.on('remark', function(data) {
                     var new_div = '<div class="insult">' + data.insult + '</div>'
                     $convo.html( $convo.html() + new_div);
-                    var new_div = '<div class="reply">'  + data.reply + '</div>'
+                    var new_div = '<div class="retort">'  + data.retort + '</div>'
                     $convo.html( $convo.html() + new_div);
                     $convo.parent().scrollTop($('#output')[0].scrollHeight);
 
@@ -41,7 +41,7 @@
                 socket.on('update_wordbank', function(data) {
                     wordbank = data.wordbank
                     display_wordbank(wordbank, $wordbank)
-                    ws.fuse = new Fuse(wordbank, fuse_opts);
+                    fuse = new Fuse(wordbank, fuse_opts);
                 })
 
                 // displays entries from words, up to wordbank_size

@@ -19,14 +19,17 @@ def index():
     return redirect(url_for('base'))
 
 
-@app.route('/base')
-def base():
+@app.route('/bas<string:flavor>')
+def base(flavor):
+    """Show a demo powered by Elm or only JS.
+    """
     adjectives = [p.split(' ')[0]  for p in cmpd_web.phrases]
     nouns      = [p.split(' ')[-1] for p in cmpd_web.phrases]
 
     session['base'] = cmpd_web.Base(adjectives, nouns)
 
-    return render_template('index.html', wordbank=session['base'].wordbank,
+    template = 'bas%s.html' % flavor
+    return render_template(template, wordbank=session['base'].wordbank,
         enemy=url_for('static', filename='images/cyclops.jpg'))
 
 
@@ -37,11 +40,15 @@ def versus():
 
     session['base'] = cmpd_web.Base(adjectives, nouns)
 
-    return render_template('index.html', wordbank=session['base'].wordbank,
+    return render_template('versus.html', wordbank=session['base'].wordbank,
         enemy=url_for('static', filename='images/ctenophora-1.jpg'))
 
 
 @socketio.on('insult', namespace='/base')
+def reply(insult):
+    session['base'].reply(insult, emit)
+
+@socketio.on('insult', namespace='/versus')
 def reply(insult):
     session['base'].reply(insult, emit)
 

@@ -30,12 +30,12 @@ class Base(object):
             
             phrase = random.choice(phrases)
             retort = {'insult': self.lastword + ' ' + insult['insult'],
-                           'reply': phrase}
+                           'retort': phrase}
 
             self.lastword = ''
             self.wordbank = self.JJ
                            
-            emit('retort', retort, namespace='/base')
+            emit('remark', retort)
 
         emit('update_wordbank', {'wordbank': self.wordbank})
 
