@@ -35,11 +35,13 @@ def base(flavor):
 def versus():
     adjectives = [p.split(' ')[0]  for p in cmpd_web.default_phrases]
     nouns      = [p.split(' ')[-1] for p in cmpd_web.default_phrases]
+    adjectives = sorted(set(adjectives))
+    nouns      = sorted(set(nouns))
 
     session['versus'] = cmpd_web.Versus(adjectives, nouns)
 
     return render_template('versus.html', 
-        fuse_threshold = 0.3,
+        fuse_threshold = 0.4,
         wordbank=session['versus'].wordbank,
         enemy=url_for('static', filename='images/ctenophora-1.jpg'))
 

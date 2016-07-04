@@ -9,16 +9,13 @@
     <script type="text/javascript" src="/static/underscore-min.js"></script>
 
     <link href="/static/main.css" rel="stylesheet">
-    <script src="https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE">
-    </script>
+    <script src="/static/Versus.js"></script>
+    <!-- <script src="https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE">
+    </script> -->
     <title></title>
 </head>
 <body>
     <script>
-
-    	// var versus = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE"
-    	// $.getScript( versus, function(a,b,c){console.log('loaded')})
-
 
 		var app 
 		var socketTarget = 'http://' + document.domain + ':' + location.port +
@@ -32,10 +29,17 @@
 
 
 		function suggest(word, wordbank) {
-		    fuse = new Fuse(wordbank, fuse_opts);
-		    suggestions = _.map(fuse.search(word), function(i) {
-		        return wordbank[i]
-		    })
+
+		    fuse = new Fuse(wordbank.map(
+		    	function(w){return w.toLowerCase()}),
+		     	fuse_opts);
+
+		    suggestions = fuse.search(word.toLowerCase())
+		    		.map(function(i) {
+		        			return wordbank[i]
+		    				}
+		    			)
+
 		    return suggestions
 		}
 
@@ -76,6 +80,7 @@
 		                	return
 		                }
 		                var suggestions = suggest(word, wordbank);
+		                console.log(suggestions)
 		                app.ports.suggestions.send(suggestions);
 		            });
 

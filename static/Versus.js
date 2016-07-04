@@ -8890,19 +8890,40 @@ var _user$project$Wordbank$update = F2(
 							model.words)
 					});
 			default:
+				var _p16 = _p12._0;
 				return _elm_lang$core$Native_Utils.update(
 					model,
 					{
 						words: function () {
-							var hidden = A2(_user$project$Wordbank$toggleWords, _user$project$Wordbank$Off, model.words);
-							return A3(
-								_elm_lang$core$List$foldl,
-								F2(
-									function (w, words) {
-										return A3(_user$project$Wordbank$toggleWord, _user$project$Wordbank$On, w, words);
-									}),
-								hidden,
-								_p12._0);
+							var _p15 = A2(
+								_elm_lang$core$List$partition,
+								function (w) {
+									return A2(_elm_lang$core$List$member, w, _p16);
+								},
+								A2(_elm_lang$core$List$map, _elm_lang$core$Basics$fst, model.words));
+							var show = _p15._0;
+							var dontShow = _p15._1;
+							var sortedShow = A2(
+								_elm_lang$core$List$filter,
+								function (w) {
+									return A2(_elm_lang$core$List$member, w, show);
+								},
+								_p16);
+							var allWords = A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(
+									_elm_lang$core$List$map,
+									function (w) {
+										return {ctor: '_Tuple2', _0: w, _1: true};
+									},
+									sortedShow),
+								A2(
+									_elm_lang$core$List$map,
+									function (w) {
+										return {ctor: '_Tuple2', _0: w, _1: false};
+									},
+									dontShow));
+							return allWords;
 						}()
 					});
 		}

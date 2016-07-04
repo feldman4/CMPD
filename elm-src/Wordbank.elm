@@ -2,19 +2,9 @@ module Wordbank exposing (Model, Msg(..), init, update, view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, keyCode, on)
 import List
-import Html.App as App
 
 
-{--
-main =
-    App.beginnerProgram
-        { model = init [ "Hello", "Fuck You" ]
-        , update = update
-        , view = view
-        }
---}
 -- MODEL
 
 
@@ -90,10 +80,22 @@ update msg model =
             { model
                 | words =
                     let
-                        hidden =
-                            (toggleWords Off model.words)
+                        ( show, dontShow ) =
+                            List.partition (\w -> List.member w wordsToShow) (List.map fst model.words)
+
+                        sortedShow =
+                            List.filter (\w -> List.member w show) wordsToShow
+
+                        allWords =
+                            (List.map (\w -> ( w, True )) sortedShow)
+                                ++ (List.map (\w -> ( w, False )) dontShow)
                     in
-                        List.foldl (\w words -> toggleWord On w words) hidden wordsToShow
+                        allWords
+                    --let
+                    --    hidden =
+                    --        (toggleWords Off model.words)
+                    --in
+                    --    List.foldl (\w words -> toggleWord On w words) hidden wordsToShow
             }
 
 
