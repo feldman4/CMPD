@@ -1,1 +1,1 @@
-web: gunicorn nexus:app --log-file -
+web: gunicorn -k eventlet nexus:app

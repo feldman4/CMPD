@@ -1,3 +1,11 @@
+### interface for scoring rule
+#### goal: test out rules for scoring, what's in wordbank.  
+- it insults, you insult
+- animate healthbar
+- better wordbank? e.g., color by pos
+- difficulty
+    + random sampler, max over increasing set
+- accelerate input
 
 
 ### flight to-do
@@ -5,9 +13,7 @@
     + clustering w/ WN is iffy, GN W2V does better
     + expanding synset?
 
-### interface for scoring rule
- - it insults, you insult
- - difficulty: how many it tests and takes the best from
+
 
 ### interface for limit break, "fucking"
 - options for showing p.o.s., etc
@@ -162,6 +168,5 @@ http://www.nltk.org/book/ch05.html
 mad cavern, robots instructed by foul-mouthed mechanic from north new jersey
 more tropes
 
-
-
-elm-live elm-app/base.elm --output=static/elm-base.js
+fractal maps, hidden object
+https://en.wikipedia.org/wiki/Dragon_curve

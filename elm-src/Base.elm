@@ -67,10 +67,6 @@ type Msg
     | SetEnemyImage String
 
 
-
---| RemarkAndScroll Remark
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of

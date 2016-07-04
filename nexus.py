@@ -14,7 +14,7 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def index():
-    return redirect(url_for('base'))
+    return redirect(url_for('versus'))
 
 
 @app.route('/bas<string:flavor>')

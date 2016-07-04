@@ -7,7 +7,7 @@ db = None
 def load_DIDB():
     cats = {}
     flag = None
-    for line in open('DIDB.txt', 'r'):
+    for line in open('resources/DIDB.txt', 'r'):
         if flag:
             cats[flag] = [[s.strip() for s in part.split(',')] 
                                      for part in line.split(';')]
@@ -27,6 +27,7 @@ def load_DIDB_pairs():
     phrases = [singular(phrase) for phrase in phrases 
                     if ' of ' not in phrase.lower()]
     return phrases
+    
 
 def singular(phrase):
     """Accepts either a list of words, or a string of space-separated words.
@@ -86,6 +87,7 @@ extra_plural = {'kulaks': 'kulak',
                 'enigmas': 'enigma',
                 'witchdoctors': 'witchdoctor',
                 'bigmouths': 'bigmouth'
+
                 }
 
 def isplural(word):
