@@ -9,18 +9,18 @@
     <script type="text/javascript" src="/static/underscore-min.js"></script>
 
     <link href="/static/main.css" rel="stylesheet">
-    <script src="/static/Versus.js">
+    <script src="https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE">
     </script>
     <title></title>
 </head>
 <body>
     <script>
 
-    	var versus = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE"
-    	$.getScript( versus, function(a,b,c){console.log('loaded')})
+    	// var versus = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE"
+    	// $.getScript( versus, function(a,b,c){console.log('loaded')})
 
 
-		var app = Elm.Versus.fullscreen()
+		var app 
 		var socketTarget = 'http://' + document.domain + ':' + location.port +
 		    '/versus'
 
@@ -49,6 +49,10 @@
 
 
 		$(document).ready(function() {
+
+					app = Elm.Versus.fullscreen()
+
+					
 		            // set up socket.io connection to flask
 		            socket = io.connect(socketTarget);
 		            // socket = io.connect()
