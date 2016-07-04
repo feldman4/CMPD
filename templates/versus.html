@@ -90,13 +90,11 @@
 		            app.ports.scrollTop.subscribe(scrollSelector)
 
 
-		            setTimeout(function(){ 
 
 		            app.ports.setEnemyImage.send(enemy)
 
 		            app.ports.newWordbank.send({{wordbank | safe}})
-		            }
-		            ,	1000);
+
 
 
 		        }
