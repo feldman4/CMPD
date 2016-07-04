@@ -52,7 +52,7 @@
 
 					app = Elm.Versus.fullscreen()
 
-					
+
 		            // set up socket.io connection to flask
 		            socket = io.connect(socketTarget);
 		            // socket = io.connect()
@@ -89,9 +89,17 @@
 		            // helper to deal with scrolling (not in elm?)
 		            app.ports.scrollTop.subscribe(scrollSelector)
 
+
+		            setTimeout(function(){ 
+
 		            app.ports.setEnemyImage.send(enemy)
 
 		            app.ports.newWordbank.send({{wordbank | safe}})
+
+
+		            	alert("Hello"); }, 
+		            	2000);
+
 
 		        }
 		    )
