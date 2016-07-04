@@ -15,6 +15,11 @@
 </head>
 <body>
     <script>
+
+    	var versus = "https://arcane-badlands-78132.herokuapp.com/static/Versus.js"
+    	$.getScript( versus, function(a,b,c){console.log('loaded')})
+
+
 		var app = Elm.Versus.fullscreen()
 		var socketTarget = 'http://' + document.domain + ':' + location.port +
 		    '/versus'
