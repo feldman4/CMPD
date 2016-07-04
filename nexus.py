@@ -46,6 +46,7 @@ def versus():
 
 @socketio.on('insult', namespace='/base')
 def reply(insult):
+    print 'received', insult
     session['base'].reply(insult, emit)
 
 @socketio.on('insult', namespace='/versus')
