@@ -17,35 +17,58 @@ img#enemy
 {
 	width: 80%;
 	height: 240px;
-	white-space: pre;
 	overflow: scroll;
 	margin: 0 auto;
 	position: relative;
+	border: -5px ;
 }
+
 #output::-webkit-scrollbar
 {
 	display: none;
 }
+
+#output-wrapper
+{
+	position: relative ;
+	height: 240px
+}
+#shield
+{
+	pointer-events:none;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	z-index: 10;
+	background: -webkit-linear-gradient(to top, rgba(0,0,0,0) 70%, rgba(255,255,255,1));
+	background: linear-gradient(to top, rgba(0,0,0,0) 70%, rgba(255,255,255,1));
+}
+
 #convo
 {
 	bottom: 0;
 	width: 100%;
 	position: relative;
 }
-#convo .insult
+
+#convo .insult,.retort
 {
-	text-align: left;
+	bottom: 0;
 	padding-top: 5px;
+/* 	max-height: 200px */
+}
+
+#convo .insult
+{	
+	text-align: left;
 }
 #convo .retort
-{
+{	
 	text-align: right;
-	padding-top: 5px;
 }
-#wordbank:after
-{
-	background: linear-gradient(to top, rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 0) 80%);
-}
+
+
 #input
 {
 	text-align: center;
@@ -69,4 +92,30 @@ img#enemy
 {
 	padding: 8px;
 	display: inline-block;
+}
+
+.progress-bar
+{
+		background-color: transparent;
+		height: 20px
+}
+
+.progress-bar .bar-box
+{
+	background-color: white;
+	border: 0px solid gray;
+	border-radius: 5px;
+	overflow: hidden;
+	height: 10px;
+
+}
+
+.progress-bar .bar-slider.normal
+{
+	background-color: #acbec8;
+}
+
+.progress-bar .bar-slider.overload
+{
+	background-color: red
 }
