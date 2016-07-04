@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CMPD-Base</title>
+
+    <script type="text/javascript" src="/static/fuse.js"></script>
+    <script   src="/static/jquery-3.0.0.min.js"   integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="   crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/static/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/underscore-min.js"></script>
+
+    <link href="/static/main.css" rel="stylesheet">
+    <script src="/static/Versus.js">
+    </script>
+    <title></title>
+</head>
+<body>
+    <script>
+		var app = Elm.Versus.fullscreen()
+		var socketTarget = 'http://' + document.domain + ':' + location.port +
+		    '/versus'
+
+		var fuse_opts = {threshold: {{fuse_threshold | safe}}}
+		var fuse
+
+		var enemy = "{{enemy | safe}}"
+		
+
+
+		function suggest(word, wordbank) {
+		    fuse = new Fuse(wordbank, fuse_opts);
+		    suggestions = _.map(fuse.search(word), function(i) {
+		        return wordbank[i]
+		    })
+		    return suggestions
+		}
+
+		function scrollSelector(selector) {
+			$d = $(selector)
+		    setTimeout(function() {
+		    	$d.scrollTop($d[0].scrollHeight);
+		    }, 30)
+		    
+		}
+
+
+		$(document).ready(function() {
+		            // set up socket.io connection to flask
+		            socket = io.connect(socketTarget);
+		            // socket = io.connect()
+		            
+		            // initializes wordbank from server
+		            // replaces fuse instance
+		            socket.on('update_wordbank', function(data) {
+		                    app.ports.newWordbank.send(data.wordbank)
+		                })
+
+		            socket.on('remark', function(data) {
+		            		app.ports.remark.send(data)
+		            })
+		            
+		            // immediately respond to requests for suggestions from elm
+		            app.ports.check.subscribe(function(comm) {
+		                var word = comm[0]
+		                var wordbank = comm[1]
+		                if (word === "") {
+		                	app.ports.newWordbank.send(_.shuffle(wordbank))
+		                	return
+		                }
+		                var suggestions = suggest(word, wordbank);
+		                app.ports.suggestions.send(suggestions);
+		            });
+
+		            // pass input words on to flask
+		            app.ports.send.subscribe(function(word) {
+		            	socket.emit('insult', {
+		            		insult: word
+		            	})
+		            })
+
+		            // helper to deal with scrolling (not in elm?)
+		            app.ports.scrollTop.subscribe(scrollSelector)
+
+		            app.ports.setEnemyImage.send(enemy)
+
+		            app.ports.newWordbank.send({{wordbank | safe}})
+
+		        }
+		    )
+
+    </script>
+</body>
+</html>
