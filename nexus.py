@@ -6,7 +6,7 @@ import cmpd_web
 
 app = Flask(__name__)
 app.session_interface = cmpd_web.CMPDSessionInterface()
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = '36dab92b-7550-4476-9984-5bc162115cf7'
 app.debug=True
 socketio = SocketIO(app)
 
