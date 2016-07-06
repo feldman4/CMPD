@@ -47,7 +47,9 @@ function changeEnemy(app) {
 
 function sendEncounter(app) {
 	socket.on('send_encounter', function(data) {
+		console.log('sending ' + data.image)
 		app.ports.setEnemyImage.send(data.image)
+
 	})
 }
 

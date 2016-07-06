@@ -62,7 +62,7 @@ initEncounter =
 tiles : List Menu.Tile
 tiles =
     [ { label = ": loadout", key = 'l', id = "loadout" }
-    , { label = ": btw", key = 'b', id = "btw" }
+    , { label = ": encounter", key = 'e', id = "e" }
     ]
 
 
@@ -99,7 +99,12 @@ update msg model =
                     ( newLoadout, selection ) =
                         Menu.update msg model.loadout
                 in
-                    { model | loadout = newLoadout } ! []
+                    case selection of
+                        Nothing ->
+                            { model | loadout = newLoadout } ! []
+
+                        _ ->
+                            update (ChangeOverlay NoOverlay) { model | loadout = newLoadout }
 
         UpdateMenu msg ->
             if model.overlay /= MenuOverlay then
@@ -116,7 +121,7 @@ update msg model =
                         Just 'l' ->
                             update (ChangeOverlay LoadoutOverlay) model
 
-                        Just 'b' ->
+                        Just 'e' ->
                             update (ChangeOverlay EncounterOverlay) model
 
                         _ ->
@@ -149,10 +154,16 @@ update msg model =
                         ! []
 
         KeyPress key ->
-            if key == (Char.toCode ':') then
-                { model | overlay = MenuOverlay, key = key, menu = initMenu } ! []
-            else if key == keycode.space then
-                { model | overlay = NoOverlay, key = key } ! []
+            if key == (Char.toCode ':') || key == (Char.toCode ';') then
+                case model.overlay of
+                    EncounterOverlay ->
+                        { model | overlay = NoOverlay, key = key } ! []
+
+                    NoOverlay ->
+                        { model | overlay = MenuOverlay, key = key, menu = initMenu } ! []
+
+                    _ ->
+                        { model | key = key } ! []
             else
                 { model | key = key } ! []
 

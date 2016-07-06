@@ -86,7 +86,8 @@ def reply(insult):
 def send_encounter(message):
     encounter = message['encounter']
     enemy_image = url_for('static', filename='images/ctenophora-1.jpg')
-    socketio.emit('send_encounter', {'image': enemy_image})
+    emit('send_encounter', {'image': enemy_image})
+
 
     adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
     nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
