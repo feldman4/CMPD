@@ -92,30 +92,35 @@ update msg model =
 
         --update (AskSuggestions input) { model | addInput = input }
         UpdateLoadout msg ->
-            let
-                ( newLoadout, selection ) =
-                    Menu.update msg model.loadout
-            in
-                { model | loadout = newLoadout } ! []
+            if model.overlay /= LoadoutOverlay then
+                model ! []
+            else
+                let
+                    ( newLoadout, selection ) =
+                        Menu.update msg model.loadout
+                in
+                    { model | loadout = newLoadout } ! []
 
         UpdateMenu msg ->
-            let
-                ( newMenu, selection ) =
-                    Menu.update msg model.menu
-            in
-                case selection of
-                    Nothing ->
-                        { model | menu = newMenu } ! []
+            if model.overlay /= MenuOverlay then
+                model ! []
+            else
+                let
+                    ( newMenu, selection ) =
+                        Menu.update msg model.menu
+                in
+                    case selection of
+                        Nothing ->
+                            { model | menu = newMenu } ! []
 
-                    Just 'l' ->
-                        update (ChangeOverlay LoadoutOverlay)
-                            { model
-                                | loadout = initLoadout
-                                , menu = initMenu
-                            }
+                        Just 'l' ->
+                            update (ChangeOverlay LoadoutOverlay) model
 
-                    _ ->
-                        update (ChangeOverlay NoOverlay) { model | menu = newMenu }
+                        Just 'b' ->
+                            update (ChangeOverlay EncounterOverlay) model
+
+                        _ ->
+                            update (ChangeOverlay NoOverlay) { model | menu = newMenu }
 
         ChangeOverlay overlay ->
             case overlay of
@@ -127,7 +132,7 @@ update msg model =
                         | overlay = overlay
                         , encounter = initEncounter
                     }
-                        ! []
+                        ! [ requestEncounter "base" ]
 
                 LoadoutOverlay ->
                     { model
@@ -156,6 +161,17 @@ update msg model =
 
         NoOp ->
             model ! []
+
+
+
+--OUTGOING
+
+
+port requestEncounter : String -> Cmd msg
+
+
+
+-- INCOMING
 
 
 port setMapImage : (String -> msg) -> Sub msg

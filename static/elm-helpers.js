@@ -1,8 +1,9 @@
 
+////////////////////// LOADING //////////////////////
+
 var socketTarget 
 var socket
 var fuse_opts = {threshold: 0.4}
-
 
 function documentReady(socketRoom) {
 	// set up socket.io connection to flask
@@ -20,6 +21,8 @@ function getScriptLocalHosted(local, hosted, success) {
 
 }
 
+
+////////////////////// FLASK -> ELM //////////////////////
 
 function updateWordbank(app) {
 	// initializes wordbank from server
@@ -42,7 +45,39 @@ function changeEnemy(app) {
 	})
 }
 
-		            
+function sendEncounter(app) {
+	socket.on('send_encounter', function(data) {
+		app.ports.setEnemyImage.send(data.image)
+	})
+}
+
+
+
+////////////////////// ELM -> FLASK //////////////////////
+
+// pass input words on to flask
+function sendInsult(app) {
+	app.ports.sendInsult.subscribe(function(comm) {
+		var word = comm[0]
+		var progress = comm[1]
+		socket.emit('insult', {
+			insult: word,
+			progress: progress
+		})
+	})
+
+}
+
+function requestEncounter(app) {
+	app.ports.requestEncounter.subscribe(function(encounter) {
+		socket.emit('request_encounter', {
+			encounter: encounter
+		})
+	})
+}
+
+
+////////////////////// ELM -> JS //////////////////////
 
 // immediately respond to requests for suggestions from elm
 function askFuse(app) {
@@ -56,6 +91,24 @@ function askFuse(app) {
         var suggestions = fuseSuggest(word, wordbank);
         app.ports.suggestions.send(suggestions);
     });
+
+}
+
+function scrollTop(app) {
+
+	app.ports.scrollTop.subscribe(scrollSelector)
+}
+
+
+////////////////////// JS  //////////////////////
+
+
+// helper to deal with scrolling (not in elm?)
+function scrollSelector(selector) {
+	var $d = $(selector)
+	setTimeout(function() {
+		$d.scrollTop($d[0].scrollHeight);
+	}, 30)
 
 }
 
@@ -74,36 +127,3 @@ function fuseSuggest(word, wordbank) {
 
     return suggestions
 }
-
-
-
-// pass input words on to flask
-function sendInsult(app) {
-	app.ports.sendInsult.subscribe(function(comm) {
-		var word = comm[0]
-		var progress = comm[1]
-		socket.emit('insult', {
-			insult: word,
-			progress: progress
-		})
-	})
-
-}
-
-
-// helper to deal with scrolling (not in elm?)
-
-function scrollTop(app) {
-
-	app.ports.scrollTop.subscribe(scrollSelector)
-
-	function scrollSelector(selector) {
-	var $d = $(selector)
-	setTimeout(function() {
-		$d.scrollTop($d[0].scrollHeight);
-	}, 30)
-
-	}
-}
-
-

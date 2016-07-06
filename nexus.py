@@ -71,10 +71,32 @@ def reply(insult):
     print 'received', insult
     session['base'].reply(insult, emit)
 
+
 @socketio.on('insult', namespace='/versus')
 def reply(insult):
     session['versus'].reply(insult, emit)
 
+
+@socketio.on('insult', namespace='/map')
+def reply(insult):
+    session['map'].reply(insult, emit)
+
+
+@socketio.on('request_encounter', namespace='/map')
+def send_encounter(message):
+    encounter = message['encounter']
+    enemy_image = url_for('static', filename='images/ctenophora-1.jpg')
+    socketio.emit('send_encounter', {'image': enemy_image})
+
+    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
+    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
+
+    vocab = [('JJ', sorted(set(adjectives))),
+             ('NN', sorted(set(nouns)))]
+
+    session['map'] = cmpd_web.VersusDIDB(vocab)
+
+    emit('update_wordbank', {'wordbank': session['map'].wordbank})
 
 if __name__ == '__main__':
     socketio.run(app)
