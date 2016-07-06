@@ -3,7 +3,9 @@
 	margin: auto;
 	width: 600px;
 	font-family: helvetica;
+	font-size: 100%;
 }
+
 #header
 {
 	text-align: center;
@@ -119,3 +121,102 @@ img#enemy
 {
 	background-color: red
 }
+
+/*  ------MAP------  */
+
+.map
+{
+	background-color: beige;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+
+	position: relative;
+
+}
+
+.map img
+{
+	width: 100%
+
+}
+
+#overlay {
+	background-color: rgba(0,0,0,0.1);
+	height: 60%;
+	width: 60%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+}
+
+.menu
+{
+	
+
+	font-family: sans-serif;
+
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+
+}
+
+.tile
+{
+	height: 100px;
+	width: 100px;
+	background-color: rgba(240,240,240,1);
+
+	margin: 2%;
+	flex: 1 1 auto;
+	text-align: center;
+	display: flex;
+
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: space-around;
+}
+
+
+
+
+.tile-key
+{
+
+	font-size: 3em;
+	height: 70%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	 
+}
+
+.tile-label
+{
+	
+	height: 30%;
+	line-height: 50%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+ 
+
+.tile:not(.selected) {
+	color: gray;
+}
+

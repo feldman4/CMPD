@@ -1,26 +1,34 @@
+from flask import url_for
 from flask.sessions import SessionMixin, SessionInterface
 import random
+from collections import OrderedDict
+from itertools import cycle, product
 
 
 def load_phrases(path):
     with open(path, 'r') as fh:
         return fh.read().split('\n')
 
-# default_phrases = load_phrases('resources/phrases.txt')
 
 
 class Base(object):
-    def __init__(self, adjectives, nouns, phrases=None, log=None):
+    def __init__(self, vocab, retorts=None, log=None):
         """Provide log as filehandle opened in append mode.
         """
-        self.JJ = adjectives
-        self.NN = nouns
-        self.phrases = phrases or default_phrases
-        self.flag = 'JJ'
 
-        self.wordbank = self.JJ
+        self.vocab = OrderedDict(vocab)
+        self.retorts = retorts or DIDB_phrases
+
+        self.flag = cycle(self.vocab.keys())
+
+        self.wordbank = self.vocab[self.flag.next()]
+
+        self.insult = []
+        self.history = []
 
         self.log = log
+
+        print self.vocab
 
 
     def reply(self, insult, emit):
@@ -28,61 +36,26 @@ class Base(object):
         provided phrases.
         """
 
-        if self.flag == 'JJ':
-            self.flag = 'NN'
-            self.lastword = insult['insult']
-            self.wordbank = self.NN
-            
-        else:
-            self.flag = 'JJ'
-            
-            phrase = random.choice(self.phrases)
-            retort = {'insult': self.lastword + ' ' + insult['insult'],
-                           'retort': phrase}
-
-            self.lastword = ''
-            self.wordbank = self.JJ
-                           
-            emit('remark', retort)
-
-        emit('update_wordbank', {'wordbank': self.wordbank})
-
-        if self.log:
-            import time
-            log.write('%f\n%s\n' % (time.time(), retort['retort']))
-
-
-
-class Versus(Base):
-    def __init__(self, *args, **kwargs):
-        super(Versus, self).__init__(*args, **kwargs)
-        self.history = []
-
-    def reply(self, insult, emit):
-        insult = insult['insult']
-
-        if self.flag == 'JJ':
-            self.flag = 'NN'
-            self.lastword = insult
-            self.wordbank = self.NN
-            
-        else:
-            self.flag = 'JJ'
-            
-            insult = self.lastword + ' ' + insult
-            phrase = random.choice(self.phrases)
-            retort = {'insult': insult,
-                           'retort': phrase,
-                           'score': self.score(insult)}
-
-            self.lastword = ''
-            self.wordbank = self.JJ
-                           
-            emit('remark', retort)
-
-            self.history += [(insult, retort)]
+        self.insult += [insult['insult']]
+        key = self.flag.next()
+        self.wordbank = self.vocab[key]
 
         random.shuffle(self.wordbank)
+
+        if key == self.vocab.keys()[0]:
+            insult = ' '.join(self.insult)
+            self.insult = []
+        
+            retort = random.choice(self.retorts)
+            score = self.score(insult)
+            remark = {'insult': insult, 
+                      'retort': retort,
+                      'score': score}
+                           
+            emit('remark', remark)
+
+            self.history += [remark]
+
         emit('update_wordbank', {'wordbank': self.wordbank})
 
         if self.log:
@@ -91,17 +64,56 @@ class Versus(Base):
 
     def score(self, insult):
 
-        past_insults = [i for i, r in self.history]
+        past_insults = [remark['insult'] for remark in self.history]
+        past_retorts = [remark['retort'] for remark in self.history]
 
         if insult in past_insults:
             return -0.05
-        if insult in default_phrases:
+        if insult in past_retorts:
+            return -0.05
+
+        return 0.1
+
+
+class VersusDerp(Base):
+    def __init__(self, *args, **kwargs):
+        super(VersusDerp, self).__init__(*args, **kwargs)
+
+    def reply(self, insult, emit):
+        
+        progress = insult['progress']
+
+        enemy_index = int(progress * 5.999) + 1
+        enemy_image = url_for('static', 
+            filename='images/derp-%d.jpg' % enemy_index)
+
+        emit('change_enemy', {'image': enemy_image})
+
+        if progress > 0.8:
+            self.retorts = derp_phrases
+        else:
+            self.retorts = DIDB_phrases
+
+        super(VersusDerp, self).reply(insult, emit)
+
+
+
+
+class VersusDIDB(Base):
+    def __init__(self, *args, **kwargs):
+        super(VersusDIDB, self).__init__(*args, **kwargs)
+
+    def score(self, insult):
+
+        past_insults = [remark['insult'] for remark in self.history]
+
+        if insult in past_insults:
+            return -0.05
+        if insult in DIDB_phrases:
             return 0.3
 
         return 0.05
         
-
-
 
 
 class Session(dict, SessionMixin):
@@ -126,7 +138,52 @@ class CMPDSessionInterface(SessionInterface):
         self.db[session.sid] = session
 
 
-default_phrases = \
+
+derp_categories = [('A', ['Lazy',
+  'Stupid',
+  'Insecure',
+  'Idiotic',
+  'Slimy',
+  'Smelly',
+  'Pompous',
+  'Pie-Eating',
+  'Racist',
+  'Elitist',
+  'White Trash',
+  'Drug-Loving',
+  'Tone Deaf',
+  'Ugly',
+  'Creepy']),
+ ('B', ['Douche',
+  'Ass',
+  'Turd',
+  'Butt',
+  'Cock',
+  'Shit',
+  'Crotch',
+  'Prick',
+  'Taint',
+  'Fuck',
+  'Dick',
+  'Nut']),
+ ('C', ['Pilot',
+  'Captain',
+  'Pirate',
+  'Knob',
+  'Box',
+  'Jockey',
+  'Nazi',
+  'Waffle',
+  'Goblin',
+  'Blossum',
+  'Clown',
+  'Socket',
+  'Balloon'])]
+
+derp_phrases = [' '.join(x) for x in product(
+                        *[words for _, words in derp_categories])]
+
+DIDB_phrases = \
 """Irreligious Latecomer
 Jaded Miscreant
 Predatory Liar
@@ -135,7 +192,7 @@ Disguised Carrion
 Candy-Assed Filth
 Unsuccessful Looter
 Talentless Hack
-Floundering Engimas
+Floundering Enigma
 Licentious Turd
 Renegade Dwarf
 Underhanded Sinner

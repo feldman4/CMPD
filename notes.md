@@ -1,11 +1,10 @@
 ### interface for scoring rule
 #### goal: test out rules for scoring, what's in wordbank.  
 - it insults, you insult
-- animate healthbar
 - better wordbank? e.g., color by pos
 - difficulty
     + random sampler, max over increasing set
-- accelerate input
+- accelerate input, matching + bar
 
 
 ### flight to-do

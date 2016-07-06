@@ -8967,8 +8967,8 @@ var _user$project$Versus$showWordbankWord = F2(
 			_user$project$Wordbank$Show(word),
 			model);
 	});
-var _user$project$Versus$check = _elm_lang$core$Native_Platform.outgoingPort(
-	'check',
+var _user$project$Versus$askFuse = _elm_lang$core$Native_Platform.outgoingPort(
+	'askFuse',
 	function (v) {
 		return [
 			v._0,
@@ -8978,16 +8978,17 @@ var _user$project$Versus$check = _elm_lang$core$Native_Platform.outgoingPort(
 			})
 		];
 	});
-var _user$project$Versus$send = _elm_lang$core$Native_Platform.outgoingPort(
-	'send',
+var _user$project$Versus$sendInsult = _elm_lang$core$Native_Platform.outgoingPort(
+	'sendInsult',
 	function (v) {
-		return v;
+		return [v._0, v._1];
 	});
 var _user$project$Versus$scrollTop = _elm_lang$core$Native_Platform.outgoingPort(
 	'scrollTop',
 	function (v) {
 		return v;
 	});
+var _user$project$Versus$setEnemyImage = _elm_lang$core$Native_Platform.incomingPort('setEnemyImage', _elm_lang$core$Json_Decode$string);
 var _user$project$Versus$newWordbank = _elm_lang$core$Native_Platform.incomingPort(
 	'newWordbank',
 	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
@@ -9013,28 +9014,10 @@ var _user$project$Versus$remark = _elm_lang$core$Native_Platform.incomingPort(
 						});
 				});
 		}));
-var _user$project$Versus$setEnemyImage = _elm_lang$core$Native_Platform.incomingPort('setEnemyImage', _elm_lang$core$Json_Decode$string);
-var _user$project$Versus$Model = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return {wordbank: a, progressBar: b, progress: c, addInput: d, enemyImage: e, maxToDisplay: f, conversation: g, clock: h, firstTick: i, overload: j};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
+var _user$project$Versus$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {wordbank: a, progressBar: b, addInput: c, enemyImage: d, maxToDisplay: e, conversation: f, clock: g, firstTick: h, overload: i};
+	});
 var _user$project$Versus$Remark = F3(
 	function (a, b, c) {
 		return {insult: a, retort: b, score: c};
@@ -9113,7 +9096,7 @@ var _user$project$Versus$update = F2(
 					return {
 						ctor: '_Tuple2',
 						_0: model,
-						_1: _user$project$Versus$check(
+						_1: _user$project$Versus$askFuse(
 							{
 								ctor: '_Tuple2',
 								_0: _p0._0,
@@ -9152,7 +9135,8 @@ var _user$project$Versus$update = F2(
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{addInput: ''}),
-							_1: _user$project$Versus$send(_p4._0)
+							_1: _user$project$Versus$sendInsult(
+								{ctor: '_Tuple2', _0: _p4._0, _1: model.progressBar.value})
 						};
 					} else {
 						return A2(
@@ -9235,7 +9219,6 @@ var _user$project$Versus$init = F3(
 					[]),
 				0),
 			progressBar: A2(_user$project$Bar$init, 0.5, true),
-			progress: 0.5,
 			enemyImage: enemyImage,
 			maxToDisplay: maxToDisplay,
 			addInput: '',
@@ -9243,7 +9226,7 @@ var _user$project$Versus$init = F3(
 				[]),
 			clock: 0,
 			firstTick: true,
-			overload: 0.8
+			overload: 0.833
 		};
 		return A2(
 			_user$project$Versus$update,
@@ -9371,18 +9354,19 @@ var _user$project$Versus$view = function (model) {
 			[enemy, progressBar, output, addInput, wordbank]));
 };
 var _user$project$Versus$main = {
-	main: _elm_lang$html$Html_App$program(
-		{
-			init: A3(
-				_user$project$Versus$init,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				'',
-				30),
-			update: _user$project$Versus$update,
-			view: _user$project$Versus$view,
-			subscriptions: _user$project$Versus$subscriptions
-		})
+	main: function () {
+		var maxToDisplay = 30;
+		var enemyImage = '';
+		var words = _elm_lang$core$Native_List.fromArray(
+			[]);
+		return _elm_lang$html$Html_App$program(
+			{
+				init: A3(_user$project$Versus$init, words, enemyImage, maxToDisplay),
+				update: _user$project$Versus$update,
+				view: _user$project$Versus$view,
+				subscriptions: _user$project$Versus$subscriptions
+			});
+	}()
 };
 
 var Elm = {};

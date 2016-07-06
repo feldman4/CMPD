@@ -4,10 +4,10 @@ wnl = WordNetLemmatizer()
 db = None
 
 
-def load_DIDB():
+def load_DIDB(path):
     cats = {}
     flag = None
-    for line in open('resources/DIDB.txt', 'r'):
+    for line in open(path, 'r'):
         if flag:
             cats[flag] = [[s.strip() for s in part.split(',')] 
                                      for part in line.split(';')]
@@ -86,8 +86,8 @@ extra_plural = {'kulaks': 'kulak',
                 'regurgitators': 'regurgitator',
                 'enigmas': 'enigma',
                 'witchdoctors': 'witchdoctor',
-                'bigmouths': 'bigmouth'
-
+                'bigmouths': 'bigmouth',
+                'ratcatchers': 'ratcatcher'
                 }
 
 def isplural(word):

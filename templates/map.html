@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CMPD-Base</title>
+
+    <script type="text/javascript" src="/static/fuse.js"></script>
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+    <script src="/static/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/static/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/underscore-min.js"></script>
+
+    <link href="/static/main.css" rel="stylesheet">
+
+    <title></title>
+</head>
+<body>
+    <script>
+    	var local_js = "/static/Map.js"
+    	var hosted_js = "/static/Map.js"
+
+		var app 
+
+		var mapImage = "{{map_src | safe}}"
+
+		function launchElm(){
+					app = Elm.Map.fullscreen()
+					setTimeout(function(){ 
+
+			            app.ports.setMapImage.send(mapImage)
+
+			            }
+			            ,	0
+			        );
+
+		}
+
+
+
+		$(document).ready(function() {
+				if (document.domain === "localhost")
+					{
+						$.getScript(local_js, launchElm)
+						console.log('local')
+
+
+					} else {
+						$.getScript(hosted_js, launchElm)
+					}
+
+
+				}
+
+			)
+
+    </script>
+</body>
+</html>

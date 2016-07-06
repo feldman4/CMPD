@@ -11,6 +11,10 @@ app.debug=True
 socketio = SocketIO(app)
 
 
+@app.route('/map')
+def map():
+    map_src = url_for('static', filename='images/map.png')
+    return render_template('map.html', map_src=map_src)
 
 @app.route('/')
 def index():
@@ -21,8 +25,8 @@ def index():
 def base(flavor):
     """Show a demo powered by Elm or only JS.
     """
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.default_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.default_phrases]
+    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
+    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
 
     session['base'] = cmpd_web.Base(adjectives, nouns)
 
@@ -33,17 +37,33 @@ def base(flavor):
 
 @app.route('/versus')
 def versus():
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.default_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.default_phrases]
-    adjectives = sorted(set(adjectives))
-    nouns      = sorted(set(nouns))
+    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
+    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
 
-    session['versus'] = cmpd_web.Versus(adjectives, nouns)
+    vocab = [('JJ', sorted(set(adjectives))),
+             ('NN', sorted(set(nouns)))]
+
+    session['versus'] = cmpd_web.VersusDIDB(vocab)
 
     return render_template('versus.html', 
-        fuse_threshold = 0.4,
         wordbank=session['versus'].wordbank,
         enemy=url_for('static', filename='images/ctenophora-1.jpg'))
+
+
+
+@app.route('/versus-derp')
+def versus_derp():
+    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
+    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
+
+    vocab = [('JJ', sorted(set(adjectives))),
+             ('NN', sorted(set(nouns)))]
+
+    session['versus'] = cmpd_web.VersusDerp(vocab)
+
+    return render_template('versus.html', 
+        wordbank=session['versus'].wordbank,
+        enemy=url_for('static', filename='images/derp-3.jpg'))
 
 
 @socketio.on('insult', namespace='/base')
