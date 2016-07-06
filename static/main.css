@@ -4,6 +4,7 @@
 	width: 600px;
 	font-family: helvetica;
 	font-size: 100%;
+	
 }
 
 #header
@@ -132,8 +133,9 @@ img#enemy
 	align-items: center;
 	justify-content: center;
 	flex-direction: row;
-
+	width: 600px;
 	position: relative;
+	margin: auto;
 
 }
 
