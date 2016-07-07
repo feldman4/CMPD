@@ -3,7 +3,9 @@ port module Map exposing (..)
 import Versus
 import View exposing (..)
 import Model exposing (..)
-import Menu
+import Menu.Menu as Menu
+import Menu.Types
+import Menu.View
 import Html.App as App
 import Keyboard
 import Char
@@ -34,12 +36,12 @@ init =
         update NoOp model
 
 
-initMenu : Menu.Model
+initMenu : Menu.Types.Model
 initMenu =
     Menu.init tiles "my-menu"
 
 
-initLoadout : Menu.Model
+initLoadout : Menu.Types.Model
 initLoadout =
     Menu.init tilesL "my-loadout"
 
@@ -59,14 +61,14 @@ initEncounter =
         fst (Versus.init words enemyImage maxToDisplay)
 
 
-tiles : List Menu.Tile
+tiles : List Menu.Types.Tile
 tiles =
     [ { label = ": loadout", key = 'l', id = "loadout" }
     , { label = ": encounter", key = 'e', id = "e" }
     ]
 
 
-tilesL : List Menu.Tile
+tilesL : List Menu.Types.Tile
 tilesL =
     [ { label = ": gun", key = 'g', id = "gun" }
     , { label = ": knife", key = 'k', id = "knife" }

@@ -9576,7 +9576,101 @@ var _user$project$Versus$main = {
 	}()
 };
 
-var _user$project$Menu$viewTile = F2(
+var _user$project$Menu_Types$Model = F5(
+	function (a, b, c, d, e) {
+		return {tiles: a, id: b, lastKey: c, active: d, selected: e};
+	});
+var _user$project$Menu_Types$Tile = F3(
+	function (a, b, c) {
+		return {label: a, key: b, id: c};
+	});
+var _user$project$Menu_Types$NoOp = {ctor: 'NoOp'};
+var _user$project$Menu_Types$Activate = function (a) {
+	return {ctor: 'Activate', _0: a};
+};
+var _user$project$Menu_Types$KeyPress = function (a) {
+	return {ctor: 'KeyPress', _0: a};
+};
+
+var _user$project$Model$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {menu: a, loadout: b, encounter: c, map: d, overlay: e, key: f};
+	});
+var _user$project$Model$Map = F2(
+	function (a, b) {
+		return {image: a, places: b};
+	});
+var _user$project$Model$Place = F3(
+	function (a, b, c) {
+		return {x: a, y: b, label: c};
+	});
+var _user$project$Model$NoOp = {ctor: 'NoOp'};
+var _user$project$Model$SetMap = function (a) {
+	return {ctor: 'SetMap', _0: a};
+};
+var _user$project$Model$KeyPress = function (a) {
+	return {ctor: 'KeyPress', _0: a};
+};
+var _user$project$Model$ChangeOverlay = function (a) {
+	return {ctor: 'ChangeOverlay', _0: a};
+};
+var _user$project$Model$UpdateEncounter = function (a) {
+	return {ctor: 'UpdateEncounter', _0: a};
+};
+var _user$project$Model$UpdateLoadout = function (a) {
+	return {ctor: 'UpdateLoadout', _0: a};
+};
+var _user$project$Model$UpdateMenu = function (a) {
+	return {ctor: 'UpdateMenu', _0: a};
+};
+var _user$project$Model$EncounterOverlay = {ctor: 'EncounterOverlay'};
+var _user$project$Model$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
+var _user$project$Model$MenuOverlay = {ctor: 'MenuOverlay'};
+var _user$project$Model$NoOverlay = {ctor: 'NoOverlay'};
+
+var _user$project$Menu_Menu$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$keyboard$Keyboard$presses(_user$project$Menu_Types$KeyPress)
+			]));
+};
+var _user$project$Menu_Menu$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'KeyPress':
+				var _p1 = _p0._0;
+				return model.active ? (_elm_lang$core$Native_Utils.eq(_p1, model.lastKey) ? {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _elm_lang$core$Maybe$Just(
+						_elm_lang$core$Char$fromCode(model.lastKey))
+				} : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{lastKey: _p1}),
+					_1: _elm_lang$core$Maybe$Nothing
+				}) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
+			case 'Activate':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{active: _p0._0}),
+					_1: _elm_lang$core$Maybe$Nothing
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
+		}
+	});
+var _user$project$Menu_Menu$init = F2(
+	function (tiles, id) {
+		return {tiles: tiles, id: id, lastKey: 0, active: true, selected: false};
+	});
+
+var _user$project$Menu_View$viewTile = F2(
 	function (tile, selected) {
 		var tag = selected ? ' selected' : '';
 		return A2(
@@ -9629,7 +9723,7 @@ var _user$project$Menu$viewTile = F2(
 						]))
 				]));
 	});
-var _user$project$Menu$view = function (model) {
+var _user$project$Menu_View$view = function (model) {
 	var flagAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
 		'selected',
@@ -9651,7 +9745,7 @@ var _user$project$Menu$view = function (model) {
 			_elm_lang$core$List$map,
 			function (t) {
 				return A2(
-					_user$project$Menu$viewTile,
+					_user$project$Menu_View$viewTile,
 					t,
 					_elm_lang$core$Native_Utils.eq(
 						_elm_lang$core$Char$toCode(t.key),
@@ -9659,98 +9753,6 @@ var _user$project$Menu$view = function (model) {
 			},
 			model.tiles));
 };
-var _user$project$Menu$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'KeyPress':
-				var _p1 = _p0._0;
-				return model.active ? (_elm_lang$core$Native_Utils.eq(_p1, model.lastKey) ? {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _elm_lang$core$Maybe$Just(
-						_elm_lang$core$Char$fromCode(model.lastKey))
-				} : {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{lastKey: _p1}),
-					_1: _elm_lang$core$Maybe$Nothing
-				}) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
-			case 'Activate':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{active: _p0._0}),
-					_1: _elm_lang$core$Maybe$Nothing
-				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
-		}
-	});
-var _user$project$Menu$init = F2(
-	function (tiles, id) {
-		return {tiles: tiles, id: id, lastKey: 0, active: true, selected: false};
-	});
-var _user$project$Menu$Model = F5(
-	function (a, b, c, d, e) {
-		return {tiles: a, id: b, lastKey: c, active: d, selected: e};
-	});
-var _user$project$Menu$Tile = F3(
-	function (a, b, c) {
-		return {label: a, key: b, id: c};
-	});
-var _user$project$Menu$NoOp = {ctor: 'NoOp'};
-var _user$project$Menu$Activate = function (a) {
-	return {ctor: 'Activate', _0: a};
-};
-var _user$project$Menu$KeyPress = function (a) {
-	return {ctor: 'KeyPress', _0: a};
-};
-var _user$project$Menu$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$keyboard$Keyboard$presses(_user$project$Menu$KeyPress)
-			]));
-};
-
-var _user$project$Model$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {menu: a, loadout: b, encounter: c, map: d, overlay: e, key: f};
-	});
-var _user$project$Model$Map = F2(
-	function (a, b) {
-		return {image: a, places: b};
-	});
-var _user$project$Model$Place = F3(
-	function (a, b, c) {
-		return {x: a, y: b, label: c};
-	});
-var _user$project$Model$NoOp = {ctor: 'NoOp'};
-var _user$project$Model$SetMap = function (a) {
-	return {ctor: 'SetMap', _0: a};
-};
-var _user$project$Model$KeyPress = function (a) {
-	return {ctor: 'KeyPress', _0: a};
-};
-var _user$project$Model$ChangeOverlay = function (a) {
-	return {ctor: 'ChangeOverlay', _0: a};
-};
-var _user$project$Model$UpdateEncounter = function (a) {
-	return {ctor: 'UpdateEncounter', _0: a};
-};
-var _user$project$Model$UpdateLoadout = function (a) {
-	return {ctor: 'UpdateLoadout', _0: a};
-};
-var _user$project$Model$UpdateMenu = function (a) {
-	return {ctor: 'UpdateMenu', _0: a};
-};
-var _user$project$Model$EncounterOverlay = {ctor: 'EncounterOverlay'};
-var _user$project$Model$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
-var _user$project$Model$MenuOverlay = {ctor: 'MenuOverlay'};
-var _user$project$Model$NoOverlay = {ctor: 'NoOverlay'};
 
 var _user$project$View$toPercent = function (x) {
 	return A2(
@@ -9828,7 +9830,7 @@ var _user$project$View$view = function (model) {
 							A2(
 							_elm_lang$html$Html_App$map,
 							_user$project$Model$UpdateMenu,
-							_user$project$Menu$view(model.menu))
+							_user$project$Menu_View$view(model.menu))
 						]));
 			case 'LoadoutOverlay':
 				return A2(
@@ -9842,7 +9844,7 @@ var _user$project$View$view = function (model) {
 							A2(
 							_elm_lang$html$Html_App$map,
 							_user$project$Model$UpdateLoadout,
-							_user$project$Menu$view(model.loadout))
+							_user$project$Menu_View$view(model.loadout))
 						]));
 			case 'EncounterOverlay':
 				return A2(
@@ -9938,8 +9940,8 @@ var _user$project$Map$initEncounter = function () {
 	return _elm_lang$core$Basics$fst(
 		A3(_user$project$Versus$init, words, enemyImage, maxToDisplay));
 }();
-var _user$project$Map$initLoadout = A2(_user$project$Menu$init, _user$project$Map$tilesL, 'my-loadout');
-var _user$project$Map$initMenu = A2(_user$project$Menu$init, _user$project$Map$tiles, 'my-menu');
+var _user$project$Map$initLoadout = A2(_user$project$Menu_Menu$init, _user$project$Map$tilesL, 'my-loadout');
+var _user$project$Map$initMenu = A2(_user$project$Menu_Menu$init, _user$project$Map$tiles, 'my-menu');
 var _user$project$Map$requestEncounter = _elm_lang$core$Native_Platform.outgoingPort(
 	'requestEncounter',
 	function (v) {
@@ -9971,7 +9973,7 @@ var _user$project$Map$update = F2(
 							_elm_lang$core$Native_List.fromArray(
 								[]));
 					} else {
-						var _p2 = A2(_user$project$Menu$update, _p0._0, model.loadout);
+						var _p2 = A2(_user$project$Menu_Menu$update, _p0._0, model.loadout);
 						var newLoadout = _p2._0;
 						var selection = _p2._1;
 						var _p3 = selection;
@@ -10001,7 +10003,7 @@ var _user$project$Map$update = F2(
 							_elm_lang$core$Native_List.fromArray(
 								[]));
 					} else {
-						var _p4 = A2(_user$project$Menu$update, _p0._0, model.menu);
+						var _p4 = A2(_user$project$Menu_Menu$update, _p0._0, model.menu);
 						var newMenu = _p4._0;
 						var selection = _p4._1;
 						var _p5 = selection;
@@ -10195,11 +10197,11 @@ var _user$project$Map$subscriptions = function (model) {
 				A2(
 				_elm_lang$core$Platform_Sub$map,
 				_user$project$Model$UpdateMenu,
-				_user$project$Menu$subscriptions(model.menu)),
+				_user$project$Menu_Menu$subscriptions(model.menu)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
 				_user$project$Model$UpdateLoadout,
-				_user$project$Menu$subscriptions(model.loadout)),
+				_user$project$Menu_Menu$subscriptions(model.loadout)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
 				_user$project$Model$UpdateEncounter,

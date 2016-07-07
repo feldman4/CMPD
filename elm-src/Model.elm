@@ -1,12 +1,12 @@
 module Model exposing (..)
 
 import Versus
-import Menu exposing (Model)
+import Menu.Types
 
 
 type alias Model =
-    { menu : Menu.Model
-    , loadout : Menu.Model
+    { menu : Menu.Types.Model
+    , loadout : Menu.Types.Model
     , encounter : Versus.Model
     , map : Map
     , overlay : Overlay
@@ -15,8 +15,8 @@ type alias Model =
 
 
 type Msg
-    = UpdateMenu Menu.Msg
-    | UpdateLoadout Menu.Msg
+    = UpdateMenu Menu.Types.Msg
+    | UpdateLoadout Menu.Types.Msg
     | UpdateEncounter Versus.Msg
     | ChangeOverlay Overlay
     | KeyPress Int
