@@ -9555,7 +9555,7 @@ var _user$project$Versus$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('main')
+				_elm_lang$html$Html_Attributes$id('versus-main')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[enemy, progressBar, output, addInput, wordbank]));
@@ -9718,11 +9718,19 @@ var _user$project$Menu$subscriptions = function (model) {
 
 var _user$project$Model$Model = F6(
 	function (a, b, c, d, e, f) {
-		return {menu: a, loadout: b, encounter: c, image: d, overlay: e, key: f};
+		return {menu: a, loadout: b, encounter: c, map: d, overlay: e, key: f};
+	});
+var _user$project$Model$Map = F2(
+	function (a, b) {
+		return {image: a, places: b};
+	});
+var _user$project$Model$Place = F3(
+	function (a, b, c) {
+		return {x: a, y: b, label: c};
 	});
 var _user$project$Model$NoOp = {ctor: 'NoOp'};
-var _user$project$Model$SetMapImage = function (a) {
-	return {ctor: 'SetMapImage', _0: a};
+var _user$project$Model$SetMap = function (a) {
+	return {ctor: 'SetMap', _0: a};
 };
 var _user$project$Model$KeyPress = function (a) {
 	return {ctor: 'KeyPress', _0: a};
@@ -9744,7 +9752,63 @@ var _user$project$Model$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
 var _user$project$Model$MenuOverlay = {ctor: 'MenuOverlay'};
 var _user$project$Model$NoOverlay = {ctor: 'NoOverlay'};
 
+var _user$project$View$toPercent = function (x) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(100 * x),
+		'%');
+};
+var _user$project$View$placeDiv = function (place) {
+	var label = A2(
+		_elm_lang$core$Basics_ops['++'],
+		': ',
+		function (_) {
+			return _.label;
+		}(place));
+	var y = _user$project$View$toPercent(
+		function (_) {
+			return _.y;
+		}(place));
+	var x = _user$project$View$toPercent(
+		function (_) {
+			return _.x;
+		}(place));
+	var placeStyle = _elm_lang$html$Html_Attributes$style(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+				{ctor: '_Tuple2', _0: 'left', _1: x},
+				{ctor: '_Tuple2', _0: 'top', _1: y}
+			]));
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				placeStyle,
+				_elm_lang$html$Html_Attributes$class('label')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(label)
+					]))
+			]));
+};
 var _user$project$View$view = function (model) {
+	var places = A2(_elm_lang$core$List$map, _user$project$View$placeDiv, model.map.places);
+	var mapImage = A2(
+		_elm_lang$html$Html$img,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$src(model.map.image)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
 	var keyAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
 		'key',
@@ -9816,21 +9880,26 @@ var _user$project$View$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class('map'),
-				_elm_lang$html$Html_Attributes$id(model.image),
-				keyAtt
+				_elm_lang$html$Html_Attributes$id('main')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$img,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$src(model.image)
+						_elm_lang$html$Html_Attributes$class('map'),
+						keyAtt
 					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				overlay
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Native_List.fromArray(
+						[mapImage]),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						places,
+						_elm_lang$core$Native_List.fromArray(
+							[overlay]))))
 			]));
 };
 
@@ -10053,12 +10122,12 @@ var _user$project$Map$update = F2(
 							_elm_lang$core$Native_List.fromArray(
 								[]));
 					}
-				case 'SetMapImage':
+				case 'SetMap':
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{image: _p0._0}),
+							{map: _p0._0}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 				default:
@@ -10071,10 +10140,54 @@ var _user$project$Map$update = F2(
 		}
 	});
 var _user$project$Map$init = function () {
-	var model = {menu: _user$project$Map$initMenu, loadout: _user$project$Map$initLoadout, encounter: _user$project$Map$initEncounter, image: 'un', overlay: _user$project$Model$NoOverlay, key: _user$project$Map$keycode.enter};
+	var model = {
+		menu: _user$project$Map$initMenu,
+		loadout: _user$project$Map$initLoadout,
+		encounter: _user$project$Map$initEncounter,
+		map: {
+			image: '',
+			places: _elm_lang$core$Native_List.fromArray(
+				[])
+		},
+		overlay: _user$project$Model$NoOverlay,
+		key: _user$project$Map$keycode.enter
+	};
 	return A2(_user$project$Map$update, _user$project$Model$NoOp, model);
 }();
-var _user$project$Map$setMapImage = _elm_lang$core$Native_Platform.incomingPort('setMapImage', _elm_lang$core$Json_Decode$string);
+var _user$project$Map$setMap = _elm_lang$core$Native_Platform.incomingPort(
+	'setMap',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'image', _elm_lang$core$Json_Decode$string),
+		function (image) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'places',
+					_elm_lang$core$Json_Decode$list(
+						A2(
+							_elm_lang$core$Json_Decode$andThen,
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'x', _elm_lang$core$Json_Decode$float),
+							function (x) {
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'y', _elm_lang$core$Json_Decode$float),
+									function (y) {
+										return A2(
+											_elm_lang$core$Json_Decode$andThen,
+											A2(_elm_lang$core$Json_Decode_ops[':='], 'label', _elm_lang$core$Json_Decode$string),
+											function (label) {
+												return _elm_lang$core$Json_Decode$succeed(
+													{x: x, y: y, label: label});
+											});
+									});
+							}))),
+				function (places) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{image: image, places: places});
+				});
+		}));
 var _user$project$Map$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
@@ -10092,7 +10205,7 @@ var _user$project$Map$subscriptions = function (model) {
 				_user$project$Model$UpdateEncounter,
 				_user$project$Versus$subscriptions(model.encounter)),
 				_elm_lang$keyboard$Keyboard$presses(_user$project$Model$KeyPress),
-				_user$project$Map$setMapImage(_user$project$Model$SetMapImage)
+				_user$project$Map$setMap(_user$project$Model$SetMap)
 			]));
 };
 var _user$project$Map$main = {

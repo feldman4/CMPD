@@ -26,7 +26,7 @@ init =
             { menu = initMenu
             , loadout = initLoadout
             , encounter = initEncounter
-            , image = "un"
+            , map = { image = "", places = [] }
             , overlay = NoOverlay
             , key = keycode.enter
             }
@@ -167,8 +167,8 @@ update msg model =
             else
                 { model | key = key } ! []
 
-        SetMapImage image ->
-            { model | image = image } ! []
+        SetMap map ->
+            { model | map = map } ! []
 
         NoOp ->
             model ! []
@@ -185,7 +185,7 @@ port requestEncounter : String -> Cmd msg
 -- INCOMING
 
 
-port setMapImage : (String -> msg) -> Sub msg
+port setMap : (Map -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -195,7 +195,7 @@ subscriptions model =
         , Sub.map UpdateLoadout (Menu.subscriptions model.loadout)
         , Sub.map UpdateEncounter (Versus.subscriptions model.encounter)
         , Keyboard.presses KeyPress
-        , setMapImage SetMapImage
+        , setMap SetMap
         ]
 
 

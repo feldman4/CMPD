@@ -14,7 +14,11 @@ socketio = SocketIO(app)
 @app.route('/map')
 def map():
     map_src = url_for('static', filename='images/map.png')
-    return render_template('map.html', map_src=map_src)
+    places = (0.15, 0.7, 'x'), (0.77, 0.25, 'y')
+    places = [{'x': x, 'y': y, 'label': l} for (x,y,l) in places]
+    map_data = {'image': map_src, 
+                'places': places}
+    return render_template('map.html', map=map_data)
 
 @app.route('/')
 def index():
@@ -87,7 +91,6 @@ def send_encounter(message):
     encounter = message['encounter']
     enemy_image = url_for('static', filename='images/ctenophora-1.jpg')
     emit('send_encounter', {'image': enemy_image})
-
 
     adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
     nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]

@@ -8,7 +8,7 @@ type alias Model =
     { menu : Menu.Model
     , loadout : Menu.Model
     , encounter : Versus.Model
-    , image : String
+    , map : Map
     , overlay : Overlay
     , key : Int
     }
@@ -20,7 +20,7 @@ type Msg
     | UpdateEncounter Versus.Msg
     | ChangeOverlay Overlay
     | KeyPress Int
-    | SetMapImage String
+    | SetMap Map
     | NoOp
 
 
@@ -29,3 +29,14 @@ type Overlay
     | MenuOverlay
     | LoadoutOverlay
     | EncounterOverlay
+
+
+type alias Map =
+    { image : String, places : List Place }
+
+
+type alias Place =
+    { x : Float
+    , y : Float
+    , label : String
+    }

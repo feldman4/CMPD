@@ -53,6 +53,12 @@ function sendEncounter(app) {
 	})
 }
 
+function sendMap(app) {
+	socket.on('send_map', function(data) {
+		app.ports.setMap.send(data)
+	})
+}
+
 
 
 ////////////////////// ELM -> FLASK //////////////////////

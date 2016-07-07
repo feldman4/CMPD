@@ -26,7 +26,7 @@
 		var app 
 		var socketRoom = '/map'
 
-		var mapImage = "{{map_src | safe}}"
+		var map = {{map | safe}}
 
 		function launchElm(){
 			app = Elm.Map.fullscreen()
@@ -49,7 +49,7 @@
 
 			setTimeout(function(){ 
 
-	            app.ports.setMapImage.send(mapImage)
+	            app.ports.setMap.send(map)
 
 	            }
 	            ,	0

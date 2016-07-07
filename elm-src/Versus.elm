@@ -236,7 +236,7 @@ view model =
                     [ div [ id "convo" ] (List.map viewRemark model.conversation) ]
                 ]
     in
-        div [ id "main" ]
+        div [ id "versus-main" ]
             [ enemy
             , progressBar
             , output

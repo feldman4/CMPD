@@ -87,7 +87,7 @@ class VersusDerp(Base):
         enemy_image = url_for('static', 
             filename='images/derp-%d.jpg' % enemy_index)
 
-        emit('change_enemy', {'image': enemy_image})
+        emit('send_encounter', {'image': enemy_image})
 
         if progress > 0.8:
             self.retorts = derp_phrases
