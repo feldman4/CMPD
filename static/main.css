@@ -7,6 +7,15 @@
 	
 }
 
+#versus-main
+{ 
+	margin: auto;
+	width: 600px;
+	font-family: helvetica;
+	font-size: 100%;
+	
+}
+
 #header
 {
 	text-align: center;
