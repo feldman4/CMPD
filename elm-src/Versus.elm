@@ -73,6 +73,11 @@ type alias Remark =
     }
 
 
+inputID : String
+inputID =
+    "#input-input"
+
+
 
 -- UPDATE
 

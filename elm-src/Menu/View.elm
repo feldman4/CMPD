@@ -1,8 +1,8 @@
-module Menu.View exposing (view)
+module Menu.View exposing (view, viewMap)
 
 import Menu.Types exposing (..)
 import Html exposing (text, div, Html, span)
-import Html.Attributes exposing (id, class, attribute)
+import Html.Attributes exposing (id, class, attribute, style)
 import String
 import Char
 
@@ -13,13 +13,33 @@ view model =
         lastKeyAtt =
             attribute "lastKey" (toString model.lastKey)
 
-        flagAtt =
-            attribute "selected" (toString model.selected)
+        getTileContents =
+            (\t -> viewTile t (Char.toCode t.key == model.lastKey))
     in
-        div [ id model.id, class "menu", lastKeyAtt, flagAtt ]
-            (List.map (\t -> viewTile t (Char.toCode t.key == model.lastKey))
-                model.tiles
-            )
+        div [ id model.id, class "menu", lastKeyAtt ]
+            (List.map getTileContents model.tiles)
+
+
+
+-- map-style view on menu, determine selected by comparing Model.lastKey to
+-- first Char in place.label
+
+
+viewMap : Model -> Html Msg
+viewMap model =
+    let
+        lastKeyAtt =
+            attribute "lastKey" (toString model.lastKey)
+
+        getTileContents =
+            (\t -> viewTileXY t (Char.toCode t.key == model.lastKey))
+    in
+        div [ id model.id, class "map-menu", lastKeyAtt ]
+            (List.map getTileContents model.tiles)
+
+
+
+-- helper functions
 
 
 viewTile : Tile -> Bool -> Html Msg
@@ -35,3 +55,30 @@ viewTile tile selected =
             [ div [ class "tile-key" ] [ span [] [ text (String.fromChar tile.key) ] ]
             , div [ class "tile-label" ] [ span [] [ text tile.label ] ]
             ]
+
+
+viewTileXY : Tile -> Bool -> Html.Html msg
+viewTileXY tile selected =
+    let
+        tag =
+            if selected then
+                " selected"
+            else
+                ""
+
+        placeStyle =
+            style
+                [ ( "position", "absolute" )
+                , ( "left", tile.x |> toPercent )
+                , ( "top", tile.y |> toPercent )
+                ]
+    in
+        div [ id tile.id, class ("tile " ++ tile.label ++ tag), placeStyle ]
+            [ div [ class "tile-key" ] [ span [] [ text (String.fromChar tile.key) ] ]
+            , div [ class "tile-label" ] [ span [] [ text tile.label ] ]
+            ]
+
+
+toPercent : Float -> String
+toPercent x =
+    (toString (100 * x)) ++ "%"

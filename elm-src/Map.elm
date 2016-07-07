@@ -5,10 +5,10 @@ import View exposing (..)
 import Model exposing (..)
 import Menu.Menu as Menu
 import Menu.Types
-import Menu.View
 import Html.App as App
 import Keyboard
 import Char
+import String
 
 
 main : Program Never
@@ -28,6 +28,7 @@ init =
             { menu = initMenu
             , loadout = initLoadout
             , encounter = initEncounter
+            , mapMenu = initMapMenu
             , map = { image = "", places = [] }
             , overlay = NoOverlay
             , key = keycode.enter
@@ -61,17 +62,22 @@ initEncounter =
         fst (Versus.init words enemyImage maxToDisplay)
 
 
+initMapMenu : Menu.Types.Model
+initMapMenu =
+    Menu.init [] ""
+
+
 tiles : List Menu.Types.Tile
 tiles =
-    [ { label = ": loadout", key = 'l', id = "loadout" }
-    , { label = ": encounter", key = 'e', id = "e" }
+    [ { label = ": loadout", key = 'l', id = "loadout", x = 0, y = 0 }
+    , { label = ": encounter", key = 'e', id = "e", x = 0, y = 0 }
     ]
 
 
 tilesL : List Menu.Types.Tile
 tilesL =
-    [ { label = ": gun", key = 'g', id = "gun" }
-    , { label = ": knife", key = 'k', id = "knife" }
+    [ { label = ": gun", key = 'g', id = "gun", x = 0, y = 0 }
+    , { label = ": knife", key = 'k', id = "knife", x = 0, y = 0 }
     ]
 
 
@@ -129,6 +135,22 @@ update msg model =
                         _ ->
                             update (ChangeOverlay NoOverlay) { model | menu = newMenu }
 
+        UpdateMapMenu msg ->
+            if model.overlay /= NoOverlay then
+                model ! []
+            else
+                let
+                    ( newMapMenu, selection ) =
+                        Menu.update msg model.mapMenu
+                in
+                    case selection of
+                        Nothing ->
+                            { model | mapMenu = newMapMenu } ! []
+
+                        -- need to programatically match to encounters?
+                        _ ->
+                            update (ChangeOverlay EncounterOverlay) model
+
         ChangeOverlay overlay ->
             case overlay of
                 NoOverlay ->
@@ -139,7 +161,7 @@ update msg model =
                         | overlay = overlay
                         , encounter = initEncounter
                     }
-                        ! [ requestEncounter "base" ]
+                        ! [ requestEncounter "base", setFocus Versus.inputID ]
 
                 LoadoutOverlay ->
                     { model
@@ -158,19 +180,40 @@ update msg model =
         KeyPress key ->
             if key == (Char.toCode ':') || key == (Char.toCode ';') then
                 case model.overlay of
-                    EncounterOverlay ->
-                        { model | overlay = NoOverlay, key = key } ! []
-
                     NoOverlay ->
                         { model | overlay = MenuOverlay, key = key, menu = initMenu } ! []
 
                     _ ->
-                        { model | key = key } ! []
+                        update (SetMap model.map) { model | overlay = NoOverlay, key = key }
             else
                 { model | key = key } ! []
 
         SetMap map ->
-            { model | map = map } ! []
+            let
+                placeToLabel place =
+                    let
+                        key =
+                            case String.uncons place.label of
+                                Just ( char, _ ) ->
+                                    char
+
+                                Nothing ->
+                                    '.'
+                    in
+                        { label = ": " ++ place.label
+                        , key = key
+                        , id = place.label
+                        , x = place.x
+                        , y = place.y
+                        }
+
+                tiles =
+                    List.map placeToLabel map.places
+
+                mapMenu =
+                    Menu.init tiles "map-menu"
+            in
+                { model | map = map, mapMenu = mapMenu } ! []
 
         NoOp ->
             model ! []
@@ -181,6 +224,9 @@ update msg model =
 
 
 port requestEncounter : String -> Cmd msg
+
+
+port setFocus : String -> Cmd msg
 
 
 
@@ -196,6 +242,7 @@ subscriptions model =
         [ Sub.map UpdateMenu (Menu.subscriptions model.menu)
         , Sub.map UpdateLoadout (Menu.subscriptions model.loadout)
         , Sub.map UpdateEncounter (Versus.subscriptions model.encounter)
+        , Sub.map UpdateMapMenu (Menu.subscriptions model.mapMenu)
         , Keyboard.presses KeyPress
         , setMap SetMap
         ]

@@ -107,6 +107,10 @@ function scrollTop(app) {
 	app.ports.scrollTop.subscribe(scrollSelector)
 }
 
+function setFocus(app) {
+	app.ports.setFocus.subscribe(focusSelector)
+}
+
 
 ////////////////////// JS  //////////////////////
 
@@ -118,6 +122,10 @@ function scrollSelector(selector) {
 		$d.scrollTop($d[0].scrollHeight);
 	}, 30)
 
+}
+
+function focusSelector(selector) {
+	$(selector).focus()
 }
 
 

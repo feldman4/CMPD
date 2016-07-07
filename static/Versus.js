@@ -8967,6 +8967,7 @@ var _user$project$Versus$showWordbankWord = F2(
 			_user$project$Wordbank$Show(word),
 			model);
 	});
+var _user$project$Versus$inputID = '#input-input';
 var _user$project$Versus$askFuse = _elm_lang$core$Native_Platform.outgoingPort(
 	'askFuse',
 	function (v) {
@@ -8985,6 +8986,11 @@ var _user$project$Versus$sendInsult = _elm_lang$core$Native_Platform.outgoingPor
 	});
 var _user$project$Versus$scrollTop = _elm_lang$core$Native_Platform.outgoingPort(
 	'scrollTop',
+	function (v) {
+		return v;
+	});
+var _user$project$Versus$setFocus = _elm_lang$core$Native_Platform.outgoingPort(
+	'setFocus',
 	function (v) {
 		return v;
 	});
@@ -9022,6 +9028,7 @@ var _user$project$Versus$Remark = F3(
 	function (a, b, c) {
 		return {insult: a, retort: b, score: c};
 	});
+var _user$project$Versus$FocusInput = {ctor: 'FocusInput'};
 var _user$project$Versus$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -9176,7 +9183,7 @@ var _user$project$Versus$update = F2(
 							{enemyImage: _p0._0}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
-				default:
+				case 'Tick':
 					var _p6 = _p0._0;
 					var elapsed = model.firstTick ? 0 : _elm_lang$core$Time$inSeconds(_p6 - model.clock);
 					var progress = A2(_elm_lang$core$Basics$max, model.progressBar.value - (2.0e-2 * elapsed), 0);
@@ -9198,6 +9205,12 @@ var _user$project$Versus$update = F2(
 							{clock: _p6, progressBar: progressBar2, firstTick: false}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
+				default:
+					return {
+						ctor: '_Tuple2',
+						_0: model,
+						_1: _user$project$Versus$setFocus(_user$project$Versus$inputID)
+					};
 			}
 		}
 	});
@@ -9348,7 +9361,7 @@ var _user$project$Versus$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('main')
+				_elm_lang$html$Html_Attributes$id('versus-main')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[enemy, progressBar, output, addInput, wordbank]));

@@ -9174,6 +9174,7 @@ var _user$project$Versus$showWordbankWord = F2(
 			_user$project$Wordbank$Show(word),
 			model);
 	});
+var _user$project$Versus$inputID = '#input-input';
 var _user$project$Versus$askFuse = _elm_lang$core$Native_Platform.outgoingPort(
 	'askFuse',
 	function (v) {
@@ -9576,13 +9577,13 @@ var _user$project$Versus$main = {
 	}()
 };
 
-var _user$project$Menu_Types$Model = F5(
-	function (a, b, c, d, e) {
-		return {tiles: a, id: b, lastKey: c, active: d, selected: e};
+var _user$project$Menu_Types$Model = F4(
+	function (a, b, c, d) {
+		return {tiles: a, id: b, lastKey: c, active: d};
 	});
-var _user$project$Menu_Types$Tile = F3(
-	function (a, b, c) {
-		return {label: a, key: b, id: c};
+var _user$project$Menu_Types$Tile = F5(
+	function (a, b, c, d, e) {
+		return {label: a, key: b, id: c, x: d, y: e};
 	});
 var _user$project$Menu_Types$NoOp = {ctor: 'NoOp'};
 var _user$project$Menu_Types$Activate = function (a) {
@@ -9592,9 +9593,9 @@ var _user$project$Menu_Types$KeyPress = function (a) {
 	return {ctor: 'KeyPress', _0: a};
 };
 
-var _user$project$Model$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {menu: a, loadout: b, encounter: c, map: d, overlay: e, key: f};
+var _user$project$Model$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {menu: a, loadout: b, encounter: c, mapMenu: d, map: e, overlay: f, key: g};
 	});
 var _user$project$Model$Map = F2(
 	function (a, b) {
@@ -9613,6 +9614,9 @@ var _user$project$Model$KeyPress = function (a) {
 };
 var _user$project$Model$ChangeOverlay = function (a) {
 	return {ctor: 'ChangeOverlay', _0: a};
+};
+var _user$project$Model$UpdateMapMenu = function (a) {
+	return {ctor: 'UpdateMapMenu', _0: a};
 };
 var _user$project$Model$UpdateEncounter = function (a) {
 	return {ctor: 'UpdateEncounter', _0: a};
@@ -9667,9 +9671,84 @@ var _user$project$Menu_Menu$update = F2(
 	});
 var _user$project$Menu_Menu$init = F2(
 	function (tiles, id) {
-		return {tiles: tiles, id: id, lastKey: 0, active: true, selected: false};
+		return {tiles: tiles, id: id, lastKey: 0, active: true};
 	});
 
+var _user$project$Menu_View$toPercent = function (x) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(100 * x),
+		'%');
+};
+var _user$project$Menu_View$viewTileXY = F2(
+	function (tile, selected) {
+		var placeStyle = _elm_lang$html$Html_Attributes$style(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+					{
+					ctor: '_Tuple2',
+					_0: 'left',
+					_1: _user$project$Menu_View$toPercent(tile.x)
+				},
+					{
+					ctor: '_Tuple2',
+					_0: 'top',
+					_1: _user$project$Menu_View$toPercent(tile.y)
+				}
+				]));
+		var tag = selected ? ' selected' : '';
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$id(tile.id),
+					_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'tile ',
+						A2(_elm_lang$core$Basics_ops['++'], tile.label, tag))),
+					placeStyle
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tile-key')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$span,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text(
+									_elm_lang$core$String$fromChar(tile.key))
+								]))
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tile-label')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$span,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text(tile.label)
+								]))
+						]))
+				]));
+	});
 var _user$project$Menu_View$viewTile = F2(
 	function (tile, selected) {
 		var tag = selected ? ' selected' : '';
@@ -9723,11 +9802,38 @@ var _user$project$Menu_View$viewTile = F2(
 						]))
 				]));
 	});
-var _user$project$Menu_View$view = function (model) {
-	var flagAtt = A2(
+var _user$project$Menu_View$viewMap = function (model) {
+	var getTileContents = function (t) {
+		return A2(
+			_user$project$Menu_View$viewTileXY,
+			t,
+			_elm_lang$core$Native_Utils.eq(
+				_elm_lang$core$Char$toCode(t.key),
+				model.lastKey));
+	};
+	var lastKeyAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
-		'selected',
-		_elm_lang$core$Basics$toString(model.selected));
+		'lastKey',
+		_elm_lang$core$Basics$toString(model.lastKey));
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id(model.id),
+				_elm_lang$html$Html_Attributes$class('map-menu'),
+				lastKeyAtt
+			]),
+		A2(_elm_lang$core$List$map, getTileContents, model.tiles));
+};
+var _user$project$Menu_View$view = function (model) {
+	var getTileContents = function (t) {
+		return A2(
+			_user$project$Menu_View$viewTile,
+			t,
+			_elm_lang$core$Native_Utils.eq(
+				_elm_lang$core$Char$toCode(t.key),
+				model.lastKey));
+	};
 	var lastKeyAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
 		'lastKey',
@@ -9738,71 +9844,12 @@ var _user$project$Menu_View$view = function (model) {
 			[
 				_elm_lang$html$Html_Attributes$id(model.id),
 				_elm_lang$html$Html_Attributes$class('menu'),
-				lastKeyAtt,
-				flagAtt
+				lastKeyAtt
 			]),
-		A2(
-			_elm_lang$core$List$map,
-			function (t) {
-				return A2(
-					_user$project$Menu_View$viewTile,
-					t,
-					_elm_lang$core$Native_Utils.eq(
-						_elm_lang$core$Char$toCode(t.key),
-						model.lastKey));
-			},
-			model.tiles));
+		A2(_elm_lang$core$List$map, getTileContents, model.tiles));
 };
 
-var _user$project$View$toPercent = function (x) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(100 * x),
-		'%');
-};
-var _user$project$View$placeDiv = function (place) {
-	var label = A2(
-		_elm_lang$core$Basics_ops['++'],
-		': ',
-		function (_) {
-			return _.label;
-		}(place));
-	var y = _user$project$View$toPercent(
-		function (_) {
-			return _.y;
-		}(place));
-	var x = _user$project$View$toPercent(
-		function (_) {
-			return _.x;
-		}(place));
-	var placeStyle = _elm_lang$html$Html_Attributes$style(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-				{ctor: '_Tuple2', _0: 'left', _1: x},
-				{ctor: '_Tuple2', _0: 'top', _1: y}
-			]));
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				placeStyle,
-				_elm_lang$html$Html_Attributes$class('label')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$span,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(label)
-					]))
-			]));
-};
 var _user$project$View$view = function (model) {
-	var places = A2(_elm_lang$core$List$map, _user$project$View$placeDiv, model.map.places);
 	var mapImage = A2(
 		_elm_lang$html$Html$img,
 		_elm_lang$core$Native_List.fromArray(
@@ -9870,11 +9917,9 @@ var _user$project$View$view = function (model) {
 					_elm_lang$core$Native_List.fromArray(
 						[
 							A2(
-							_elm_lang$html$Html$div,
-							_elm_lang$core$Native_List.fromArray(
-								[]),
-							_elm_lang$core$Native_List.fromArray(
-								[]))
+							_elm_lang$html$Html_App$map,
+							_user$project$Model$UpdateMapMenu,
+							_user$project$Menu_View$viewMap(model.mapMenu))
 						]));
 		}
 	}();
@@ -9893,15 +9938,8 @@ var _user$project$View$view = function (model) {
 						_elm_lang$html$Html_Attributes$class('map'),
 						keyAtt
 					]),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Native_List.fromArray(
-						[mapImage]),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						places,
-						_elm_lang$core$Native_List.fromArray(
-							[overlay]))))
+				_elm_lang$core$Native_List.fromArray(
+					[mapImage, overlay]))
 			]));
 };
 
@@ -9911,12 +9949,16 @@ var _user$project$Map$tilesL = _elm_lang$core$Native_List.fromArray(
 		{
 		label: ': gun',
 		key: _elm_lang$core$Native_Utils.chr('g'),
-		id: 'gun'
+		id: 'gun',
+		x: 0,
+		y: 0
 	},
 		{
 		label: ': knife',
 		key: _elm_lang$core$Native_Utils.chr('k'),
-		id: 'knife'
+		id: 'knife',
+		x: 0,
+		y: 0
 	}
 	]);
 var _user$project$Map$tiles = _elm_lang$core$Native_List.fromArray(
@@ -9924,14 +9966,23 @@ var _user$project$Map$tiles = _elm_lang$core$Native_List.fromArray(
 		{
 		label: ': loadout',
 		key: _elm_lang$core$Native_Utils.chr('l'),
-		id: 'loadout'
+		id: 'loadout',
+		x: 0,
+		y: 0
 	},
 		{
 		label: ': encounter',
 		key: _elm_lang$core$Native_Utils.chr('e'),
-		id: 'e'
+		id: 'e',
+		x: 0,
+		y: 0
 	}
 	]);
+var _user$project$Map$initMapMenu = A2(
+	_user$project$Menu_Menu$init,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	'');
 var _user$project$Map$initEncounter = function () {
 	var maxToDisplay = 30;
 	var enemyImage = '';
@@ -9944,6 +9995,11 @@ var _user$project$Map$initLoadout = A2(_user$project$Menu_Menu$init, _user$proje
 var _user$project$Map$initMenu = A2(_user$project$Menu_Menu$init, _user$project$Map$tiles, 'my-menu');
 var _user$project$Map$requestEncounter = _elm_lang$core$Native_Platform.outgoingPort(
 	'requestEncounter',
+	function (v) {
+		return v;
+	});
+var _user$project$Map$setFocus = _elm_lang$core$Native_Platform.outgoingPort(
+	'setFocus',
 	function (v) {
 		return v;
 	});
@@ -10040,16 +10096,44 @@ var _user$project$Map$update = F2(
 							}
 						}
 					}
+				case 'UpdateMapMenu':
+					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Model$NoOverlay)) {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							_elm_lang$core$Native_List.fromArray(
+								[]));
+					} else {
+						var _p6 = A2(_user$project$Menu_Menu$update, _p0._0, model.mapMenu);
+						var newMapMenu = _p6._0;
+						var selection = _p6._1;
+						var _p7 = selection;
+						if (_p7.ctor === 'Nothing') {
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{mapMenu: newMapMenu}),
+								_elm_lang$core$Native_List.fromArray(
+									[]));
+						} else {
+							var _v12 = _user$project$Model$ChangeOverlay(_user$project$Model$EncounterOverlay),
+								_v13 = model;
+							msg = _v12;
+							model = _v13;
+							continue update;
+						}
+					}
 				case 'ChangeOverlay':
-					var _p7 = _p0._0;
-					var _p6 = _p7;
-					switch (_p6.ctor) {
+					var _p9 = _p0._0;
+					var _p8 = _p9;
+					switch (_p8.ctor) {
 						case 'NoOverlay':
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
-									{overlay: _p7}),
+									{overlay: _p9}),
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						case 'EncounterOverlay':
@@ -10057,17 +10141,18 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
-									{overlay: _p7, encounter: _user$project$Map$initEncounter}),
+									{overlay: _p9, encounter: _user$project$Map$initEncounter}),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_user$project$Map$requestEncounter('base')
+										_user$project$Map$requestEncounter('base'),
+										_user$project$Map$setFocus(_user$project$Versus$inputID)
 									]));
 						case 'LoadoutOverlay':
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
-									{overlay: _p7, loadout: _user$project$Map$initLoadout}),
+									{overlay: _p9, loadout: _user$project$Map$initLoadout}),
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						default:
@@ -10075,61 +10160,72 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
-									{overlay: _p7, menu: _user$project$Map$initMenu}),
+									{overlay: _p9, menu: _user$project$Map$initMenu}),
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 					}
 				case 'KeyPress':
-					var _p9 = _p0._0;
+					var _p11 = _p0._0;
 					if (_elm_lang$core$Native_Utils.eq(
-						_p9,
+						_p11,
 						_elm_lang$core$Char$toCode(
 							_elm_lang$core$Native_Utils.chr(':'))) || _elm_lang$core$Native_Utils.eq(
-						_p9,
+						_p11,
 						_elm_lang$core$Char$toCode(
 							_elm_lang$core$Native_Utils.chr(';')))) {
-						var _p8 = model.overlay;
-						switch (_p8.ctor) {
-							case 'EncounterOverlay':
-								return A2(
-									_elm_lang$core$Platform_Cmd_ops['!'],
-									_elm_lang$core$Native_Utils.update(
-										model,
-										{overlay: _user$project$Model$NoOverlay, key: _p9}),
-									_elm_lang$core$Native_List.fromArray(
-										[]));
-							case 'NoOverlay':
-								return A2(
-									_elm_lang$core$Platform_Cmd_ops['!'],
-									_elm_lang$core$Native_Utils.update(
-										model,
-										{overlay: _user$project$Model$MenuOverlay, key: _p9, menu: _user$project$Map$initMenu}),
-									_elm_lang$core$Native_List.fromArray(
-										[]));
-							default:
-								return A2(
-									_elm_lang$core$Platform_Cmd_ops['!'],
-									_elm_lang$core$Native_Utils.update(
-										model,
-										{key: _p9}),
-									_elm_lang$core$Native_List.fromArray(
-										[]));
+						var _p10 = model.overlay;
+						if (_p10.ctor === 'NoOverlay') {
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{overlay: _user$project$Model$MenuOverlay, key: _p11, menu: _user$project$Map$initMenu}),
+								_elm_lang$core$Native_List.fromArray(
+									[]));
+						} else {
+							var _v16 = _user$project$Model$SetMap(model.map),
+								_v17 = _elm_lang$core$Native_Utils.update(
+								model,
+								{overlay: _user$project$Model$NoOverlay, key: _p11});
+							msg = _v16;
+							model = _v17;
+							continue update;
 						}
 					} else {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
 								model,
-								{key: _p9}),
+								{key: _p11}),
 							_elm_lang$core$Native_List.fromArray(
 								[]));
 					}
 				case 'SetMap':
+					var _p13 = _p0._0;
+					var placeToLabel = function (place) {
+						var key = function () {
+							var _p12 = _elm_lang$core$String$uncons(place.label);
+							if (_p12.ctor === 'Just') {
+								return _p12._0._0;
+							} else {
+								return _elm_lang$core$Native_Utils.chr('.');
+							}
+						}();
+						return {
+							label: A2(_elm_lang$core$Basics_ops['++'], ': ', place.label),
+							key: key,
+							id: place.label,
+							x: place.x,
+							y: place.y
+						};
+					};
+					var tiles = A2(_elm_lang$core$List$map, placeToLabel, _p13.places);
+					var mapMenu = A2(_user$project$Menu_Menu$init, tiles, 'map-menu');
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{map: _p0._0}),
+							{map: _p13, mapMenu: mapMenu}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 				default:
@@ -10146,6 +10242,7 @@ var _user$project$Map$init = function () {
 		menu: _user$project$Map$initMenu,
 		loadout: _user$project$Map$initLoadout,
 		encounter: _user$project$Map$initEncounter,
+		mapMenu: _user$project$Map$initMapMenu,
 		map: {
 			image: '',
 			places: _elm_lang$core$Native_List.fromArray(
@@ -10206,6 +10303,10 @@ var _user$project$Map$subscriptions = function (model) {
 				_elm_lang$core$Platform_Sub$map,
 				_user$project$Model$UpdateEncounter,
 				_user$project$Versus$subscriptions(model.encounter)),
+				A2(
+				_elm_lang$core$Platform_Sub$map,
+				_user$project$Model$UpdateMapMenu,
+				_user$project$Menu_Menu$subscriptions(model.mapMenu)),
 				_elm_lang$keyboard$Keyboard$presses(_user$project$Model$KeyPress),
 				_user$project$Map$setMap(_user$project$Model$SetMap)
 			]));

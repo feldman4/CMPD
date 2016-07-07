@@ -14,7 +14,10 @@ socketio = SocketIO(app)
 @app.route('/map')
 def map():
     map_src = url_for('static', filename='images/map.png')
-    places = (0.15, 0.7, 'x'), (0.77, 0.25, 'y')
+    places = [(0.16, 0.08, 'w'),
+              (0.12, 0.65, 'x'), 
+              (0.72, 0.18, 'y'),
+              (0.66, 0.65, 'z')]
     places = [{'x': x, 'y': y, 'label': l} for (x,y,l) in places]
     map_data = {'image': map_src, 
                 'places': places}

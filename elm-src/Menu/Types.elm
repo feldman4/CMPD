@@ -6,7 +6,6 @@ type alias Model =
     , id : String
     , lastKey : Int
     , active : Bool
-    , selected : Bool
     }
 
 
@@ -14,6 +13,8 @@ type alias Tile =
     { label : String
     , key : Char
     , id : String
+    , x : Float
+    , y : Float
     }
 
 

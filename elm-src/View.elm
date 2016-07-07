@@ -27,48 +27,20 @@ view model =
                         [ App.map UpdateLoadout (Menu.View.view model.loadout) ]
 
                 EncounterOverlay ->
-                    div [ id "encounter" ] [ App.map UpdateEncounter (Versus.view model.encounter) ]
+                    div [ id "encounter" ]
+                        [ App.map UpdateEncounter (Versus.view model.encounter) ]
 
                 NoOverlay ->
-                    div [ id "empty-overlay" ] [ div [] [] ]
+                    div [ id "empty-overlay" ]
+                        [ App.map UpdateMapMenu (Menu.View.viewMap model.mapMenu) ]
 
         keyAtt =
             attribute "key" (toString model.key)
 
         mapImage =
             img [ src model.map.image ] []
-
-        places =
-            List.map placeDiv model.map.places
     in
         div [ id "main" ]
             [ div [ class "map", keyAtt ]
-                ([ mapImage ] ++ places ++ [ overlay ])
+                ([ mapImage, overlay ])
             ]
-
-
-placeDiv : Place -> Html.Html msg
-placeDiv place =
-    let
-        x =
-            .x place |> toPercent
-
-        y =
-            .y place |> toPercent
-
-        label =
-            ": " ++ (.label place)
-
-        placeStyle =
-            style
-                [ ( "position", "absolute" )
-                , ( "left", x )
-                , ( "top", y )
-                ]
-    in
-        div [ placeStyle, class "label" ] [ span [] [ text label ] ]
-
-
-toPercent : Float -> String
-toPercent x =
-    (toString (100 * x)) ++ "%"

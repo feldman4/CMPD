@@ -23,7 +23,6 @@ init tiles id =
     , id = id
     , lastKey = 0
     , active = True
-    , selected = False
     }
 
 
