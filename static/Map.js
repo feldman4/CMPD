@@ -10137,16 +10137,18 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						case 'EncounterOverlay':
-							return A2(
-								_elm_lang$core$Platform_Cmd_ops['!'],
-								_elm_lang$core$Native_Utils.update(
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
 									model,
 									{overlay: _p9, encounter: _user$project$Map$initEncounter}),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_user$project$Map$requestEncounter('base'),
-										_user$project$Map$setFocus(_user$project$Versus$inputID)
-									]));
+								_1: _elm_lang$core$Platform_Cmd$batch(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_user$project$Map$requestEncounter('base'),
+											_user$project$Map$setFocus(_user$project$Versus$inputID)
+										]))
+							};
 						case 'LoadoutOverlay':
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],

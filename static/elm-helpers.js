@@ -4,6 +4,7 @@
 var socketTarget 
 var socket
 var fuse_opts = {threshold: 0.4}
+var timeoutDelay = 30 // delay for Elm requests to modify updated DOM
 
 function documentReady(socketRoom) {
 	// set up socket.io connection to flask
@@ -120,12 +121,15 @@ function scrollSelector(selector) {
 	var $d = $(selector)
 	setTimeout(function() {
 		$d.scrollTop($d[0].scrollHeight);
-	}, 30)
+	}, timeoutDelay)
 
 }
 
 function focusSelector(selector) {
-	$(selector).focus()
+	setTimeout(function() {
+		$(selector).focus()
+	}, timeoutDelay )
+	console.log('focused')
 }
 
 

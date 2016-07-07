@@ -157,11 +157,12 @@ update msg model =
                     { model | overlay = overlay } ! []
 
                 EncounterOverlay ->
-                    { model
+                    ( { model
                         | overlay = overlay
                         , encounter = initEncounter
-                    }
-                        ! [ requestEncounter "base", setFocus Versus.inputID ]
+                      }
+                    , Cmd.batch [ requestEncounter "base", setFocus Versus.inputID ]
+                    )
 
                 LoadoutOverlay ->
                     { model

@@ -1,3 +1,12 @@
+### todo
+1. google sheet of communication
+2. componentize encounter in python
+    1. implement some more scoring rules
+    2. split out Vocab? 
+3. add Loadout component
+4. 
+
+
 ### elm integration
 
 1. flask routes web pages
