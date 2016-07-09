@@ -25,7 +25,7 @@ def map():
 
 @app.route('/')
 def index():
-    return redirect(url_for('versus'))
+    return redirect(url_for('versus_enemy', enemy='ctenophora'))
 
 
 @app.route('/bas<string:flavor>')
@@ -42,25 +42,31 @@ def base(flavor):
         enemy=url_for('static', filename='images/cyclops.jpg'))
 
 
-@app.route('/versus')
+@app.route('/versus/')
 def versus():
-    return render_template('versus.html')
+    return redirect(url_for('versus_enemy', enemy='none'))
 
 
 @app.route('/versus/<string:enemy>')
-def versus_derp():
+def versus_enemy(enemy):
 
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
+    if enemy not in cmpd_web.stable:
+        enemies = ''
+        for e in sorted(cmpd_web.stable):
+            url = url_for('versus_enemy', enemy=e)
+            enemies += '<a href=%s>%s</a> ' % (url, e)
 
-    vocab = [('JJ', sorted(set(adjectives))),
-             ('NN', sorted(set(nouns)))]
 
-    session['versus'] = cmpd_web.VersusDerp(vocab, emit)
+        return '<h1>404 not an enemy</h1>' + \
+                '<h3>try: %s</h3>' % enemies
 
-    return render_template('versus.html', 
-        wordbank=session['versus'].wordbank,
-        enemy=url_for('static', filename='images/derp-3.jpg'))
+
+
+    session['versus_enemy'] = cmpd_web.stable[enemy]
+
+    return render_template('versus.html')
+
+    
 
 
 @socketio.on('INSULT', namespace='/base')
@@ -84,28 +90,28 @@ def reply(insult):
 
 @socketio.on('REQUEST_ENCOUNTER', namespace='/versus')
 def send_encounter(message):
-    print 'requested versus'
-    encounter = message['encounter'] # not used!
 
-    enemy_image = url_for('static', filename='images/ctenophora-1.jpg')
+    enemy = session['versus_enemy']
+    print 'requested versus', enemy
+
+    enemy_image =  url_for('static', filename=enemy['image'])
     emit('SEND_ENCOUNTER', {'image': enemy_image})
 
     adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
     nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
-
     vocab = [('JJ', sorted(set(adjectives))),
              ('NN', sorted(set(nouns)))]
 
-    session['versus'] = cmpd_web.VersusDIDB(vocab, emit)
+    # this will initialize, emitting UPDATE_WORDBANK
+    session['versus'] = enemy['class'](vocab, emit)
 
-    emit('UPDATE_WORDBANK', {'wordbank': session['versus'].wordbank})
-    print 'sent wordbank'
+    
 
 
 @socketio.on('REQUEST_ENCOUNTER', namespace='/map')
 def send_encounter(message):
     encounter = message['encounter']
-    enemy_image = url_for('static', filename='images/ctenophora-1.jpg')
+    enemy_image = url_for('static', filename='images/ctenophora.png')
     emit('SEND_ENCOUNTER', {'image': enemy_image})
 
     adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]

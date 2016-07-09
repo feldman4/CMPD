@@ -20,7 +20,6 @@ js_to_flask = {
 }
 
 
-
 def load_phrases(path):
     with open(path, 'r') as fh:
         return fh.read().split('\n')
@@ -114,7 +113,7 @@ class VersusDerp(Base):
     def __init__(self, *args, **kwargs):
         super(VersusDerp, self).__init__(*args, **kwargs)
 
-    def reply(self, insult, emit):
+    def reply(self, insult):
         
         progress = insult['progress']
 
@@ -122,14 +121,14 @@ class VersusDerp(Base):
         enemy_image = url_for('static', 
             filename='images/derp-%d.jpg' % enemy_index)
 
-        emit('send_encounter', {'image': enemy_image})
+        self.emit(flask_to_js['SEND_ENCOUNTER'], {'image': enemy_image})
 
         if progress > 0.8:
             self.retorts = derp_phrases
         else:
             self.retorts = DIDB_phrases
 
-        super(VersusDerp, self).reply(insult, emit)
+        super(VersusDerp, self).reply(insult)
 
 
 
@@ -258,6 +257,12 @@ class StoreReturns(object):
         if self.func.__doc__:
             return self.func.__doc__
         return self.func.__str__()
+
+
+stable = {'ctenophora': {'image': 'images/ctenophora.png',
+                         'class': VersusDIDB},
+          'derp': {'image': 'images/derp-3.jpg',
+                         'class': VersusDerp}}
 
 
 
