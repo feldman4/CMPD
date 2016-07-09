@@ -1,4 +1,20 @@
 
+////////////////////// SOCKET MESSAGES //////////////////////
+
+flask_to_js = {
+	'REMARK': 'REMARK',
+	'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
+	'SEND_ENCOUNTER': 'SEND_ENCOUNTER',
+	'SEND_MAP': 'SEND_MAP',
+	'CHANGE_ENEMY': 'CHANGE_ENEMY'
+}
+
+js_to_flask = {
+	'INSULT': 'INSULT', 
+	'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER'
+}
+
+
 ////////////////////// LOADING //////////////////////
 
 var socketTarget 
@@ -27,35 +43,34 @@ function getScriptLocalHosted(local, hosted, success) {
 
 function updateWordbank(app) {
 	// initializes wordbank from server
-	socket.on('update_wordbank', function(data) {
+	socket.on(flask_to_js.UPDATE_WORDBANK, function(data) {
 	        app.ports.newWordbank.send(data.wordbank)
 	    })
 }
 
 
 function remark(app) {
-	socket.on('remark', function(data) {
+	socket.on(flask_to_js.REMARK, function(data) {
 			app.ports.remark.send(data)
 	})
 }
 
 function changeEnemy(app) {
-	socket.on('change_enemy', function(data) {
+	socket.on(flask_to_js.CHANGE_ENEMY, function(data) {
 		
 		app.ports.setEnemyImage.send(data.image)
 	})
 }
 
 function sendEncounter(app) {
-	socket.on('send_encounter', function(data) {
-		console.log('sending ' + data.image)
+	socket.on(flask_to_js.SEND_ENCOUNTER, function(data) {
 		app.ports.setEnemyImage.send(data.image)
 
 	})
 }
 
 function sendMap(app) {
-	socket.on('send_map', function(data) {
+	socket.on(flask_to_js.SEND_MAP, function(data) {
 		app.ports.setMap.send(data)
 	})
 }
@@ -69,7 +84,7 @@ function sendInsult(app) {
 	app.ports.sendInsult.subscribe(function(comm) {
 		var word = comm[0]
 		var progress = comm[1]
-		socket.emit('insult', {
+		socket.emit(js_to_flask.INSULT, {
 			insult: word,
 			progress: progress
 		})
@@ -79,7 +94,7 @@ function sendInsult(app) {
 
 function requestEncounter(app) {
 	app.ports.requestEncounter.subscribe(function(encounter) {
-		socket.emit('request_encounter', {
+		socket.emit(js_to_flask.REQUEST_ENCOUNTER, {
 			encounter: encounter
 		})
 	})
@@ -129,7 +144,6 @@ function focusSelector(selector) {
 	setTimeout(function() {
 		$(selector).focus()
 	}, timeoutDelay )
-	console.log('focused')
 }
 
 

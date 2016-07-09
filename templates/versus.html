@@ -24,7 +24,6 @@
 
     	var socketRoom = '/versus'
 		var app
-		var enemy = "{{enemy | safe}}"
 
 		// Elm js hosted remotely for compatibility with Heroku...
 		var hosted_elm_js = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE"
@@ -45,10 +44,11 @@
 
             setTimeout(function(){ 
 
-	            app.ports.setEnemyImage.send(enemy)
-
-	            app.ports.newWordbank.send({{wordbank | safe}})
+			    socket.emit(js_to_flask.REQUEST_ENCOUNTER, {
+						encounter: 'ctenaphora'
+					})
 	            }
+
 	            ,	0
 	        );
 		}
