@@ -10,12 +10,12 @@
 	
 }
 
-/* @media (min-width:600px) {
+@media (min-width:600px) {
 	#main {
-		font-size: 80%;
+		width: 600px;
 	}
 }
- */
+
 
 
 #versus-main
@@ -86,12 +86,12 @@ img#enemy
 	padding-top: 5%;
 }
 
-@media (min-width:600px) {
+@media (min-width:400px) {
 	#convo {
-		width: 80%
+/* 		width: 80% */
 	}
 	 #convo .insult,.retort {
-	 	padding-top: 1%;
+	 	padding-top: 15px;
 	 }
 }
 
