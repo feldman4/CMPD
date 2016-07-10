@@ -9365,9 +9365,36 @@ var _user$project$Versus$main = {
 	}()
 };
 
+var _user$project$Encounter$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('main')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Versus$view(model)
+			]));
+};
+var _user$project$Encounter$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: A3(
+				_user$project$Versus$init,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				'',
+				30),
+			update: _user$project$Versus$update,
+			view: _user$project$Encounter$view,
+			subscriptions: _user$project$Versus$subscriptions
+		})
+};
+
 var Elm = {};
-Elm['Versus'] = Elm['Versus'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Versus'], 'Versus', typeof _user$project$Versus$main === 'undefined' ? null : _user$project$Versus$main);
+Elm['Encounter'] = Elm['Encounter'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['Encounter'], 'Encounter', typeof _user$project$Encounter$main === 'undefined' ? null : _user$project$Encounter$main);
 
 if (typeof define === "function" && define['amd'])
 {

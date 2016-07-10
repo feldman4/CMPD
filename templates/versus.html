@@ -19,6 +19,7 @@
 
     <title></title>
 </head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <body>
     <script>
 
@@ -26,12 +27,12 @@
 		var app
 
 		// Elm js hosted remotely for compatibility with Heroku...
-		var hosted_elm_js = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mVTNXZE9ZckdScUE"
-		var local_elm_js = "/static/Versus.js"
+		var hosted_elm_js = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mcENvMlphLVJTRzg"
+		var local_elm_js = "/static/Encounter.js"
 		
 
 		function launchElm(){
-			app = Elm.Versus.fullscreen()
+			app = Elm.Encounter.fullscreen()
 
 			// register communication to/from elm, flask
 			sendInsult(app)
@@ -45,7 +46,7 @@
             setTimeout(function(){ 
 
 			    socket.emit(js_to_flask.REQUEST_ENCOUNTER, {
-						encounter: 'ctenaphora'
+						encounter: 'ctenophora'
 					})
 	            }
 

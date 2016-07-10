@@ -9467,7 +9467,7 @@ var _user$project$Versus$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('output-wrapper')
+				_elm_lang$html$Html_Attributes$id('output')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -9475,18 +9475,20 @@ var _user$project$Versus$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$id('output')
+						_elm_lang$html$Html_Attributes$id('convo')
 					]),
+				A2(
+					_elm_lang$core$List$map,
+					_user$project$Versus$viewRemark,
+					_elm_lang$core$List$reverse(model.conversation))),
+				A2(
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$id('convo')
-							]),
-						A2(_elm_lang$core$List$map, _user$project$Versus$viewRemark, model.conversation))
-					]))
+						_elm_lang$html$Html_Attributes$id('shield')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
 			]));
 	var enemy = A2(
 		_elm_lang$html$Html$div,
@@ -9542,16 +9544,9 @@ var _user$project$Versus$view = function (model) {
 				_user$project$Bar$view(model.progressBar))
 			]));
 	var wordbank = A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html_App$map,
-				_user$project$Versus$UpdateWordbank,
-				_user$project$Wordbank$view(model.wordbank))
-			]));
+		_elm_lang$html$Html_App$map,
+		_user$project$Versus$UpdateWordbank,
+		_user$project$Wordbank$view(model.wordbank));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9631,48 +9626,6 @@ var _user$project$Model$EncounterOverlay = {ctor: 'EncounterOverlay'};
 var _user$project$Model$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
 var _user$project$Model$MenuOverlay = {ctor: 'MenuOverlay'};
 var _user$project$Model$NoOverlay = {ctor: 'NoOverlay'};
-
-var _user$project$Menu_Menu$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$keyboard$Keyboard$presses(_user$project$Menu_Types$KeyPress)
-			]));
-};
-var _user$project$Menu_Menu$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'KeyPress':
-				var _p1 = _p0._0;
-				return model.active ? (_elm_lang$core$Native_Utils.eq(_p1, model.lastKey) ? {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _elm_lang$core$Maybe$Just(
-						_elm_lang$core$Char$fromCode(model.lastKey))
-				} : {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{lastKey: _p1}),
-					_1: _elm_lang$core$Maybe$Nothing
-				}) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
-			case 'Activate':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{active: _p0._0}),
-					_1: _elm_lang$core$Maybe$Nothing
-				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
-		}
-	});
-var _user$project$Menu_Menu$init = F2(
-	function (tiles, id) {
-		return {tiles: tiles, id: id, lastKey: 0, active: true};
-	});
 
 var _user$project$Menu_View$toPercent = function (x) {
 	return A2(
@@ -9850,14 +9803,6 @@ var _user$project$Menu_View$view = function (model) {
 };
 
 var _user$project$View$view = function (model) {
-	var mapImage = A2(
-		_elm_lang$html$Html$img,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$src(model.map.image)
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[]));
 	var keyAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
 		'key',
@@ -9923,6 +9868,42 @@ var _user$project$View$view = function (model) {
 						]));
 		}
 	}();
+	var mapDiv = false ? A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('map'),
+				keyAtt
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$img,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$src(model.map.image)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[overlay]))
+			])) : A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('map'),
+				keyAtt
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$img,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$src(model.map.image)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				overlay
+			]));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9930,18 +9911,50 @@ var _user$project$View$view = function (model) {
 				_elm_lang$html$Html_Attributes$id('main')
 			]),
 		_elm_lang$core$Native_List.fromArray(
+			[mapDiv]));
+};
+
+var _user$project$Menu_Menu$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
 			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('map'),
-						keyAtt
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[mapImage, overlay]))
+				_elm_lang$keyboard$Keyboard$presses(_user$project$Menu_Types$KeyPress)
 			]));
 };
+var _user$project$Menu_Menu$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'KeyPress':
+				var _p1 = _p0._0;
+				return model.active ? (_elm_lang$core$Native_Utils.eq(_p1, model.lastKey) ? {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _elm_lang$core$Maybe$Just(
+						_elm_lang$core$Char$fromCode(model.lastKey))
+				} : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{lastKey: _p1}),
+					_1: _elm_lang$core$Maybe$Nothing
+				}) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
+			case 'Activate':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{active: _p0._0}),
+					_1: _elm_lang$core$Maybe$Nothing
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing};
+		}
+	});
+var _user$project$Menu_Menu$init = F2(
+	function (tiles, id) {
+		return {tiles: tiles, id: id, lastKey: 0, active: true};
+	});
 
 var _user$project$Map$keycode = {enter: 13, shift: 16, space: 32, escape: 27};
 var _user$project$Map$tilesL = _elm_lang$core$Native_List.fromArray(

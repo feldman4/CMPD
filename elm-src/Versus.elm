@@ -210,9 +210,7 @@ view : Model -> Html Msg
 view model =
     let
         wordbank =
-            div []
-                [ App.map UpdateWordbank (Wordbank.view model.wordbank)
-                ]
+            App.map UpdateWordbank (Wordbank.view model.wordbank)
 
         progressBar =
             div [ class "progress-bar" ]
@@ -236,9 +234,9 @@ view model =
                 [ img [ id "enemy", src model.enemyImage ] [] ]
 
         output =
-            div [ id "output-wrapper" ]
-                [ div [ id "output" ]
-                    [ div [ id "convo" ] (List.map viewRemark model.conversation) ]
+            div [ id "output" ]
+                [ div [ id "convo" ] (List.map viewRemark (List.reverse model.conversation))
+                , div [ id "shield" ] []
                 ]
     in
         div [ id "versus-main" ]

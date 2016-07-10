@@ -2,8 +2,6 @@ module View exposing (..)
 
 import Versus
 import Model exposing (..)
-import Menu.Menu as Menu
-import Menu.Types
 import Menu.View
 import Html exposing (text, div, Html, img, span)
 import Html.Attributes exposing (id, class, attribute, src, style)
@@ -37,10 +35,13 @@ view model =
         keyAtt =
             attribute "key" (toString model.key)
 
-        mapImage =
-            img [ src model.map.image ] []
+        mapDiv =
+            if False then
+                div [ class "map", keyAtt ]
+                    [ img [ src model.map.image ] [ overlay ] ]
+            else
+                div [ class "map", keyAtt ]
+                    ([ img [ src model.map.image ] [], overlay ])
     in
         div [ id "main" ]
-            [ div [ class "map", keyAtt ]
-                ([ mapImage, overlay ])
-            ]
+            [ mapDiv ]
