@@ -127,7 +127,7 @@
 	{
 		width: 600px;
 	}
-}
+}*/
 
 @media (min-width: 600px)
 {
@@ -145,4 +145,4 @@
 	#my-menu .tile-label {
 		font-size: 18px;
 	}
-} */
+}
