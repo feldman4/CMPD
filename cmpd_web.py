@@ -337,7 +337,8 @@ stable = {'ctenophora': {'image': 'images/ctenophora.png',
                          'class': VersusDerp},
           'underground': {'image': 'images/underground.png',
                          'class': VersusDIDB},
-
+          'buddha': {'image': 'images/buddha.jpg',
+                         'class': VersusDIDB},
 
 
                          }
