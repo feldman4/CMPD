@@ -11,14 +11,15 @@ flask_to_js = {
   'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
   'SEND_ENCOUNTER': 'SEND_ENCOUNTER',
   'SEND_MAP': 'SEND_MAP',
-  'CHANGE_ENEMY': 'CHANGE_ENEMY'
+  'CHANGE_ENEMY': 'CHANGE_ENEMY',
+  'SEND_PLAYER' : 'SEND_PLAYER'
 }
 
 js_to_flask = {
   'INSULT': 'INSULT', 
-  'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER'
+  'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER',
+  'UPDATE_PLAYER': 'UPDATE_PLAYER'
 }
-
 
 def load_phrases(path):
     with open(path, 'r') as fh:
@@ -259,10 +260,87 @@ class StoreReturns(object):
         return self.func.__str__()
 
 
+class GameMaster(object):
+    
+    def __init__(self, places, enemies, vocab, map_src):
+        # coordinates and tag (key)
+        self.places = places
+        self.vocab = vocab
+        
+        vocab_size = 10
+        capacity = [(pos, 6) for pos,_ in vocab]
+
+        loaded, unloaded = [], []
+        for pos, examples in vocab:
+            words = random.sample(examples, vocab_size)
+            loaded   += [{'word': word, 'partOfSpeech': pos} for word in words[:4]]
+            unloaded += [{'word': word, 'partOfSpeech': pos} for word in words[4:]]
+        
+        self.player = {'loaded': loaded,
+                       'unloaded': unloaded,
+                       'capacity': capacity}
+        
+        self.map_src = map_src
+        
+        self.enemies = enemies
+        
+        self.current_enemy = None
+        
+    def initialize(self, emit):
+        """ 
+        Send the map and player info. 
+        Determines loadout and displayed map.
+        Called when JS loads and emits INITIALIZE.
+        """
+        map_data = {'image': self.map_src, 
+                    'places': self.places}
+        
+        emit('SEND_PLAYER', {'player': self.player})
+        emit('SEND_MAP', map_data)
+        
+    def request_encounter(self, enemy, emit):
+        image = self.enemies[enemy]['image']
+        enemyClass = self.enemies[enemy]['class']
+        vocab = self.player_to_vocab(self.player)
+        
+        print 'image is', image
+        print 'vocab is', vocab
+        self.current_enemy = enemyClass(vocab, emit)
+        
+        # make the enemy with right vocab
+        emit('SEND_ENCOUNTER', {'image': image})
+        
+    def reply(self, insult, emit):
+        self.current_enemy.emit = emit
+        self.current_enemy.reply(insult)
+        
+        
+    def update_player(self, update):
+        self.player = update
+        
+    def player_to_vocab(self, player):
+        from collections import defaultdict
+        words = player['loaded']
+        vocab = defaultdict(list)
+
+        for word in words:
+            vocab[word['partOfSpeech']] += [word['word']]
+        return sorted(vocab.items())
+
+
+
+
+
 stable = {'ctenophora': {'image': 'images/ctenophora.png',
                          'class': VersusDIDB},
           'derp': {'image': 'images/derp-3.jpg',
-                         'class': VersusDerp}}
+                         'class': VersusDerp},
+          'underground': {'image': 'images/underground.png',
+                         'class': VersusDIDB},
+
+
+
+                         }
 
 
 

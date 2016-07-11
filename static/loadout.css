@@ -1,0 +1,112 @@
+#loadout {
+    width: 100%;
+    height: 90%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+}
+
+.pane {
+    background-color: rgba(200, 200, 255, 0.9);
+    margin-left: 1%;
+    margin-right: 1%;
+    width: 40%;
+    height: 100%;
+    overflow: hidden;
+}
+
+div.word {
+    padding: 2%;
+    padding-left: 20%;
+    padding-right: 20%;
+    font-size: 2.5vw;
+}
+
+div.word.selected {
+    border: rgba(60,60,190,1) 3px solid;
+    padding: calc(2% - 3px);
+    padding-left: calc(20% - 3px);
+    padding-right: calc(20% - 3px);
+}
+
+.pane .words {
+    overflow: scroll;
+    height: 100%
+}
+
+.pane .scroll-dummy {
+    height: 80%;
+}
+
+.pane.adjective {
+    color: green;
+}
+
+.pane.noun {
+    color: red;
+}
+
+.pane .heading {
+    font-size: 4vw;
+}
+
+.pane .capacity {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex: 0 1 auto;
+    flex-flow: row wrap;
+    /*     background-color: black; */
+    align-items: center;
+}
+
+.pane .capacity .led {
+    margin: 2%;
+    width: 1.5vw;
+    height: 1.5vw;
+}
+
+.pane.adjective .capacity .led {
+    background-color: lightgreen;
+}
+
+.pane.noun .capacity .led {
+    background-color: pink;
+}
+
+.pane.adjective .capacity .used {
+    background-color: green;
+}
+
+.pane.noun .capacity .used {
+    background-color: red;
+}
+
+.pane .capacity .unused {
+    background-color: transparent;
+}
+
+.word.loaded.adjective span {
+    background-color: lightgreen;
+}
+
+.word.loaded.noun span {
+    background-color: pink;
+}
+
+@media (min-width: 600px) {
+    .pane .heading {
+        font-size: 24px;
+    }
+
+    div.word {
+        font-size: 18px;
+    }
+
+    .pane .capacity .led {
+        width: 12px;
+        height: 12px;
+    }
+}

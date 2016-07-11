@@ -6,12 +6,15 @@ flask_to_js = {
 	'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
 	'SEND_ENCOUNTER': 'SEND_ENCOUNTER',
 	'SEND_MAP': 'SEND_MAP',
-	'CHANGE_ENEMY': 'CHANGE_ENEMY'
+	'CHANGE_ENEMY': 'CHANGE_ENEMY',
+	'SEND_PLAYER' : 'SEND_PLAYER'
 }
 
 js_to_flask = {
 	'INSULT': 'INSULT', 
-	'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER'
+	'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER',
+	'UPDATE_PLAYER': 'UPDATE_PLAYER',
+	'INITIALIZE': 'INITIALIZE'
 }
 
 
@@ -75,7 +78,17 @@ function sendMap(app) {
 	})
 }
 
+function sendPlayer(app) {
+	socket.on(flask_to_js.SEND_PLAYER, function(data) {
+		app.ports.setPlayer.send(data.player)
+	})
+}
 
+/////////////////////// JS -> FLASK //////////////////////
+
+function initialize() {
+	socket.emit(js_to_flask.INITIALIZE, {})
+}
 
 ////////////////////// ELM -> FLASK //////////////////////
 
@@ -93,10 +106,19 @@ function sendInsult(app) {
 }
 
 function requestEncounter(app) {
-	app.ports.requestEncounter.subscribe(function(encounter) {
+	app.ports.requestEncounter.subscribe(function(comm) {
+		var enemy = comm[0]
+		var player = comm[1]
 		socket.emit(js_to_flask.REQUEST_ENCOUNTER, {
-			encounter: encounter
+			enemy: enemy,
+			player: player
 		})
+	})
+}
+
+function updatePlayer(app) {
+	app.ports.updatePlayer.subscribe(function(player) {
+		socket.emit(js_to_flask.UPDATE_PLAYER, player)
 	})
 }
 

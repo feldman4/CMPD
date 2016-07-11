@@ -11,17 +11,10 @@ app.debug=True
 socketio = SocketIO(app)
 
 
+
 @app.route('/map')
 def map():
-    map_src = url_for('static', filename='images/map.png')
-    places = [(0.24, 0.12, 'w'),
-              (0.19, 0.68, 'x'), 
-              (0.80, 0.22, 'y'),
-              (0.74, 0.71, 'z')]
-    places = [{'x': x, 'y': y, 'label': l} for (x,y,l) in places]
-    map_data = {'image': map_src, 
-                'places': places}
-    return render_template('map.html', map=map_data)
+    return render_template('map.html')
 
 @app.route('/')
 def index():
@@ -66,8 +59,6 @@ def versus_enemy(enemy):
 
     return render_template('versus.html')
 
-    
-
 
 @socketio.on('INSULT', namespace='/base')
 def reply(insult):
@@ -83,13 +74,55 @@ def reply(insult):
 
 @socketio.on('INSULT', namespace='/map')
 def reply(insult):
-    session['map'].emit = emit
-    session['map'].reply(insult)
+    session['map_GM'].reply(insult, emit)
+
+
+@socketio.on('INITIALIZE', namespace='/map')
+def initialize_map(message):
+    print 'initializing map'
+    map_src = url_for('static', filename='images/map.png')
+
+    places = [(0.24, 0.12, 'w', 'ctenophora'),
+              (0.19, 0.68, 'x', 'ctenophora'), 
+              (0.80, 0.22, 'y', 'derp'),
+              (0.74, 0.71, 'z', 'underground')]
+    places = [{'x': x, 'y': y, 'label': l, 'enemy': e} for (x,y,l,e) in places]
+
+    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
+    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
+    vocab = [('adjective', sorted(set(adjectives))),
+             ('noun', sorted(set(nouns)))]
+
+    enemies = cmpd_web.stable.copy()
+    for enemy in enemies:
+        image = enemies[enemy]['image']
+        enemies[enemy]['image'] = url_for('static', 
+                                            filename=image)
+        print enemies[enemy]['image']
+
+    GM = cmpd_web.GameMaster(places, enemies, vocab, map_src)
+    GM.initialize(emit)
+    session['map_GM'] = GM
+
+
+@socketio.on('REQUEST_ENCOUNTER', namespace='/map')
+def send_encounter(message):
+    print message
+    enemy = message['enemy']
+    player = message['player']
+    GM = session['map_GM']
+
+    GM.update_player(player)
+
+    # GM checks its enemies list, initializes w/ vocab
+    GM.request_encounter(enemy, emit)
 
 
 
 @socketio.on('REQUEST_ENCOUNTER', namespace='/versus')
 def send_encounter(message):
+
+    message['encounter']
 
     enemy = session['versus_enemy']
     print 'requested versus', enemy
@@ -108,21 +141,7 @@ def send_encounter(message):
     
 
 
-@socketio.on('REQUEST_ENCOUNTER', namespace='/map')
-def send_encounter(message):
-    encounter = message['encounter']
-    enemy_image = url_for('static', filename='images/ctenophora.png')
-    emit('SEND_ENCOUNTER', {'image': enemy_image})
 
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
-
-    vocab = [('JJ', sorted(set(adjectives))),
-             ('NN', sorted(set(nouns)))]
-
-    session['map'] = cmpd_web.VersusDIDB(vocab, emit)
-
-    emit('UPDATE_WORDBANK', {'wordbank': session['map'].wordbank})
 
 if __name__ == '__main__':
     socketio.run(app)

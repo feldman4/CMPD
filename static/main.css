@@ -1,198 +1,156 @@
-
-#main
-{ 
-	margin: auto;
-	width: 100%;
-	font-family: helvetica;
-	font-size: 100%;
-	height: 100vh;
-	overflow: hidden;
-	
+#main {
+    margin: auto;
+    width: 100%;
+    font-family: helvetica;
+    font-size: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
-@media (min-width:600px) {
-	#main {
-		width: 600px;
-	}
+@media (min-width: 600px) {
+    #main {
+        width: 600px;
+    }
 }
 
-
-
-#versus-main
-{ 
-	margin: auto;
-	height: 100%;
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-
+#versus-main {
+    margin: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#header
-{
-	padding-top: 2%;
-	padding-bottom: 1%;
-	height: 25%;
-	width: 100%;
-
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
+#header {
+    padding-top: 2%;
+    padding-bottom: 1%;
+    height: 25%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
-img#enemy
-{
-	text-align: center;
-	height: 100%;
-	width: auto;
+img#enemy {
+    text-align: center;
+    height: 100%;
+    width: auto;
 }
-
 
 /* ////////////////////// OUTPUT ////////////////////// */
-
-#output
-{ 
-	width: 80%;
-	height: 24%;
-	margin: 0 auto;
-	position: relative;
-
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
+#output {
+    width: 80%;
+    height: 24%;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
-
-#convo
-{
-	width: 100%;
-	position: relative;
-	overflow: scroll;
-
-	display: flex;
-	flex-direction: column-reverse;
+#convo {
+    width: 100%;
+    position: relative;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column-reverse;
 }
+
 ::-webkit-scrollbar {
     width: 0px;
 }
 
-
-#convo .insult,.retort
-{
-
-	bottom: 0;
-	padding-top: 5%;
+#convo .insult,.retort {
+    bottom: 0;
+    padding-top: 5%;
 }
 
-@media (min-width:400px) {
-	#convo {
-/* 		width: 80% */
-	}
-	 #convo .insult,.retort {
-	 	padding-top: 15px;
-	 }
+@media (min-width: 400px) {
+    #convo {
+        /* 		width: 80% */
+    }
+
+    #convo .insult,.retort {
+        padding-top: 15px;
+    }
 }
 
-
-
-#convo .insult
-{	
-	text-align: right;
-}
-#convo .retort
-{	
-	text-align: left;
+#convo .insult {
+    text-align: right;
 }
 
-
-
-#shield
-{
-	background-color: transparent;
-	pointer-events: none;
-	height: 100%;
-	width: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	background: -webkit-linear-gradient(to top, rgba(0,0,0,0) 70%, rgba(255,255,255,1));
-/* 	background: linear-gradient(to top, rgba(0,0,0,0) 60%, rgba(255,255,255,.7) 80%, rgba(255,255,255,1) 100%); */
+#convo .retort {
+    text-align: left;
 }
 
+#shield {
+    background-color: transparent;
+    pointer-events: none;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: -webkit-linear-gradient(to top, rgba(0,0,0,0) 70%, rgba(255,255,255,1));
+    /* 	background: linear-gradient(to top, rgba(0,0,0,0) 60%, rgba(255,255,255,.7) 80%, rgba(255,255,255,1) 100%); */
+}
 
 /* ////////////////////// INPUT ////////////////////// */
-
-
-#input
-{
-	text-align: center;
-}
-#input-input
-{
-	border: 0px solid black;
-	background-color: transparent;
-	text-align: center;
-	margin: 0 auto;
-	display: inline-block;
-	font-size: 42px;
-	outline: none;
+#input {
+    text-align: center;
 }
 
-#wordbank
-{
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: row;
-	justify-content: center;
-	align-content: flex-start;
-	height: 25%;
-	width: 100%;
-	overflow: scroll;
-
+#input-input {
+    border: 0px solid black;
+    background-color: transparent;
+    text-align: center;
+    margin: 0 auto;
+    display: inline-block;
+    font-size: 42px;
+    outline: none;
 }
 
-#wordbank .word
-{
-	padding: 1.7%;
+#wordbank {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-content: flex-start;
+    height: 25%;
+    width: 100%;
+    overflow: scroll;
 }
 
-@media (min-width:600px) {
-	#wordbank .word {
-	 	padding: 1%;
-	 }
+#wordbank .word {
+    padding: 1.7%;
 }
 
+@media (min-width: 600px) {
+    #wordbank .word {
+        padding: 1%;
+    }
+}
 
 /* ///////////////////// PROGRESS BAR ///////////////////// */
-
-
-.progress-bar
-{
-		background-color: transparent;
-		height: 20px;
-		width: 80%;
-
+.progress-bar {
+    background-color: transparent;
+    height: 20px;
+    width: 80%;
 }
 
-.progress-bar .bar-box
-{
-	background-color: transparent;
-	border: 0px solid gray;
-	border-radius: 5px;
-	overflow: hidden;
-	height: 10px;
-
+.progress-bar .bar-box {
+    background-color: transparent;
+    border: 0px solid gray;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 10px;
 }
 
-.progress-bar .bar-slider.normal
-{
-	background-color: #acbec8;
+.progress-bar .bar-slider.normal {
+    background-color: #acbec8;
 }
 
-.progress-bar .bar-slider.overload
-{
-	background-color: red
+.progress-bar .bar-slider.overload {
+    background-color: red
 }
-

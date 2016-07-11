@@ -1,8 +1,9 @@
 module View exposing (..)
 
 import Versus
-import Model exposing (..)
+import Types exposing (..)
 import Menu.View
+import Loadout.Loadout as Loadout
 import Html exposing (text, div, Html, img, span)
 import Html.Attributes exposing (id, class, attribute, src, style)
 import Html.App as App
@@ -20,9 +21,13 @@ view model =
                     div [ id "overlay" ]
                         [ App.map UpdateMenu (Menu.View.view model.menu) ]
 
+                WeaponsOverlay ->
+                    div [ id "overlay" ]
+                        [ App.map UpdateWeapons (Menu.View.view model.weapons) ]
+
                 LoadoutOverlay ->
                     div [ id "overlay" ]
-                        [ App.map UpdateLoadout (Menu.View.view model.loadout) ]
+                        [ App.map UpdateLoadout (Loadout.view model.loadout) ]
 
                 EncounterOverlay ->
                     div [ id "encounter" ]

@@ -15,6 +15,7 @@
 
     <link href="/static/main.css" rel="stylesheet">
     <link href="/static/menu.css" rel="stylesheet">
+    <link href="/static/loadout.css" rel="stylesheet">
 
     <title></title>
 </head>
@@ -28,8 +29,6 @@
 		var app 
 		var socketRoom = '/map'
 
-		var map = {{map | safe}}
-
 		function launchElm(){
 			app = Elm.Map.fullscreen()
 
@@ -39,20 +38,24 @@
         	updateWordbank(app)
             remark(app)
             changeEnemy(app)
+            sendEncounter(app)
+            sendMap(app)
+            sendPlayer(app)
 
             //// ELM -> FLASK ////
             sendInsult(app)
             requestEncounter(app)
-            sendEncounter(app)
+            updatePlayer(app)
 
             //// ELM -> JS    ////
             scrollTop(app)
             setFocus(app)
             askFuse(app)
 
+            // setTimeout may be unnecessary
 			setTimeout(function(){ 
 
-	            app.ports.setMap.send(map)
+	            initialize()
 
 	            }
 	            ,	0
