@@ -43,6 +43,8 @@ def versus():
 @app.route('/versus/<string:enemy>')
 def versus_enemy(enemy):
 
+    print cmpd_web.stable
+
     if enemy not in cmpd_web.stable:
         enemies = ''
         for e in sorted(cmpd_web.stable):
@@ -93,11 +95,11 @@ def initialize_map(message):
     vocab = [('adjective', sorted(set(adjectives))),
              ('noun', sorted(set(nouns)))]
 
-    enemies = cmpd_web.stable.copy()
-    for enemy in enemies:
-        image = enemies[enemy]['image']
+    enemies = {}
+    for enemy in cmpd_web.stable:
+        enemies[enemy] = dict(cmpd_web.stable[enemy])
         enemies[enemy]['image'] = url_for('static', 
-                                            filename=image)
+                                            filename=enemies[enemy]['image'])
         print enemies[enemy]['image']
 
     GM = cmpd_web.GameMaster(places, enemies, vocab, map_src)

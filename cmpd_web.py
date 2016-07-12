@@ -5,6 +5,7 @@ import random
 from collections import OrderedDict
 from itertools import cycle, product
 import difflib
+from frozendict import frozendict
 
 flask_to_js = {
   'REMARK': 'REMARK',
@@ -331,17 +332,17 @@ class GameMaster(object):
 
 
 
-stable = {'ctenophora': {'image': 'images/ctenophora.png',
-                         'class': VersusDIDB},
-          'derp': {'image': 'images/derp-3.jpg',
-                         'class': VersusDerp},
-          'underground': {'image': 'images/underground.png',
-                         'class': VersusDIDB},
-          'buddha': {'image': 'images/buddha.jpg',
-                         'class': VersusDIDB},
+stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
+                         'class': VersusDIDB}),
+          'derp': frozendict({'image': 'images/derp-3.jpg',
+                         'class': VersusDerp}),
+          'underground': frozendict({'image': 'images/underground.png',
+                         'class': VersusDIDB}),
+          'buddha': frozendict({'image': 'images/buddha.jpg',
+                         'class': VersusDIDB}),
 
 
-                         }
+                         })
 
 
 
