@@ -7,6 +7,8 @@ from itertools import cycle, product
 import difflib
 from frozendict import frozendict
 
+import pandas as pd
+
 flask_to_js = {
   'REMARK': 'REMARK',
   'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
