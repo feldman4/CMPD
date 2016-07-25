@@ -19,3 +19,5 @@ Werkzeug==0.11.10
 frozendict==0.6
 numpy==1.11.1
 pandas==0.18.1
+gspread==0.4.1
+oauth2client==2.2.0

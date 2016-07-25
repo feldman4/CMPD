@@ -332,6 +332,34 @@ class GameMaster(object):
 
 
 
+google_json_key = 'resources/gspread-da2f80418147.json'
+
+def load_sheet(worksheet, g_file='CMPD', credentials=google_json_key):
+    """Load sheet as array of strings (drops .xls style index)
+    gspread allows for .xlsx export as well, which can capture style info.
+    :param worksheet: provide None to return a dictionary of all sheets
+    :param g_file:
+    :return:
+    """
+    # see http://gspread.readthedocs.org/en/latest/oauth2.html
+
+    from oauth2client.service_account import ServiceAccountCredentials
+    import gspread
+
+    scope = ['https://spreadsheets.google.com/feeds']
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(google_json_key, scope)
+    gc = gspread.authorize(credentials)
+    xsheet = gc.open(g_file)
+
+    if isinstance(worksheet, int):
+        wks = xsheet.get_worksheet(worksheet)
+    if worksheet is None:
+        return {x.title: np.array(x.get_all_values()) for x in xsheet.worksheets()}
+    else:
+        wks = xsheet.worksheet(worksheet)
+    xs_values = wks.get_all_values()
+    return xs_values
+
 
 
 stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
