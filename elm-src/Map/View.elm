@@ -1,7 +1,7 @@
-module View exposing (..)
+module Map.View exposing (..)
 
 import Versus
-import Types exposing (..)
+import Map.Types exposing (..)
 import Menu.View
 import Loadout.Loadout as Loadout
 import Html exposing (text, div, Html, img, span)
@@ -29,7 +29,7 @@ view model =
                     div [ id "overlay" ]
                         [ App.map UpdateLoadout (Loadout.view model.loadout) ]
 
-                EncounterOverlay ->
+                EncounterOverlay char ->
                     div [ id "encounter" ]
                         [ App.map UpdateEncounter (Versus.view model.encounter) ]
 

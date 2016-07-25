@@ -11269,61 +11269,61 @@ var _user$project$Menu_Types$KeyPress = function (a) {
 	return {ctor: 'KeyPress', _0: a};
 };
 
-var _user$project$Types$Model = F9(
+var _user$project$Map_Types$Model = F9(
 	function (a, b, c, d, e, f, g, h, i) {
 		return {menu: a, loadout: b, weapons: c, encounter: d, mapMenu: e, map: f, overlay: g, key: h, player: i};
 	});
-var _user$project$Types$Player = F3(
+var _user$project$Map_Types$Player = F3(
 	function (a, b, c) {
 		return {loaded: a, unloaded: b, capacity: c};
 	});
-var _user$project$Types$Map = F2(
+var _user$project$Map_Types$Map = F2(
 	function (a, b) {
 		return {image: a, places: b};
 	});
-var _user$project$Types$Word = F2(
+var _user$project$Map_Types$Word = F2(
 	function (a, b) {
 		return {word: a, partOfSpeech: b};
 	});
-var _user$project$Types$Place = F4(
+var _user$project$Map_Types$Place = F4(
 	function (a, b, c, d) {
 		return {x: a, y: b, label: c, enemy: d};
 	});
-var _user$project$Types$NoOp = {ctor: 'NoOp'};
-var _user$project$Types$SetPlayer = function (a) {
+var _user$project$Map_Types$NoOp = {ctor: 'NoOp'};
+var _user$project$Map_Types$SetPlayer = function (a) {
 	return {ctor: 'SetPlayer', _0: a};
 };
-var _user$project$Types$SetMap = function (a) {
+var _user$project$Map_Types$SetMap = function (a) {
 	return {ctor: 'SetMap', _0: a};
 };
-var _user$project$Types$KeyPress = function (a) {
+var _user$project$Map_Types$KeyPress = function (a) {
 	return {ctor: 'KeyPress', _0: a};
 };
-var _user$project$Types$ChangeOverlay = function (a) {
+var _user$project$Map_Types$ChangeOverlay = function (a) {
 	return {ctor: 'ChangeOverlay', _0: a};
 };
-var _user$project$Types$UpdateMapMenu = function (a) {
+var _user$project$Map_Types$UpdateMapMenu = function (a) {
 	return {ctor: 'UpdateMapMenu', _0: a};
 };
-var _user$project$Types$UpdateEncounter = function (a) {
+var _user$project$Map_Types$UpdateEncounter = function (a) {
 	return {ctor: 'UpdateEncounter', _0: a};
 };
-var _user$project$Types$UpdateWeapons = function (a) {
+var _user$project$Map_Types$UpdateWeapons = function (a) {
 	return {ctor: 'UpdateWeapons', _0: a};
 };
-var _user$project$Types$UpdateLoadout = function (a) {
+var _user$project$Map_Types$UpdateLoadout = function (a) {
 	return {ctor: 'UpdateLoadout', _0: a};
 };
-var _user$project$Types$UpdateMenu = function (a) {
+var _user$project$Map_Types$UpdateMenu = function (a) {
 	return {ctor: 'UpdateMenu', _0: a};
 };
-var _user$project$Types$WeaponsOverlay = {ctor: 'WeaponsOverlay'};
-var _user$project$Types$EncounterOverlay = function (a) {
+var _user$project$Map_Types$WeaponsOverlay = {ctor: 'WeaponsOverlay'};
+var _user$project$Map_Types$EncounterOverlay = function (a) {
 	return {ctor: 'EncounterOverlay', _0: a};
 };
-var _user$project$Types$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
-var _user$project$Types$MenuOverlay = {ctor: 'MenuOverlay'};
-var _user$project$Types$NoOverlay = {ctor: 'NoOverlay'};
+var _user$project$Map_Types$LoadoutOverlay = {ctor: 'LoadoutOverlay'};
+var _user$project$Map_Types$MenuOverlay = {ctor: 'MenuOverlay'};
+var _user$project$Map_Types$NoOverlay = {ctor: 'NoOverlay'};
 
 var _user$project$Menu_View$toPercent = function (x) {
 	return A2(
@@ -11500,7 +11500,7 @@ var _user$project$Menu_View$view = function (model) {
 		A2(_elm_lang$core$List$map, getTileContents, model.tiles));
 };
 
-var _user$project$View$view = function (model) {
+var _user$project$Map_View$view = function (model) {
 	var keyAtt = A2(
 		_elm_lang$html$Html_Attributes$attribute,
 		'key',
@@ -11519,7 +11519,7 @@ var _user$project$View$view = function (model) {
 						[
 							A2(
 							_elm_lang$html$Html_App$map,
-							_user$project$Types$UpdateMenu,
+							_user$project$Map_Types$UpdateMenu,
 							_user$project$Menu_View$view(model.menu))
 						]));
 			case 'WeaponsOverlay':
@@ -11533,7 +11533,7 @@ var _user$project$View$view = function (model) {
 						[
 							A2(
 							_elm_lang$html$Html_App$map,
-							_user$project$Types$UpdateWeapons,
+							_user$project$Map_Types$UpdateWeapons,
 							_user$project$Menu_View$view(model.weapons))
 						]));
 			case 'LoadoutOverlay':
@@ -11547,7 +11547,7 @@ var _user$project$View$view = function (model) {
 						[
 							A2(
 							_elm_lang$html$Html_App$map,
-							_user$project$Types$UpdateLoadout,
+							_user$project$Map_Types$UpdateLoadout,
 							_user$project$Loadout_Loadout$view(model.loadout))
 						]));
 			case 'EncounterOverlay':
@@ -11561,7 +11561,7 @@ var _user$project$View$view = function (model) {
 						[
 							A2(
 							_elm_lang$html$Html_App$map,
-							_user$project$Types$UpdateEncounter,
+							_user$project$Map_Types$UpdateEncounter,
 							_user$project$Versus$view(model.encounter))
 						]));
 			default:
@@ -11575,7 +11575,7 @@ var _user$project$View$view = function (model) {
 						[
 							A2(
 							_elm_lang$html$Html_App$map,
-							_user$project$Types$UpdateMapMenu,
+							_user$project$Map_Types$UpdateMapMenu,
 							_user$project$Menu_View$viewMap(model.mapMenu))
 						]));
 		}
@@ -11803,10 +11803,10 @@ var _user$project$Map$update = F2(
 					return {
 						ctor: '_Tuple2',
 						_0: newModel,
-						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Types$UpdateEncounter, newMsg)
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Map_Types$UpdateEncounter, newMsg)
 					};
 				case 'UpdateLoadout':
-					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Types$LoadoutOverlay)) {
+					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Map_Types$LoadoutOverlay)) {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
@@ -11825,20 +11825,20 @@ var _user$project$Map$update = F2(
 							{loaded: newLoadout.loaded, unloaded: newLoadout.unloaded});
 						var _p3 = A2(
 							_user$project$Map$update,
-							_user$project$Types$SetPlayer(newPlayer),
+							_user$project$Map_Types$SetPlayer(newPlayer),
 							newModel);
 						var newModel2 = _p3._0;
 						var newMsg2 = _p3._1;
 						var cmds = _elm_lang$core$Platform_Cmd$batch(
 							_elm_lang$core$Native_List.fromArray(
 								[
-									A2(_elm_lang$core$Platform_Cmd$map, _user$project$Types$UpdateLoadout, newMsg),
+									A2(_elm_lang$core$Platform_Cmd$map, _user$project$Map_Types$UpdateLoadout, newMsg),
 									newMsg2
 								]));
 						return {ctor: '_Tuple2', _0: newModel2, _1: cmds};
 					}
 				case 'UpdateWeapons':
-					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Types$WeaponsOverlay)) {
+					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Map_Types$WeaponsOverlay)) {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
@@ -11858,7 +11858,7 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						} else {
-							var _v2 = _user$project$Types$ChangeOverlay(_user$project$Types$NoOverlay),
+							var _v2 = _user$project$Map_Types$ChangeOverlay(_user$project$Map_Types$NoOverlay),
 								_v3 = _elm_lang$core$Native_Utils.update(
 								model,
 								{weapons: newWeapons});
@@ -11868,7 +11868,7 @@ var _user$project$Map$update = F2(
 						}
 					}
 				case 'UpdateMenu':
-					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Types$MenuOverlay)) {
+					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Map_Types$MenuOverlay)) {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
@@ -11890,27 +11890,27 @@ var _user$project$Map$update = F2(
 						} else {
 							switch (_p7._0.valueOf()) {
 								case 'l':
-									var _v5 = _user$project$Types$ChangeOverlay(_user$project$Types$LoadoutOverlay),
+									var _v5 = _user$project$Map_Types$ChangeOverlay(_user$project$Map_Types$LoadoutOverlay),
 										_v6 = model;
 									msg = _v5;
 									model = _v6;
 									continue update;
 								case 'w':
-									var _v7 = _user$project$Types$ChangeOverlay(_user$project$Types$WeaponsOverlay),
+									var _v7 = _user$project$Map_Types$ChangeOverlay(_user$project$Map_Types$WeaponsOverlay),
 										_v8 = model;
 									msg = _v7;
 									model = _v8;
 									continue update;
 								case 'e':
-									var _v9 = _user$project$Types$ChangeOverlay(
-										_user$project$Types$EncounterOverlay(
+									var _v9 = _user$project$Map_Types$ChangeOverlay(
+										_user$project$Map_Types$EncounterOverlay(
 											_elm_lang$core$Native_Utils.chr('e'))),
 										_v10 = model;
 									msg = _v9;
 									model = _v10;
 									continue update;
 								default:
-									var _v11 = _user$project$Types$ChangeOverlay(_user$project$Types$NoOverlay),
+									var _v11 = _user$project$Map_Types$ChangeOverlay(_user$project$Map_Types$NoOverlay),
 										_v12 = _elm_lang$core$Native_Utils.update(
 										model,
 										{menu: newMenu});
@@ -11921,7 +11921,7 @@ var _user$project$Map$update = F2(
 						}
 					}
 				case 'UpdateMapMenu':
-					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Types$NoOverlay)) {
+					if (!_elm_lang$core$Native_Utils.eq(model.overlay, _user$project$Map_Types$NoOverlay)) {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
@@ -11941,8 +11941,8 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						} else {
-							var _v14 = _user$project$Types$ChangeOverlay(
-								_user$project$Types$EncounterOverlay(_p9._0)),
+							var _v14 = _user$project$Map_Types$ChangeOverlay(
+								_user$project$Map_Types$EncounterOverlay(_p9._0)),
 								_v15 = model;
 							msg = _v14;
 							model = _v15;
@@ -12036,14 +12036,14 @@ var _user$project$Map$update = F2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
-									{overlay: _user$project$Types$MenuOverlay, key: _p14, menu: _user$project$Map$initMenu}),
+									{overlay: _user$project$Map_Types$MenuOverlay, key: _p14, menu: _user$project$Map$initMenu}),
 								_elm_lang$core$Native_List.fromArray(
 									[]));
 						} else {
-							var _v19 = _user$project$Types$SetMap(model.map),
+							var _v19 = _user$project$Map_Types$SetMap(model.map),
 								_v20 = _elm_lang$core$Native_Utils.update(
 								model,
-								{overlay: _user$project$Types$NoOverlay, key: _p14});
+								{overlay: _user$project$Map_Types$NoOverlay, key: _p14});
 							msg = _v19;
 							model = _v20;
 							continue update;
@@ -12116,11 +12116,11 @@ var _user$project$Map$init = function () {
 			places: _elm_lang$core$Native_List.fromArray(
 				[])
 		},
-		overlay: _user$project$Types$NoOverlay,
+		overlay: _user$project$Map_Types$NoOverlay,
 		key: _user$project$Map$keycode.enter,
 		player: player
 	};
-	return A2(_user$project$Map$update, _user$project$Types$NoOp, model);
+	return A2(_user$project$Map$update, _user$project$Map_Types$NoOp, model);
 }();
 var _user$project$Map$setMap = _elm_lang$core$Native_Platform.incomingPort(
 	'setMap',
@@ -12227,32 +12227,32 @@ var _user$project$Map$subscriptions = function (model) {
 			[
 				A2(
 				_elm_lang$core$Platform_Sub$map,
-				_user$project$Types$UpdateMenu,
+				_user$project$Map_Types$UpdateMenu,
 				_user$project$Menu_Menu$subscriptions(model.menu)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
-				_user$project$Types$UpdateWeapons,
+				_user$project$Map_Types$UpdateWeapons,
 				_user$project$Menu_Menu$subscriptions(model.weapons)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
-				_user$project$Types$UpdateLoadout,
+				_user$project$Map_Types$UpdateLoadout,
 				_user$project$Loadout_Loadout$subscriptions(model.loadout)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
-				_user$project$Types$UpdateEncounter,
+				_user$project$Map_Types$UpdateEncounter,
 				_user$project$Versus$subscriptions(model.encounter)),
 				A2(
 				_elm_lang$core$Platform_Sub$map,
-				_user$project$Types$UpdateMapMenu,
+				_user$project$Map_Types$UpdateMapMenu,
 				_user$project$Menu_Menu$subscriptions(model.mapMenu)),
-				_elm_lang$keyboard$Keyboard$presses(_user$project$Types$KeyPress),
-				_user$project$Map$setMap(_user$project$Types$SetMap),
-				_user$project$Map$setPlayer(_user$project$Types$SetPlayer)
+				_elm_lang$keyboard$Keyboard$presses(_user$project$Map_Types$KeyPress),
+				_user$project$Map$setMap(_user$project$Map_Types$SetMap),
+				_user$project$Map$setPlayer(_user$project$Map_Types$SetPlayer)
 			]));
 };
 var _user$project$Map$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$Map$init, update: _user$project$Map$update, view: _user$project$View$view, subscriptions: _user$project$Map$subscriptions})
+		{init: _user$project$Map$init, update: _user$project$Map$update, view: _user$project$Map_View$view, subscriptions: _user$project$Map$subscriptions})
 };
 
 var Elm = {};

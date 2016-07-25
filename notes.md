@@ -96,6 +96,8 @@ embeddings
 - alternate word2vec
 - continuous bag of words
 
+http://corpus.byu.edu/full-text/ historical, contemporary, global corpora
+
 british library sounds
 
 comparative table of simple adj/noun pairs (JJ NN)

@@ -2,8 +2,8 @@ port module Map exposing (..)
 
 import Loadout.Loadout as Loadout
 import Versus
-import View exposing (..)
-import Types exposing (..)
+import Map.View exposing (..)
+import Map.Types exposing (..)
 import Menu.Menu as Menu
 import Menu.Types
 import Html.App as App
@@ -95,20 +95,6 @@ tilesWeapons : List Menu.Types.Tile
 tilesWeapons =
     [ { label = ": gun", key = 'g', id = "gun", x = 0, y = 0 }
     , { label = ": knife", key = 'k', id = "knife", x = 0, y = 0 }
-    ]
-
-
-ccc : List ( String, String, Bool )
-ccc =
-    [ ( "Adjective", "Fuckers", False )
-    , ( "Noun", "You", False )
-    , ( "Adjective", "Hello", True )
-    , ( "Noun", "There", True )
-    , ( "Noun", "Asshat", True )
-    , ( "Noun", "There2", True )
-    , ( "Noun", "Asshat2", True )
-    , ( "Noun", "There3", True )
-    , ( "Noun", "Asshat3", True )
     ]
 
 

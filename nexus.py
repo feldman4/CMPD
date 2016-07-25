@@ -1,13 +1,15 @@
 from flask import Flask, render_template, url_for, redirect, session
 from flask_socketio import emit, SocketIO
 import random
+import os
+import uuid
 
 import cmpd_web
 
 app = Flask(__name__)
 app.session_interface = cmpd_web.CMPDSessionInterface()
-app.config['SECRET_KEY'] = '36dab92b-7550-4476-9984-5bc162115cf7'
-app.debug=True
+app.config['SECRET_KEY'] = str(uuid.uuid4())
+app.debug = os.environ.get('DEBUG', '') == 'TRUE'
 socketio = SocketIO(app)
 
 
