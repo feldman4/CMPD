@@ -17,3 +17,4 @@ six==1.10.0
 Unidecode==0.4.19
 Werkzeug==0.11.10
 frozendict==0.6
+numpy==1.11.1
