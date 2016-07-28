@@ -44,7 +44,7 @@ def make_gspread_json():
         key1, key2 = os.environ['KEY1'], os.environ['KEY2']
         text = fh.read()
         aes = AES.new(key1, AES.MODE_CBC, key2)
-        json_key = json.loads(aes.decrypt(text))
+        return json.loads(aes.decrypt(text))
 
     
 
