@@ -1,0 +1,119 @@
+#top-half {
+    height: 60%;
+    width: 100%;
+}
+
+.enemy {
+    justify-content: flex-end;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start
+}
+
+.player {
+    justify-content: flex-start;
+    height: 50%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+} 
+
+.enemy img {
+    
+    height: 100%;
+    width: auto;
+}
+
+.player img {
+    height: 100%;
+    width: auto;
+
+} 
+
+.status
+{
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: 1 0 auto;
+}
+
+.player .status
+{
+    justify-content: flex-end;
+    border-right: 3px black solid;
+    border-bottom: 3px black solid;
+    margin-left: 10%;
+}
+
+.enemy .status
+{
+    align-items: flex-start;
+    border-left: 3px black solid;
+    border-bottom: 3px black solid;
+    margin-right: 10%;
+}
+
+.name
+{
+    margin: 2%;
+}
+
+
+.progress-bar .bar-box
+{
+    width: 100%;
+    background-color: black;
+}
+.arrow
+{
+    
+    height: 0%;
+    background-color: black;
+    width: 80%;
+    margin-bottom: 2%;
+}
+
+.enemy .name 
+{
+    text-align: left;
+}
+
+#bottom-half {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 40%;
+    width: 100%;
+    border-top: black 3px solid;
+    margin-top: 1%;
+}
+
+#bottom-left {
+    border-right: black 3px solid;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+#bottom-right {
+    
+    width: 50%;
+}
+
+#bottom-right #output {
+    height: 100%;
+}
+
+#bottom-left #input-input {
+    width: 100%;
+}
+
+
+#bottom-left #wordbank {
+    height: auto;
+}
