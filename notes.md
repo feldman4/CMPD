@@ -7,12 +7,6 @@
 - accelerate input, matching + bar
 
 
-### flight to-do
-- adjective synsets
-    + clustering w/ WN is iffy, GN W2V does better
-    + expanding synset?
-
-
 
 ### interface for limit break, "fucking"
 - options for showing p.o.s., etc
@@ -34,13 +28,6 @@ score similarity between words,
 phrase trees?
 
 comparative voice?
-
-imperative?
-eat shit and die
-go fuck yourself
-go fuck a tree
-go fuck a bamboo
-go suck a lemon 
 
 
 You bourgeois warmonger, your accusation against the DPRK is no more than barking at the moon! -- KCNA

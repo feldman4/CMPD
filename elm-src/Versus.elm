@@ -45,6 +45,7 @@ type alias Model =
     , clock : Time.Time
     , firstTick : Bool
     , overload : Float
+    , drainRate : Float -- 0.02 works
     }
 
 
@@ -61,6 +62,7 @@ init words enemyImage maxToDisplay =
             , clock = 0
             , firstTick = True
             , overload = 0.833
+            , drainRate = 0
             }
     in
         update (NewWordbank words) model
@@ -176,7 +178,7 @@ update message model =
                         Time.inSeconds (newTime - model.clock)
 
                 progress =
-                    max (model.progressBar.value - 0.02 * elapsed) 0
+                    max (model.progressBar.value - model.drainRate * elapsed) 0
 
                 progressBar =
                     Bar.update (Bar.Value progress) model.progressBar
@@ -212,8 +214,8 @@ showWordbankWord word model =
 -- App.map TheWordbank (Wordbank.view model.wordbank)
 
 
-view : Model -> Html Msg
-view model =
+viewSimple : Model -> Html Msg
+viewSimple model =
     let
         wordbank =
             App.map UpdateWordbank (Wordbank.view model.wordbank)
@@ -252,6 +254,89 @@ view model =
             , addInput
             , wordbank
             ]
+
+
+view : Model -> Html Msg
+view model =
+    let
+        wordbank =
+            App.map UpdateWordbank (Wordbank.view model.wordbank)
+
+        statusPlayer =
+            div [class "status" ] [
+            div [class "name"] [ text "player"]
+            ,
+               div
+                [ class "progress-bar" ]
+                [ App.map UpdateProgressBar (Bar.view model.progressBar) ]
+            ,  div [class "arrow"] [] ]
+
+        statusEnemy = 
+            div [class "status" ] [
+            div [class "name"] [ text model.enemyImage ]
+            ,
+               div
+                [ class "progress-bar" ]
+                [ App.map UpdateProgressBar (Bar.view model.progressBar) ]
+            ,  div [class "arrow"] [] ]
+
+
+
+        addInput =
+            div [ id "input" ]
+                [ input
+                    [ placeholder ""
+                    , onInput UpdateAddInput
+                    , onEnter EnterInput
+                    , value model.addInput
+                    , id "input-input"
+                    , autofocus True
+                    ]
+                    []
+                ]
+
+        enemy =
+             img [ src model.enemyImage ] []
+
+        player =  
+            img [ src model.enemyImage ] []
+
+        output =
+            div [ id "output" ]
+                [ div [ id "convo" ] (List.map viewRemarkScore (List.reverse model.conversation))
+                , div [ id "shield" ] []
+                ]
+    in
+
+        div [ id "versus-main" ]
+            [ div [ id "top-half" ]
+                [ div [class "enemy"] [statusEnemy, enemy]
+                , div [class "player"] [player, statusPlayer] ]
+
+
+            , div [ id "bottom-half" ] [
+
+                div [ id "bottom-left" ]
+                    [ addInput
+                    , wordbank ]
+
+                , div [id "bottom-right" ]
+                 [output]
+                    
+                    ]     
+                    ]   
+
+
+viewRemarkScore : Remark -> Html.Html Msg
+viewRemarkScore remark =
+    div [ class "remark" ]
+        [ div [ class "insult" ]
+            [ div [class "insult-phrase"] [text remark.insult ]
+            , div [class "insult-score"] [text <| toString remark.score] ]
+        , div [ class "retort" ]
+            [ div [class "retort-score"] [text <| toString remark.score] 
+            , div [class "retort-phrase"] [text remark.retort ] ]
+        ]
 
 
 viewRemark : Remark -> Html.Html Msg

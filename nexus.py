@@ -22,7 +22,14 @@ socketio = SocketIO(app)
 
 @app.route('/map')
 def map():
+    session['map'] = 'islands'
     return render_template('map.html')
+
+@app.route('/map/<string:map_name>')
+def custom_map(map_name):
+    session['map'] = map_name
+    return render_template('map.html')
+
 
 @app.route('/')
 def index():
@@ -96,25 +103,30 @@ def insult(insult):
 
 @socketio.on('INITIALIZE', namespace='/map')
 def initialize_map(message):
-    print 'initializing map'
-    map_src = url_for('static', filename='images/map.png')
+    map_name = session['map']
+    print 'initializing map: %s' % map_name
 
-    places = [(0.24, 0.12, 'w', 'ctenophora'),
-              (0.19, 0.68, 'x', 'ctenophora'), 
-              (0.80, 0.22, 'y', 'derp'),
-              (0.74, 0.71, 'z', 'underground')]
+    map_image = cmpd_web.maps[map_name]['image']
+    places = cmpd_web.maps[map_name]['places']
     places = [Place(*p) for p in places]
-    player_vocab = cmpd_web.load_vocab('derp')
+    player_vocab = cmpd_web.load_vocab(cmpd_web.maps[map_name]['vocab'])
+    
+    new_vocab = []
+    for pos, words in player_vocab:
+        words = list(words)
+        random.shuffle(words)
+        new_vocab += [(pos, words[:12])]
+    player_vocab = new_vocab
 
+    map_src = url_for('static', filename=map_image)
 
     enemies = {}
     for enemy in cmpd_web.stable:
         enemies[enemy] = dict(cmpd_web.stable[enemy])
         enemies[enemy]['image'] = url_for('static', 
                                             filename=enemies[enemy]['image'])
-        print enemies[enemy]['image']
 
-    
+    print player_vocab
     player = cmpd_web.Player(player_vocab, None, capacity=6)
     GM = cmpd_web.GameMaster(places, enemies, player, map_src)
     GM.initialize(emit)
@@ -128,7 +140,7 @@ def send_encounter(message):
     player = message['player']
     GM = session['map_GM']
 
-    GM.player.model = player
+    GM.player.update(player)
 
     # GM checks its enemies list, initializes w/ vocab
     GM.request_encounter(enemy, emit)

@@ -134,6 +134,10 @@ class Player(object):
 
         return next_words
 
+    def update(self, model):
+        model['loaded'] = sorted(model['loaded'])
+        model['unloaded'] = sorted(model['unloaded'])
+        self.model = model
 
 
 class VersusDerp(Enemy):
@@ -445,7 +449,7 @@ make_DIDB_phrases = lambda: make_row_phrases(load_vocab('DIDB'))
 
 stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
                          'class': Enemy,
-                         'vocab': 'DIDB'}),
+                         'vocab': 'more'}),
           'derp': frozendict({'image': 'images/derp-3.jpg',
                          'class': VersusDerp,
                          'vocab': 'DIDB'}),
@@ -457,4 +461,27 @@ stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
                          'vocab': 'DIDB'}),
 
                          })
+
+
+maps = frozendict({'islands': frozendict({
+              'places': 
+              [(0.24, 0.12, 'w', 'ctenophora'),
+              (0.19, 0.68, 'x', 'ctenophora'), 
+              (0.80, 0.22, 'y', 'derp'),
+              (0.74, 0.71, 'z', 'underground')],
+              'image': 'images/islands.png',
+              'vocab': 'derp'}) ,
+
+                     'ovaloffice': frozendict({
+                        'places': 
+            [(0.235, 0.77, 'a', 'ctenophora'),
+             (0.055, 0.46, 'b', 'ctenophora'),
+             (0.265, 0.42, 'c', 'ctenophora'),
+             (0.723, 0.27, 'd', 'ctenophora'),
+             (0.412, 0.22, 'e', 'ctenophora'),
+             (0.798, 0.61, 'f', 'ctenophora')],
+
+              'image': 'images/ovaloffice.png',
+              'vocab': 'more'})
+                        })
 

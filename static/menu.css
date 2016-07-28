@@ -104,6 +104,9 @@
 @media (min-width: 600px) {
     #map-menu .tile {
         font-size: 48px;
+        background-color: rgba(50, 50, 50, 0.1);
+        width: 8%;
+        text-align: center;
     }
 }
 

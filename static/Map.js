@@ -10859,6 +10859,77 @@ var _user$project$Versus$viewRemark = function (remark) {
 					]))
 			]));
 };
+var _user$project$Versus$viewRemarkScore = function (remark) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('remark')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('insult')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('insult-phrase')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(remark.insult)
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('insult-score')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(remark.score))
+							]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('retort')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('retort-score')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(remark.score))
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('retort-phrase')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(remark.retort)
+							]))
+					]))
+			]));
+};
 var _user$project$Versus$showWordbankWord = F2(
 	function (word, model) {
 		return A2(
@@ -10934,10 +11005,27 @@ var _user$project$Versus$remark = _elm_lang$core$Native_Platform.incomingPort(
 						});
 				});
 		}));
-var _user$project$Versus$Model = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {wordbank: a, progressBar: b, addInput: c, enemyImage: d, maxToDisplay: e, conversation: f, clock: g, firstTick: h, overload: i};
-	});
+var _user$project$Versus$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {wordbank: a, progressBar: b, addInput: c, enemyImage: d, maxToDisplay: e, conversation: f, clock: g, firstTick: h, overload: i, drainRate: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _user$project$Versus$Remark = F3(
 	function (a, b, c) {
 		return {insult: a, retort: b, score: c};
@@ -11119,7 +11207,7 @@ var _user$project$Versus$update = F2(
 				default:
 					var _p12 = _p0._0;
 					var elapsed = model.firstTick ? 0 : _elm_lang$core$Time$inSeconds(_p12 - model.clock);
-					var progress = A2(_elm_lang$core$Basics$max, model.progressBar.value - (2.0e-2 * elapsed), 0);
+					var progress = A2(_elm_lang$core$Basics$max, model.progressBar.value - (model.drainRate * elapsed), 0);
 					var progressBar = A2(
 						_user$project$Bar$update,
 						_user$project$Bar$Value(progress),
@@ -11166,7 +11254,8 @@ var _user$project$Versus$init = F3(
 				[]),
 			clock: 0,
 			firstTick: true,
-			overload: 0.833
+			overload: 0.833,
+			drainRate: 0
 		};
 		return A2(
 			_user$project$Versus$update,
@@ -11194,7 +11283,7 @@ var _user$project$Versus$onEnter = function (msg) {
 		'keydown',
 		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
 };
-var _user$project$Versus$view = function (model) {
+var _user$project$Versus$viewSimple = function (model) {
 	var output = A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -11287,6 +11376,216 @@ var _user$project$Versus$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[enemy, progressBar, output, addInput, wordbank]));
+};
+var _user$project$Versus$view = function (model) {
+	var output = A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('output')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('convo')
+					]),
+				A2(
+					_elm_lang$core$List$map,
+					_user$project$Versus$viewRemarkScore,
+					_elm_lang$core$List$reverse(model.conversation))),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('shield')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]));
+	var player = A2(
+		_elm_lang$html$Html$img,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$src(model.enemyImage)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var enemy = A2(
+		_elm_lang$html$Html$img,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$src(model.enemyImage)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var addInput = A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('input')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$placeholder(''),
+						_elm_lang$html$Html_Events$onInput(_user$project$Versus$UpdateAddInput),
+						_user$project$Versus$onEnter(_user$project$Versus$EnterInput),
+						_elm_lang$html$Html_Attributes$value(model.addInput),
+						_elm_lang$html$Html_Attributes$id('input-input'),
+						_elm_lang$html$Html_Attributes$autofocus(true)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]));
+	var statusEnemy = A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('status')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('name')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.enemyImage)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('progress-bar')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Versus$UpdateProgressBar,
+						_user$project$Bar$view(model.progressBar))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('arrow')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]));
+	var statusPlayer = A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('status')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('name')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('player')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('progress-bar')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Versus$UpdateProgressBar,
+						_user$project$Bar$view(model.progressBar))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('arrow')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]));
+	var wordbank = A2(
+		_elm_lang$html$Html_App$map,
+		_user$project$Versus$UpdateWordbank,
+		_user$project$Wordbank$view(model.wordbank));
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('versus-main')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('top-half')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('enemy')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[statusEnemy, enemy])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('player')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[player, statusPlayer]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('bottom-half')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$id('bottom-left')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[addInput, wordbank])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$id('bottom-right')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[output]))
+					]))
+			]));
 };
 var _user$project$Versus$main = {
 	main: function () {
@@ -11784,11 +12083,11 @@ var _user$project$Map$updatePlayer = _elm_lang$core$Native_Platform.outgoingPort
 		return {
 			loaded: _elm_lang$core$Native_List.toArray(v.loaded).map(
 				function (v) {
-					return {word: v.word, partOfSpeech: v.partOfSpeech};
+					return {word: v.word, partOfSpeech: v.partOfSpeech, tag: v.tag};
 				}),
 			unloaded: _elm_lang$core$Native_List.toArray(v.unloaded).map(
 				function (v) {
-					return {word: v.word, partOfSpeech: v.partOfSpeech};
+					return {word: v.word, partOfSpeech: v.partOfSpeech, tag: v.tag};
 				}),
 			capacity: _elm_lang$core$Native_List.toArray(v.capacity).map(
 				function (v) {
@@ -11804,11 +12103,11 @@ var _user$project$Map$requestEncounter = _elm_lang$core$Native_Platform.outgoing
 			{
 			loaded: _elm_lang$core$Native_List.toArray(v._1.loaded).map(
 				function (v) {
-					return {word: v.word, partOfSpeech: v.partOfSpeech};
+					return {word: v.word, partOfSpeech: v.partOfSpeech, tag: v.tag};
 				}),
 			unloaded: _elm_lang$core$Native_List.toArray(v._1.unloaded).map(
 				function (v) {
-					return {word: v.word, partOfSpeech: v.partOfSpeech};
+					return {word: v.word, partOfSpeech: v.partOfSpeech, tag: v.tag};
 				}),
 			capacity: _elm_lang$core$Native_List.toArray(v._1.capacity).map(
 				function (v) {
@@ -12212,8 +12511,13 @@ var _user$project$Map$setPlayer = _elm_lang$core$Native_Platform.incomingPort(
 							_elm_lang$core$Json_Decode$andThen,
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'partOfSpeech', _elm_lang$core$Json_Decode$string),
 							function (partOfSpeech) {
-								return _elm_lang$core$Json_Decode$succeed(
-									{word: word, partOfSpeech: partOfSpeech});
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'tag', _elm_lang$core$Json_Decode$string),
+									function (tag) {
+										return _elm_lang$core$Json_Decode$succeed(
+											{word: word, partOfSpeech: partOfSpeech, tag: tag});
+									});
 							});
 					}))),
 		function (loaded) {
@@ -12231,8 +12535,13 @@ var _user$project$Map$setPlayer = _elm_lang$core$Native_Platform.incomingPort(
 									_elm_lang$core$Json_Decode$andThen,
 									A2(_elm_lang$core$Json_Decode_ops[':='], 'partOfSpeech', _elm_lang$core$Json_Decode$string),
 									function (partOfSpeech) {
-										return _elm_lang$core$Json_Decode$succeed(
-											{word: word, partOfSpeech: partOfSpeech});
+										return A2(
+											_elm_lang$core$Json_Decode$andThen,
+											A2(_elm_lang$core$Json_Decode_ops[':='], 'tag', _elm_lang$core$Json_Decode$string),
+											function (tag) {
+												return _elm_lang$core$Json_Decode$succeed(
+													{word: word, partOfSpeech: partOfSpeech, tag: tag});
+											});
 									});
 							}))),
 				function (unloaded) {

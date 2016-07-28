@@ -77,11 +77,11 @@ img#enemy {
 }
 
 #convo .insult {
-    text-align: right;
+    text-align: left;
 }
 
 #convo .retort {
-    text-align: left;
+    text-align: right;
 }
 
 #shield {
@@ -94,6 +94,35 @@ img#enemy {
     left: 0px;
     background: -webkit-linear-gradient(to top, rgba(0,0,0,0) 70%, rgba(255,255,255,1));
     /* 	background: linear-gradient(to top, rgba(0,0,0,0) 60%, rgba(255,255,255,.7) 80%, rgba(255,255,255,1) 100%); */
+}
+
+.retort, .insult 
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: left;
+    align-content: flex-start;
+    height: 25%;
+    width: 100%;
+    overflow: scroll;
+}
+ 
+
+.insult-phrase
+{
+    flex: 1 1 auto;
+}
+.insult-score
+{
+    color: blue;
+}
+
+.retort-score
+{
+    flex: 1 1 auto;
+    text-align: left;
+    color: red;
 }
 
 /* ////////////////////// INPUT ////////////////////// */
@@ -131,6 +160,7 @@ img#enemy {
         padding: 1%;
     }
 }
+
 
 /* ///////////////////// PROGRESS BAR ///////////////////// */
 .progress-bar {
