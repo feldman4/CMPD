@@ -7,6 +7,8 @@ from itertools import cycle, product
 import difflib
 from frozendict import frozendict
 import json
+import os
+from Crypto.Cipher import AES
 
 import pandas as pd
 
@@ -28,6 +30,16 @@ js_to_flask = {
 def load_phrases(path):
     with open(path, 'r') as fh:
         return fh.read().split('\n')
+
+
+def make_gspread_json():
+    with open('resources/crypt.json', 'r') as fh:
+        key1, key2 = os.environ['KEY1'], os.environ['KEY2']
+        text = fh.read()
+        aes = AES.new(key1, AES.MODE_CBC, key2)
+        text = aes.decrypt(text)
+    with open('resources/key.json', 'w') as fh:
+        fh.write(text)
 
 def load_elm_helpers(path):
   """ Load socket message names from static/elm-helpers.js
@@ -354,7 +366,7 @@ class LocalEncounter(GameMaster):
             print '#' * width
 
 
-google_json_key = 'resources/gspread-da2f80418147.json'
+google_json_key = 'resources/key.json'
 
 def load_sheet(worksheet, g_file='CMPD', credentials=google_json_key):
     """Load sheet as array of strings (drops .xls style index)

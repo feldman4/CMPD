@@ -18,6 +18,8 @@ socketio = SocketIO(app)
 
 
 
+
+
 @app.route('/map')
 def map():
     return render_template('map.html')
@@ -149,12 +151,11 @@ def send_encounter(message):
     # this will initialize, emitting UPDATE_WORDBANK
     session['versus'] = enemy['class'](vocab, emit)
 
-    
-
-
-
 
 if __name__ == '__main__':
+
+    cmpd_web.make_gspread_json()
+
     socketio.run(app)
 
     path = url_for('static', filename='/elm-helpers.js')
