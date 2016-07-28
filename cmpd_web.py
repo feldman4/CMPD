@@ -1,11 +1,12 @@
-from flask import url_for
+from flask import url_for, Flask
 from flask.sessions import SessionMixin, SessionInterface
 import re
 import random
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict, namedtuple
 from itertools import cycle, product
 import difflib
 from frozendict import frozendict
+import json
 
 import pandas as pd
 
@@ -50,70 +51,73 @@ def load_elm_helpers(path):
     flask_to_js =  eval(match[0])
 
 
-class Base(object):
-    def __init__(self, vocab, emit, retorts=None, log=None):
-        """Provide log as filehandle opened in append mode.
-        """
-        self.vocab = OrderedDict(vocab)
-        self.retorts = retorts or DIDB_phrases
-        self.log = log
-        self.emit = emit
+Place = namedtuple('Place', 'x y label enemy')
 
-        self.initialize()
+Remark = namedtuple('Remark', 'insult retort score')
+
+class Word(namedtuple('Word', 'word partOfSpeech tag')):
+  # namedtuple with defaults
+    def __new__(cls, word, partOfSpeech, tag=''):
+        return super(Word, cls).__new__(cls, word, partOfSpeech, tag)
+
+
+class Enemy(object):
+    def __init__(self, vocab, view):
         
-    def initialize(self):
-        self.flag = cycle(self.vocab.keys())
-        self.insult = []
-        self.history = []
-        self.wordbank = self.vocab[self.flag.next()]
-        self.emit(flask_to_js['UPDATE_WORDBANK'], {'wordbank': self.wordbank})
-
-
-    def reply(self, insult):
-        """ Switches between adjectives and nouns. Retorts from 
-        provided phrases.
-        """
-
-        self.insult += [insult['insult']]
-        key = self.flag.next()
-        self.wordbank = self.vocab[key]
-
-        random.shuffle(self.wordbank)
-
-        if key == self.vocab.keys()[0]:
-            insult = ' '.join(self.insult)
-            self.insult = []
+        self.vocab = vocab
+        self.grammar = None
+        self.view = view
         
-            retort = random.choice(self.retorts)
-            score = self.score(insult)
-            remark = {'insult': insult, 
-                      'retort': retort,
-                      'score': score}
-                           
-            self.emit(flask_to_js['REMARK'], remark)
+    def retort(self, insult, remarks):
+        """ Retorts from provided vocab.
+        """
+        retorts = zip(*[w for _, w in self.vocab])
+        return ' '.join(random.choice(retorts))
 
-            self.history += [remark]
+        
+class Player(object):
 
-        self.emit(flask_to_js['UPDATE_WORDBANK'], {'wordbank': self.wordbank})
+    def __init__(self, vocab, grammar, capacity=6):
+        """ Player manages vocab and grammar. 
+        Given a partial phrase, has a method to return next words/possible completions.
+        Model describes loaded/unloaded words. Corresponds to Elm model. 
+        """
+        self.vocab = vocab
+        self.grammar = grammar
+        capacity = [(pos, capacity) for pos,_ in vocab]
 
-        if self.log:
-            import time
-            log.write('%f\n%s\n' % (time.time(), retort['retort']))
+        loaded, unloaded = [], []
+        for pos, examples in vocab:
+            loaded   += [Word(word, pos)._asdict() for word in examples[:4]]
+            unloaded += [Word(word, pos)._asdict() for word in examples[4:]]
+        
+        self.model = {'loaded': sorted(loaded),
+                       'unloaded': sorted(unloaded),
+                       'capacity': capacity}
 
-    def score(self, insult):
+    def next_word(self, phrase):
+        """ Provides list of possible next Words based on a phrase (list of Words)
+        If nothing is possible (e.g., end of phrase) return empty list.
+        Filters words based on loaded.
+        """
+        if phrase:
+            last = phrase[-1]
+            index = 1 + [pos for pos,_ in self.vocab].index(last.partOfSpeech)
+            if index >= len(self.vocab):
+                return []
+        else:
+            index = 0
 
-        past_insults = [remark['insult'] for remark in self.history]
-        past_retorts = [remark['retort'] for remark in self.history]
+        next_words = []
+        for word in self.vocab[index][1]:
+            if word in [w['word'] for w in self.model['loaded']]:
+                next_words += [Word(word, self.vocab[index][0])]
 
-        if insult in past_insults:
-            return -0.05
-        if insult in past_retorts:
-            return -0.05
-
-        return 0.1
+        return next_words
 
 
-class VersusDerp(Base):
+
+class VersusDerp(Enemy):
     def __init__(self, *args, **kwargs):
         super(VersusDerp, self).__init__(*args, **kwargs)
 
@@ -122,36 +126,16 @@ class VersusDerp(Base):
         progress = insult['progress']
 
         enemy_index = int(progress * 5.999) + 1
-        enemy_image = url_for('static', 
-            filename='images/derp-%d.jpg' % enemy_index)
-
-        self.emit(flask_to_js['SEND_ENCOUNTER'], {'image': enemy_image})
+        self.view = {'image': url_for('static', 
+            filename='images/derp-%d.jpg' % enemy_index)}
 
         if progress > 0.8:
-            self.retorts = derp_phrases
+            self.vocab = load_vocab('derp')
         else:
-            self.retorts = DIDB_phrases
+            self.vocab = load_vocab('DIDB')
 
         super(VersusDerp, self).reply(insult)
 
-
-
-
-class VersusDIDB(Base):
-    def __init__(self, *args, **kwargs):
-        super(VersusDIDB, self).__init__(*args, **kwargs)
-
-    def score(self, insult):
-
-        past_insults = [remark['insult'] for remark in self.history]
-
-        if insult in past_insults:
-            return -0.05
-        if insult in DIDB_phrases:
-            return 0.3
-
-        return 0.05
-        
 
 
 class Session(dict, SessionMixin):
@@ -192,61 +176,13 @@ def nearest_word(word, wordbank, case=False):
     hit = wordbank[distances.index(max(distances))]
     return hit
 
-
-class LocalEncounter(object):
-    def __init__(self):
-        self.opponent = None
-        self.wordbank = None
-        
-    def prompt(self):
-        # launch a prompt to interact with opponent, instead
-        # of elm
-    
-        print 'Enemy:', self.opponent
-        print 'Enter text to insult, enter nothing to quit.'
-        self.progress = 0.5
-        
-        while True:
-            print 'Wordbank:', ', '.join(self.wordbank[:4] +  ['...'])
-            user_input = raw_input()
-            if user_input == '':
-                break
-            word = nearest_word(user_input, self.wordbank)
             
-            insult = {'insult': word}
-            
-            reply = self.opponent.reply(insult)
-    
-    def local_emit(self, message, data):
-        """ Local simulation of sending message and data through socket.
-        """
-        
-        if message == flask_to_js['REMARK']:
-            
-            width = 49
-
-            self.progress += data['score']
-            bar =  '-' * int((width - 5) * self.progress)
-            bar += ' ' * int((width - 5) * (1 - self.progress))
-
-            insult_message = '# %s (%.2f)' % (data['insult'], data['score'])
-            insult_spacer = ' ' * (width - len(insult_message) - 1)         
-
-            print '#' * width
-            print '# [%s] #' % bar
-            print  '%s%s#' % (insult_message, insult_spacer)
-            print '# %45s #' % data['retort'] 
-            print '#' * width
-            
-        if message == flask_to_js['UPDATE_WORDBANK']:
-            self.wordbank = data['wordbank']
 
 class StoreReturns(object):
     """Decorator that caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned, and
     not re-evaluated.
     """
-
     def __init__(self, func):
         self.func = func
         self.returns = []
@@ -265,29 +201,17 @@ class StoreReturns(object):
 
 class GameMaster(object):
     
-    def __init__(self, places, enemies, vocab, map_src):
+    def __init__(self, places, enemies, player, map_src):
         # coordinates and tag (key)
         self.places = places
-        self.vocab = vocab
-        
-        vocab_size = 10
-        capacity = [(pos, 6) for pos,_ in vocab]
-
-        loaded, unloaded = [], []
-        for pos, examples in vocab:
-            words = random.sample(examples, vocab_size)
-            loaded   += [{'word': word, 'partOfSpeech': pos} for word in words[:4]]
-            unloaded += [{'word': word, 'partOfSpeech': pos} for word in words[4:]]
-        
-        self.player = {'loaded': loaded,
-                       'unloaded': unloaded,
-                       'capacity': capacity}
+        self.player = player
         
         self.map_src = map_src
         
         self.enemies = enemies
         
         self.current_enemy = None
+        self.remarks = []
         
     def initialize(self, emit):
         """ 
@@ -296,40 +220,138 @@ class GameMaster(object):
         Called when JS loads and emits INITIALIZE.
         """
         map_data = {'image': self.map_src, 
-                    'places': self.places}
+                    'places': [p._asdict() for p in self.places]}
         
-        emit('SEND_PLAYER', {'player': self.player})
+        emit('SEND_PLAYER', self.player.model)
         emit('SEND_MAP', map_data)
         
     def request_encounter(self, enemy, emit):
+        """ Initializes enemy. Starts Player and asks to send an updated Wordbank.
+        """
         image = self.enemies[enemy]['image']
         enemyClass = self.enemies[enemy]['class']
-        vocab = self.player_to_vocab(self.player)
-        
-        print 'image is', image
-        print 'vocab is', vocab
-        self.current_enemy = enemyClass(vocab, emit)
-        
-        # make the enemy with right vocab
-        emit('SEND_ENCOUNTER', {'image': image})
-        
-    def reply(self, insult, emit):
-        self.current_enemy.emit = emit
-        self.current_enemy.reply(insult)
-        
-        
-    def update_player(self, update):
-        self.player = update
-        
-    def player_to_vocab(self, player):
-        from collections import defaultdict
-        words = player['loaded']
-        vocab = defaultdict(list)
 
-        for word in words:
-            vocab[word['partOfSpeech']] += [word['word']]
-        return sorted(vocab.items())
+        enemy_vocab = load_vocab(self.enemies[enemy]['vocab'])
+        enemy_view = {'image': image}
 
+        self.current_enemy = enemyClass(enemy_vocab, enemy_view)
+        
+        emit('SEND_ENCOUNTER', enemy_view)
+
+        self.player_phrase = []
+        self.next_word(emit)
+
+    def next_word(self, emit):
+        """ Weird to have end-of-phrase logic here.
+        """
+        new_wordbank = self.player.next_word(self.player_phrase)
+        if new_wordbank:
+            new_wordbank = [w._asdict() for w in new_wordbank]
+            
+            emit('UPDATE_WORDBANK', new_wordbank)
+        else:
+            self.reply(emit)
+            self.player_phrase = []
+            self.next_word(emit)
+
+    def insult(self, insult, emit):
+        """ Responds to incoming insult. Called by socketio.on('INSULT').
+        """
+        insult['word'] = Word(**insult['word'])
+        self.player_phrase += [insult['word']]
+        self.next_word(emit)
+        
+    def reply(self, emit):
+        insult = ' '.join(w.word for w in self.player_phrase)
+        retort = self.current_enemy.retort(insult, self.remarks)
+        score = self.score(insult, retort)
+        remark = Remark(insult, retort, score)
+        self.remarks += [remark]
+
+        emit('REMARK', remark._asdict())
+        
+        
+    def score(self, insult, retort):
+
+        past_insults = [remark.insult for remark in self.remarks]
+        past_retorts = [remark.retort for remark in self.remarks]
+
+        if insult in past_insults:
+            return -0.05
+        if insult in past_retorts:
+            return -0.05
+
+        return 0.1
+        
+
+class LocalEncounter(GameMaster):
+    def __init__(self, player, enemies=None):
+        self.player = player
+        self.enemies = enemies or stable
+        self.remarks = []
+
+
+        app = Flask(__name__)
+        self.app_context = app.test_request_context()
+
+        
+    def prompt(self, enemy):
+        # launch a prompt to interact with opponent, instead
+        # of elm
+    
+        self.request_encounter(enemy, self.emit)
+        print 'Enemy:', enemy
+        print 'Enter text to insult, enter nothing to quit.'
+        self.progress = 0.5
+        
+        while True:
+            
+            user_input = raw_input()
+            if user_input == '':
+                break
+
+            # match user input to get insult
+            wordbank = self.player.next_word(self.player_phrase)
+            wordbank_words = [w.word for w in wordbank]
+            match = nearest_word(user_input, wordbank_words)
+          
+            insult = {'word': wordbank[wordbank_words.index(match)], 
+                      'progress': self.progress}
+            # looks like it's coming from Elm
+            insult['word'] = insult['word']._asdict()
+            
+            # mimic insult
+            # with self.app_context:
+            self.insult(insult, self.emit)
+
+            # if at end of phrase, reply
+
+    
+    def emit(self, message, data):
+        """ Local simulation of sending message and data through socket.
+        """
+        
+        if message == flask_to_js['UPDATE_WORDBANK']:
+            wordbank = data
+            wordbank = [w['word'] for w in wordbank]
+            print 'Wordbank:', ', '.join(wordbank[:4] +  ['...'])
+
+        if message == flask_to_js['REMARK']:
+            
+            width = 49
+
+            self.progress += data['score']
+            bar =  '-' * int((width - 5) * self.progress)
+            bar += ' ' * int((width - 5) * (1 - self.progress))
+
+            insult_message = '# %s (%.2f)' % (data['insult'], data['score'])
+            insult_spacer = ' ' * (width - len(insult_message) - 1)         
+
+            print '#' * width
+            print '# [%s] #' % bar
+            print  '%s%s#' % (insult_message, insult_spacer)
+            print '# %45s #' % data['retort'] 
+            print '#' * width
 
 
 google_json_key = 'resources/gspread-da2f80418147.json'
@@ -361,214 +383,56 @@ def load_sheet(worksheet, g_file='CMPD', credentials=google_json_key):
     return xs_values
 
 
+def load_vocab(sheet, reload=False):
+  path = 'resources/vocab/%s.json' % sheet
+
+  def load_remote(sheet):
+      sheet = load_sheet(sheet)
+      df = pd.DataFrame(sheet[1:], columns=sheet[0])
+      vocab = []
+      for col in df:
+          words = [w for w in df[col] if w]
+          vocab += [(col, words)]
+
+      with open(path, 'w') as fh:
+          json.dump(vocab, fh, indent=4)
+      return vocab
+
+  if reload:
+    return load_remote(sheet)
+
+  try:
+      with open(path, 'r') as fh:
+          return json.load(fh)
+  except (IOError, ValueError):
+      return load_remote(sheet)
+
+
+def make_all_phrases(vocab):
+    return [' '.join(x) for x in product(
+                          *[words for _, words in vocab])]
+
+def make_row_phrases(vocab):
+  phrases = []
+  for row in zip(*[words for cat,words in vocab]):
+      phrases += [' '.join(row)]
+  return phrases
+
+
+make_DIDB_phrases = lambda: make_row_phrases(load_vocab('DIDB'))
 
 stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
-                         'class': VersusDIDB}),
+                         'class': Enemy,
+                         'vocab': 'DIDB'}),
           'derp': frozendict({'image': 'images/derp-3.jpg',
-                         'class': VersusDerp}),
+                         'class': VersusDerp,
+                         'vocab': 'DIDB'}),
           'underground': frozendict({'image': 'images/underground.png',
-                         'class': VersusDIDB}),
+                         'class': Enemy,
+                         'vocab': 'high school shakespeare'}),
           'buddha': frozendict({'image': 'images/buddha.jpg',
-                         'class': VersusDIDB}),
-
+                         'class': Enemy,
+                         'vocab': 'DIDB'}),
 
                          })
 
-
-
-derp_categories = [('A', ['Lazy',
-  'Stupid',
-  'Insecure',
-  'Idiotic',
-  'Slimy',
-  'Smelly',
-  'Pompous',
-  'Pie-Eating',
-  'Racist',
-  'Elitist',
-  'White Trash',
-  'Drug-Loving',
-  'Tone Deaf',
-  'Ugly',
-  'Creepy']),
- ('B', ['Douche',
-  'Ass',
-  'Turd',
-  'Butt',
-  'Cock',
-  'Shit',
-  'Crotch',
-  'Prick',
-  'Taint',
-  'Fuck',
-  'Dick',
-  'Nut']),
- ('C', ['Pilot',
-  'Captain',
-  'Pirate',
-  'Knob',
-  'Box',
-  'Jockey',
-  'Nazi',
-  'Waffle',
-  'Goblin',
-  'Blossum',
-  'Clown',
-  'Socket',
-  'Balloon'])]
-
-derp_phrases = [' '.join(x) for x in product(
-                        *[words for _, words in derp_categories])]
-
-DIDB_phrases = \
-"""Irreligious Latecomer
-Jaded Miscreant
-Predatory Liar
-Lonely Regurgitator
-Disguised Carrion
-Candy-Assed Filth
-Unsuccessful Looter
-Talentless Hack
-Floundering Enigma
-Licentious Turd
-Renegade Dwarf
-Underhanded Sinner
-Deceased Tyrant
-Celebrated Nincompoop
-Avaricious Poltergeist
-Constipated Moocher
-Tufted Eunuch
-Low-ranking Sycophant
-Inveterate Plagiarizer
-Cantankerous Poltroon
-Impoverished Lunatic
-Clamorous Weakling
-Unelected Yahoo
-Despicable Bastard
-Sweaty Pygmy
-Gutless Traitor
-Defenceless Neophyte
-Sinister Halfwit
-Poisonous Fool
-Self-Promoting Judas
-Treacherous Failure
-Subservient Wimp
-Botched Experiment
-Powdered Fop
-Monied Aristocrat
-Litigious Upstart
-Ignorant Amateur
-Worm-Eaten Pilferer
-Garish Reptile
-Overpaid Invertebrate
-Loathsome Creature
-Precocious Weasel
-Overfunded Mouth-Breather
-Backwater Racist
-Ill-Bred Yokel
-Oxygen-Deprived Redneck
-Prejudiced Swamp-Dweller
-Officious Transient
-Fear-Mongering Coward
-Mean Turncoat
-Odious Riffraff
-Meddlesome Fanatic
-Armchair Rapist
-Atrophied Sponge
-Free-Range Moron
-Unemployed Fetishist
-Variegated Cretin
-Vindictive Abuser
-Synthetic Ape-Man
-Asthmatic Gelding
-Intellectual Centipede
-Nauseating Hypocrite
-Irrelevant Bigmouth
-Underqualified Drunk
-Bankrupt Loser
-Insincere Huckster
-Unregenerate Philistine
-Antediluvian Trash
-Pompous Narcissist
-Disorganized Pushover
-Tendentious Boob
-Scheming Crackpot
-Drug-Addled Parasite
-Egg-Sucking Caveman
-Foul Betrayer
-Worthless Cheater
-Bellicose Scum
-Unprincipled Marxist
-Political Insect
-Mistaken Demagogue
-Closet Communist
-Garden-Variety Reactionary
-Diseased Collaborator
-Jilted Counter-Revolutionary
-Drugstore Fascist
-Dirty Trotskyite
-Crass Individualist
-Feather-Brained Idealist
-Humorless Jingoist
-Incontinent Meat-Packer
-Sniveling Ratcatchers
-Breastfed Academic
-Kowtowing Swineherd
-Apprentice Spook
-Hoity-Toity Intellectual
-Insufferable Clerk
-Spineless Middle-Manager
-Backwoods Trapper
-Impotent Fish-Cleaner
-Unwitting Peasant
-Insignificant Garbageman
-Self-Satisfied Undertaker
-Bearded Mystic
-Dishonest Mortician
-Simpering Priest
-Pallid Functionary
-Melancholy Organ-Grinder
-Deranged Pornographer
-Ill-Tempered Philanthropist
-Misinformed Yes-Man
-Hairless Dignitary
-Medicated Stenographer
-Orthodox Gravedigger
-Dimwitted Philosopher
-Disingenuous Hitman
-Common Thug
-Preposterous Highwayman
-Alcoholic Criminal
-Jackbooted Accomplice
-Ineffectual Mercenary
-Small-Time Assassin
-Rented Executioner
-Careless Arsonist
-Malignant Squatter
-Reckless Lawbreaker
-Obsequious Pimp
-Indiscreet Murderer
-Retired Slave-Trader
-Well-Fed Scoundrel
-Bucktoothed Swindler
-Flesh-Eating Goon
-Craven Warlord
-Clumsy Villain
-Embarrassing Backstabber
-Unwashed Kidnapper
-Unctuous Vandal
-Fraudulent Monk
-Bigoted Soothsayer
-Defrocked Witchdoctor
-Luckless Zealot
-Forsaken Apostate
-Morose Cultist
-White-Collar Simonist
-Wretched Atheist
-Belligerent Fakir
-Disgraced Pederast
-Listless Masturbator
-Limp-wristed Onanist
-Daft Cuckold
-Gilded Concubine
-Self-Appointed Rapist""".split('\n')

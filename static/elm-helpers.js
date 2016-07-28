@@ -47,7 +47,7 @@ function getScriptLocalHosted(local, hosted, success) {
 function updateWordbank(app) {
 	// initializes wordbank from server
 	socket.on(flask_to_js.UPDATE_WORDBANK, function(data) {
-	        app.ports.newWordbank.send(data.wordbank)
+	        app.ports.newWordbank.send(data)
 	    })
 }
 
@@ -80,7 +80,7 @@ function sendMap(app) {
 
 function sendPlayer(app) {
 	socket.on(flask_to_js.SEND_PLAYER, function(data) {
-		app.ports.setPlayer.send(data.player)
+		app.ports.setPlayer.send(data)
 	})
 }
 
@@ -98,7 +98,7 @@ function sendInsult(app) {
 		var word = comm[0]
 		var progress = comm[1]
 		socket.emit(js_to_flask.INSULT, {
-			insult: word,
+			word: word,
 			progress: progress
 		})
 	})
@@ -131,7 +131,7 @@ function askFuse(app) {
         var word = comm[0]
         var wordbank = comm[1]
         if (word === "") {
-        	app.ports.newWordbank.send(_.shuffle(wordbank))
+        	app.ports.suggestions.send(wordbank)
         	return
         }
         var suggestions = fuseSuggest(word, wordbank);

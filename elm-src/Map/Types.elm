@@ -1,6 +1,7 @@
 module Map.Types exposing (..)
 
 import Versus
+import Wordbank exposing (Word)
 import Menu.Types
 import Loadout.Loadout
 
@@ -50,10 +51,6 @@ type alias Map =
     { image : String, places : List Place }
 
 
-type alias Word =
-    { word : String
-    , partOfSpeech : String
-    }
 
 
 type alias Place =

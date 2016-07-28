@@ -1,39 +1,45 @@
-module Wordbank exposing (Model, Msg(..), init, update, view)
+module Wordbank exposing (Model, Msg(..), init, update, view, Word)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import List
+import String
 
 
 -- MODEL
 
 
 type alias Model =
-    { words : List ( String, Bool )
+    { words : List ( Word, Bool )
     , maxToDisplay : Int
     }
 
 
-init : List String -> Int -> Model
+init : List Word -> Int -> Model
 init words maxToDisplay =
     { words = List.map (\x -> ( x, True )) words
     , maxToDisplay = maxToDisplay
     }
 
 
+type alias Word = 
+    { word : String,
+      partOfSpeech: String,
+      tag: String
+  }
 
 -- UPDATE
 
 
 type Msg
-    = Hide String
-    | Show String
-    | Toggle String
+    = Hide Word
+    | Show Word
+    | Toggle Word
     | HideAll
     | ShowAll
-    | Add String
-    | Remove String
-    | ShowWords (List String)
+    | Add Word
+    | Remove Word
+    | ShowWords (List Word)
 
 
 type ChangeIt
@@ -99,7 +105,7 @@ update msg model =
             }
 
 
-toggleWords : ChangeIt -> List ( String, Bool ) -> List ( String, Bool )
+toggleWords : ChangeIt -> List ( Word, Bool ) -> List ( Word, Bool )
 toggleWords state words =
     List.map
         (\( w, b ) ->
@@ -116,7 +122,7 @@ toggleWords state words =
         words
 
 
-toggleWord : ChangeIt -> String -> List ( String, Bool ) -> List ( String, Bool )
+toggleWord : ChangeIt -> Word -> List ( Word, Bool ) -> List ( Word, Bool )
 toggleWord state word words =
     List.map
         (\( w, b ) ->
@@ -152,14 +158,17 @@ view model =
         wordbank
 
 
-viewWord : ( String, Bool ) -> Maybe (Html.Html msg)
+viewWord : ( Word, Bool ) -> Maybe (Html.Html msg)
 viewWord ( word, show ) =
-    case show of
-        True ->
-            Just (div [ class "word" ] [ text word ])
+    let
+        wordClass = String.join " " ["word", word.partOfSpeech, word.tag]
+    in
+        case show of
+            True ->
+                Just (div [ class wordClass ] [ text word.word ])
 
-        False ->
-            Nothing
+            False ->
+                Nothing
 
 
 countStyle : Attribute msg

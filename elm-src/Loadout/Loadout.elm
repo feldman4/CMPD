@@ -9,6 +9,7 @@ module Loadout.Loadout
         , subscriptions
         )
 
+import Wordbank exposing (Word)
 import Html exposing (text, div, span)
 import Html.Attributes exposing (id, class)
 import Html.App as App
@@ -34,13 +35,6 @@ aaa : List { partOfSpeech : String, word : String }
 aaa =
     [ { word = "Hello", partOfSpeech = "Adjective" }
     , { word = "There", partOfSpeech = "Noun" }
-    ]
-
-
-bbb : List { partOfSpeech : String, word : String }
-bbb =
-    [ { word = "Fuckers", partOfSpeech = "Adjective" }
-    , { word = "You", partOfSpeech = "Noun" }
     ]
 
 
@@ -76,7 +70,7 @@ initFromLongform words =
             words
                 |> List.sortBy (\( pos, word, load ) -> ( pos, word ))
                 |> List.filter predicate
-                |> List.map (\( pos, word, load ) -> { word = word, partOfSpeech = pos })
+                |> List.map (\( pos, word, load ) -> { word = word, partOfSpeech = pos, tag = "wordTag" })
 
         loaded =
             convert (\( pos, word, load ) -> load) words
@@ -119,9 +113,9 @@ sortWordsTuple words =
         |> List.filterMap identity
 
 
-nullWord : { partOfSpeech : String, word : String }
+nullWord : Word
 nullWord =
-    { word = "null", partOfSpeech = "Noun" }
+    { word = "null", partOfSpeech = "Noun", tag = "nullWordTag" }
 
 
 type alias Model =
@@ -140,10 +134,6 @@ type Msg
     | KeyPress Int
 
 
-type alias Word =
-    { word : String
-    , partOfSpeech : String
-    }
 
 
 
@@ -182,6 +172,7 @@ update msg model =
 
                 right =
                     getWord after
+
             in
                 if key == keycode.up then
                     { model | selected = up } ! []
@@ -219,8 +210,6 @@ update msg model =
                         , List.Extra.remove model.selected model.unloaded
                         )
 
-                a =
-                    Debug.log "used, capacity" ( used, capacity )
             in
                 if
                     (List.member model.selected model.unloaded)
@@ -348,8 +337,15 @@ viewPOS pos model =
 
         headingDiv =
             div [ class "heading" ] [ (span [] [ text (String.toLower pos) ]), capacityDiv ]
+
+
+        posIndex = case (List.Extra.elemIndex pos model.partsOfSpeech) of
+                        Just i ->
+                           i + 1 |> toString
+                        Nothing ->
+                            "0"
     in
-        div [ class ("pane " ++ pos) ]
+        div [ class ("pane " ++ pos ++ " pos-" ++ posIndex) ]
             [ headingDiv, wordsDiv ]
 
 

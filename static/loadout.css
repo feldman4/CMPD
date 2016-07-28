@@ -40,13 +40,6 @@ div.word.selected {
     height: 80%;
 }
 
-.pane.adjective {
-    color: green;
-}
-
-.pane.noun {
-    color: red;
-}
 
 .pane .heading {
     font-size: 4vw;
@@ -68,33 +61,46 @@ div.word.selected {
     height: 1.5vw;
 }
 
-.pane.adjective .capacity .led {
-    background-color: lightgreen;
-}
-
-.pane.noun .capacity .led {
-    background-color: pink;
-}
-
-.pane.adjective .capacity .used {
-    background-color: green;
-}
-
-.pane.noun .capacity .used {
-    background-color: red;
-}
-
 .pane .capacity .unused {
     background-color: transparent;
 }
 
-.word.loaded.adjective span {
+.pane.pos-1 .led,.pane.pos-1 .word.loaded span {
     background-color: lightgreen;
 }
 
-.word.loaded.noun span {
+.pane.pos-2 .led,.pane.pos-2 .word.loaded span {
     background-color: pink;
 }
+
+.pane.pos-3 .led,.pane.pos-3 .word.loaded span {
+    background-color: sandybrown;
+}
+
+.pane.pos-1 .capacity .used {
+    background-color: green;
+}
+
+.pane.pos-2 .capacity .used {
+    background-color: red;
+}
+
+.pane.pos-3 .capacity .used {
+    background-color: chocolate;
+}
+
+.pane.pos-1 {
+    color: green;
+}
+
+.pane.pos-2 {
+    color: red;
+}
+
+.pane.pos-3 {
+    color: chocolate;
+}
+
 
 @media (min-width: 600px) {
     .pane .heading {

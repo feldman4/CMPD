@@ -1,10 +1,14 @@
 from flask import Flask, render_template, url_for, redirect, session
 from flask_socketio import emit, SocketIO
+from gspread import WorksheetNotFound
 import random
+from glob import glob
+import json
 import os
 import uuid
 
 import cmpd_web
+from cmpd_web import Place
 
 app = Flask(__name__)
 app.session_interface = cmpd_web.CMPDSessionInterface()
@@ -22,15 +26,22 @@ def map():
 def index():
     return redirect(url_for('versus_enemy', enemy='ctenophora'))
 
+@app.route('/vocab/<string:vocab>')
+def vocab(vocab):
+    try:
+        dump = json.dumps(cmpd_web.load_vocab(vocab, reload=True), indent=4)
+        return dump.replace('\n', '<br/>').replace(' ', '&nbsp;')
+    except Exception as e:
+        return 'Error retrieving %s: %s' % (vocab, e.__repr__())
+
 
 @app.route('/bas<string:flavor>')
 def base(flavor):
     """Show a demo powered by Elm or only JS.
     """
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
+    vocab = cmpd_web.load_vocab('DIDB')
 
-    session['base'] = cmpd_web.Base(adjectives, nouns)
+    session['base'] = cmpd_web.Base(vocab[0], vocab[1])
 
     template = 'bas%s.html' % flavor
     return render_template(template, wordbank=session['base'].wordbank,
@@ -77,8 +88,8 @@ def reply(insult):
 
 
 @socketio.on('INSULT', namespace='/map')
-def reply(insult):
-    session['map_GM'].reply(insult, emit)
+def insult(insult):
+    session['map_GM'].insult(insult, emit)
 
 
 @socketio.on('INITIALIZE', namespace='/map')
@@ -90,12 +101,9 @@ def initialize_map(message):
               (0.19, 0.68, 'x', 'ctenophora'), 
               (0.80, 0.22, 'y', 'derp'),
               (0.74, 0.71, 'z', 'underground')]
-    places = [{'x': x, 'y': y, 'label': l, 'enemy': e} for (x,y,l,e) in places]
+    places = [Place(*p) for p in places]
+    player_vocab = cmpd_web.load_vocab('derp')
 
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
-    vocab = [('adjective', sorted(set(adjectives))),
-             ('noun', sorted(set(nouns)))]
 
     enemies = {}
     for enemy in cmpd_web.stable:
@@ -104,19 +112,21 @@ def initialize_map(message):
                                             filename=enemies[enemy]['image'])
         print enemies[enemy]['image']
 
-    GM = cmpd_web.GameMaster(places, enemies, vocab, map_src)
+    
+    player = cmpd_web.Player(player_vocab, None, capacity=6)
+    GM = cmpd_web.GameMaster(places, enemies, player, map_src)
     GM.initialize(emit)
     session['map_GM'] = GM
 
 
 @socketio.on('REQUEST_ENCOUNTER', namespace='/map')
 def send_encounter(message):
-    print message
+    print 'request encounter\n' , message
     enemy = message['enemy']
     player = message['player']
     GM = session['map_GM']
 
-    GM.update_player(player)
+    GM.player.model = player
 
     # GM checks its enemies list, initializes w/ vocab
     GM.request_encounter(enemy, emit)
@@ -134,10 +144,7 @@ def send_encounter(message):
     enemy_image =  url_for('static', filename=enemy['image'])
     emit('SEND_ENCOUNTER', {'image': enemy_image})
 
-    adjectives = [p.split(' ')[0]  for p in cmpd_web.DIDB_phrases]
-    nouns      = [p.split(' ')[-1] for p in cmpd_web.DIDB_phrases]
-    vocab = [('JJ', sorted(set(adjectives))),
-             ('NN', sorted(set(nouns)))]
+    vocab = cmpd_web.load_vocab('DIDB')
 
     # this will initialize, emitting UPDATE_WORDBANK
     session['versus'] = enemy['class'](vocab, emit)

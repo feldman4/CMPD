@@ -1,7 +1,7 @@
 port module Versus exposing (..)
 
 import Bar
-import Wordbank
+import Wordbank exposing (Word)
 import Html exposing (Html, button, div, text, img, input, Attribute)
 import Html.Attributes exposing (value, placeholder, id, src, class, autofocus, itemprop)
 import Html.App as App
@@ -48,7 +48,7 @@ type alias Model =
     }
 
 
-init : List String -> String -> Int -> ( Model, Cmd Msg )
+init : List Word -> String -> Int -> ( Model, Cmd Msg )
 init words enemyImage maxToDisplay =
     let
         model =
@@ -84,7 +84,7 @@ inputID =
 
 type Msg
     = NoOp
-    | NewWordbank (List String)
+    | NewWordbank (List Word)
     | UpdateWordbank Wordbank.Msg
     | UpdateAddInput String
     | AskSuggestions String
@@ -121,12 +121,18 @@ update message model =
             update (AskSuggestions input) { model | addInput = input }
 
         AskSuggestions word ->
-            ( model, askFuse ( word, List.map fst model.wordbank.words ) )
+            ( model, askFuse ( word, List.map (\(w, visible) -> w.word) model.wordbank.words ) )
 
         Suggest suggestions ->
+            let 
+                wordbankWords = model.wordbank.words
+
+                suggestionWords = List.filter (\(w, visible) -> List.member w.word suggestions) wordbankWords 
+                        |> List.map (\(w, visible) -> w)
+            in
             { model
                 | wordbank =
-                    Wordbank.update (Wordbank.ShowWords suggestions)
+                    Wordbank.update (Wordbank.ShowWords suggestionWords)
                         model.wordbank
             }
                 ! []
@@ -192,7 +198,7 @@ update message model =
                     ! []
 
 
-showWordbankWord : String -> Wordbank.Model -> Wordbank.Model
+showWordbankWord : Word -> Wordbank.Model -> Wordbank.Model
 showWordbankWord word model =
     Wordbank.update (Wordbank.Show word) model
 
@@ -277,7 +283,7 @@ onEnter msg =
 port askFuse : ( String, List String ) -> Cmd msg
 
 
-port sendInsult : ( String, Float ) -> Cmd msg
+port sendInsult : ( Word, Float ) -> Cmd msg
 
 
 port scrollTop : String -> Cmd msg
@@ -290,7 +296,7 @@ port scrollTop : String -> Cmd msg
 port setEnemyImage : (String -> msg) -> Sub msg
 
 
-port newWordbank : (List String -> msg) -> Sub msg
+port newWordbank : (List Word -> msg) -> Sub msg
 
 
 port suggestions : (List String -> msg) -> Sub msg
