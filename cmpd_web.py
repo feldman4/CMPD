@@ -385,6 +385,8 @@ def load_sheet(worksheet, g_file='CMPD'):
 
     
 
+    json_key = make_gspread_json()
+    
     from oauth2client.service_account import ServiceAccountCredentials
     import gspread
 
