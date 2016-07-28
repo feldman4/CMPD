@@ -154,6 +154,7 @@ def send_encounter(message):
 
 if __name__ == '__main__':
 
+    cmpd_web.app = app
     cmpd_web.make_gspread_json()
 
     socketio.run(app)

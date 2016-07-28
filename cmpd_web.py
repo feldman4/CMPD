@@ -12,6 +12,10 @@ from Crypto.Cipher import AES
 
 import pandas as pd
 
+
+local_app = Flask(__name__)
+json_key = ''
+
 flask_to_js = {
   'REMARK': 'REMARK',
   'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
@@ -27,19 +31,22 @@ js_to_flask = {
   'UPDATE_PLAYER': 'UPDATE_PLAYER'
 }
 
+
+
 def load_phrases(path):
     with open(path, 'r') as fh:
         return fh.read().split('\n')
 
 
 def make_gspread_json():
-    with open('resources/crypt.json', 'r') as fh:
+    global json_key
+    with local_app.open_resource('resources/crypt.json', 'r') as fh:
         key1, key2 = os.environ['KEY1'], os.environ['KEY2']
         text = fh.read()
         aes = AES.new(key1, AES.MODE_CBC, key2)
-        text = aes.decrypt(text)
-    with open('resources/key.json', 'w') as fh:
-        fh.write(text)
+        json_key = json.loads(aes.decrypt(text))
+
+    
 
 def load_elm_helpers(path):
   """ Load socket message names from static/elm-helpers.js
@@ -366,9 +373,8 @@ class LocalEncounter(GameMaster):
             print '#' * width
 
 
-google_json_key = 'resources/key.json'
 
-def load_sheet(worksheet, g_file='CMPD', credentials=google_json_key):
+def load_sheet(worksheet, g_file='CMPD'):
     """Load sheet as array of strings (drops .xls style index)
     gspread allows for .xlsx export as well, which can capture style info.
     :param worksheet: provide None to return a dictionary of all sheets
@@ -377,11 +383,13 @@ def load_sheet(worksheet, g_file='CMPD', credentials=google_json_key):
     """
     # see http://gspread.readthedocs.org/en/latest/oauth2.html
 
+    
+
     from oauth2client.service_account import ServiceAccountCredentials
     import gspread
 
     scope = ['https://spreadsheets.google.com/feeds']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(google_json_key, scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_key, scope)
     gc = gspread.authorize(credentials)
     xsheet = gc.open(g_file)
 
