@@ -157,10 +157,12 @@ if __name__ == '__main__':
     cmpd_web.app = app
     cmpd_web.json_key = cmpd_web.make_gspread_json()
 
+    print cmpd_web.json_key[:30]
     socketio.run(app)
 
     path = url_for('static', filename='/elm-helpers.js')
     cmpd_web.load_elm_helpers(path)
+    print cmpd_web.json_key[:30]
 
 
 
