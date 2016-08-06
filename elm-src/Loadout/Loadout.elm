@@ -1,4 +1,4 @@
-module Loadout.Loadout
+port module Loadout.Loadout
     exposing
         ( Model
         , Msg(..)
@@ -16,35 +16,41 @@ import Html.App as App
 import Keyboard
 import List
 import List.Extra
-import String
-import Debug
 
 
 main : Program Never
 main =
     App.program
-        { --init = (init aaa bbb) ! []
-          init = initFromLongform ccc ! []
+        { init = init [] dummyWords dummyCapacity ! []
         , update = update
         , view = view
         , subscriptions = subscriptions
         }
 
 
-aaa : List { partOfSpeech : String, word : String }
-aaa =
-    [ { word = "Hello", partOfSpeech = "Adjective" }
-    , { word = "There", partOfSpeech = "Noun" }
-    ]
+dummyWords : List Word
+dummyWords =
+    let
+        makeWord word pos =
+            { word = word, partOfSpeech = pos, tag = "" }
+
+        words =
+            [ ( "Chunky", "Adjective" )
+            , ( "Unregenerate", "Adjective" )
+            , ( "Ridiculous", "Adjective" )
+            , ( "Horse Thief", "Noun" )
+            , ( "Coward", "Noun" )
+            , ( "Johnny-Come-Lately", "Noun" )
+            , ( "Buffoon", "Noun" )
+            , ( "French", "Adjective" )
+            ]
+    in
+        List.map (\( w, p ) -> makeWord w p) words
 
 
-ccc : List ( String, String, Bool )
-ccc =
-    [ ( "Adjective", "Fuckers", False )
-    , ( "Noun", "You", False )
-    , ( "Adjective", "Hello", True )
-    , ( "Noun", "There", True )
-    ]
+dummyCapacity : List ( String, Int )
+dummyCapacity =
+    [ ( "Adjective", 3 ), ( "Noun", 3 ) ]
 
 
 
@@ -135,8 +141,6 @@ type Msg
 
 
 
-
-
 -- UPDATE
 
 
@@ -172,7 +176,6 @@ update msg model =
 
                 right =
                     getWord after
-
             in
                 if key == keycode.up then
                     { model | selected = up } ! []
@@ -209,7 +212,6 @@ update msg model =
                         ( sortWords (model.loaded ++ [ model.selected ])
                         , List.Extra.remove model.selected model.unloaded
                         )
-
             in
                 if
                     (List.member model.selected model.unloaded)
@@ -253,6 +255,9 @@ getBeforeAfter predicate list backup =
                     backup
     in
         ( before, after )
+
+
+port scrollTop : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg
@@ -319,7 +324,9 @@ viewPOS pos model =
             div [ class "words" ]
                 ((List.map (\( word, load ) -> viewWord word load (word == selected))
                     wordsWithPOS
-                ) ++ [div [class "scroll-dummy"] []])
+                 )
+                    ++ [ div [ class "scroll-dummy" ] [] ]
+                )
 
         capacity =
             getPosCapacity model pos
@@ -336,14 +343,15 @@ viewPOS pos model =
                 )
 
         headingDiv =
-            div [ class "heading" ] [ (span [] [ text (String.toLower pos) ]), capacityDiv ]
+            div [ class "heading" ] [ (span [] [ text pos ]), capacityDiv ]
 
+        posIndex =
+            case (List.Extra.elemIndex pos model.partsOfSpeech) of
+                Just i ->
+                    i + 1 |> toString
 
-        posIndex = case (List.Extra.elemIndex pos model.partsOfSpeech) of
-                        Just i ->
-                           i + 1 |> toString
-                        Nothing ->
-                            "0"
+                Nothing ->
+                    "0"
     in
         div [ class ("pane " ++ pos ++ " pos-" ++ posIndex) ]
             [ headingDiv, wordsDiv ]

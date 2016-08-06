@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Map</title>
+	<title>{{elm_component}}</title>
 
     <script type="text/javascript" src="/static/fuse.js"></script>
     <script type="text/javascript" src="/static/socket.io.min.js"></script>
@@ -24,8 +24,7 @@
 <body>
     <script>
     	// Elm js hosted remotely for compatibility with Heroku...
-    	var local_elm_js = "/static/Map.js"
-    	var hosted_elm_js = "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mUFNpekI4QUVxdnM"
+    	var elmComponent = {{elm_component}}
 
 		var app 
 		var socketRoom = '/map'
@@ -50,6 +49,7 @@
 
             //// ELM -> JS    ////
             scrollTop(app)
+            scrollParent(app)
             setFocus(app)
             askFuse(app)
 
@@ -65,8 +65,10 @@
 
 		$(document).ready(function() {
 
+                [localElmJS, hostedElmJS] = elmJS[elmComponent]
+
 				documentReady(socketRoom)
-		        getScriptLocalHosted(local_elm_js, hosted_elm_js, launchElm)
+		        getScriptLocalHosted(localElmJS, hostedElmJS, launchElm)
 
 		    }
 		)

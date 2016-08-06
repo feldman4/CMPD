@@ -18,17 +18,22 @@ socketio = SocketIO(app)
 
 
 
-
+@app.route('/components/<string:elm_component>')
+def component(elm_component):
+    # component names and files are uppercase, like Elm.js
+    elm_component = elm_component[0].upper() + elm_component[1:]
+    print 'rendering component', elm_component
+    return render_template('base.html', elm_component=elm_component)
 
 @app.route('/map')
 def map():
     session['map'] = 'islands'
-    return render_template('map.html')
+    return render_template('base.html', elm_component='Map')
 
 @app.route('/map/<string:map_name>')
 def custom_map(map_name):
     session['map'] = map_name
-    return render_template('map.html')
+    return render_template('map.html', elm_component='Map')
 
 
 @app.route('/')

@@ -410,15 +410,22 @@ def load_sheet(worksheet, g_file='CMPD'):
 
 
 def load_vocab(sheet, reload=False):
+  """ Load columns of google sheet into vocab of type [(header, [word])]. 
+  No entry for empty header. Empty and duplicate words removed.
+
+  Uses local cached json if reload is False and file exists.
+  """
   path = 'resources/vocab/%s.json' % sheet
 
   def load_remote(sheet):
+
       sheet = load_sheet(sheet)
       df = pd.DataFrame(sheet[1:], columns=sheet[0])
       vocab = []
       for col in df:
-          words = [w for w in df[col] if w]
-          vocab += [(col, words)]
+          if col:
+              words = sorted(set([w for w in df[col] if w]))
+              vocab += [(col, words)]
 
       with open(path, 'w') as fh:
           json.dump(vocab, fh, indent=4)

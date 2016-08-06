@@ -1,4 +1,12 @@
 
+////////////////////// COMPONENTS //////////////////////
+
+elmJS = {
+	Map: ["/static/Map.js", "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mUFNpekI4QUVxdnM"],
+	Loadout: ["/static/Loadout.js", ""],
+}
+
+
 ////////////////////// SOCKET MESSAGES //////////////////////
 
 flask_to_js = {
@@ -142,7 +150,11 @@ function askFuse(app) {
 
 function scrollTop(app) {
 
-	app.ports.scrollTop.subscribe(scrollSelector)
+	app.ports.scrollTop.subscribe(scrollTop)
+}
+
+function scrollParent(app) {
+	app.ports.scrollParent.subscribe(scrollParent)
 }
 
 function setFocus(app) {
@@ -154,12 +166,21 @@ function setFocus(app) {
 
 
 // helper to deal with scrolling (not in elm?)
-function scrollSelector(selector) {
+function scrollTop(selector) {
 	var $d = $(selector)
 	setTimeout(function() {
 		$d.scrollTop($d[0].scrollHeight);
 	}, timeoutDelay)
+}
 
+// scrolls a parent the minimum distance to keep selected child visible
+function scrollParent(selector) {
+	var $child = $(selector)
+	var $parent = $(selector).parent()
+	var height = 0
+	setTimeout(function() {
+		$parent.scrollTop(height)
+	}, timeoutDelay)
 }
 
 function focusSelector(selector) {
