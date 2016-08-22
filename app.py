@@ -18,27 +18,10 @@ socketio = SocketIO(app)
 
 
 
-@app.route('/components/<string:elm_component>')
-def component(elm_component):
-    # component names and files are uppercase, like Elm.js
-    elm_component = elm_component[0].upper() + elm_component[1:]
-    print 'rendering component', elm_component
-    return render_template('base.html', elm_component=elm_component)
-
-@app.route('/map')
-def map():
-    session['map'] = 'islands'
-    return render_template('base.html', elm_component='Map')
-
-@app.route('/map/<string:map_name>')
-def custom_map(map_name):
-    session['map'] = map_name
-    return render_template('map.html', elm_component='Map')
-
-
 @app.route('/')
 def index():
-    return redirect(url_for('versus_enemy', enemy='ctenophora'))
+    return redirect(url_for('custom_map', map_name='ovaloffice'))
+
 
 @app.route('/vocab/<string:vocab>')
 def vocab(vocab):
@@ -49,17 +32,44 @@ def vocab(vocab):
         return 'Error retrieving %s: %s' % (vocab, e.__repr__())
 
 
-@app.route('/bas<string:flavor>')
-def base(flavor):
-    """Show a demo powered by Elm or only JS.
-    """
-    vocab = cmpd_web.load_vocab('DIDB')
+@app.route('/components')
+def show_components():
+    return redirect(url_for('component', elm_component='none'))
 
-    session['base'] = cmpd_web.Base(vocab[0], vocab[1])
+@app.route('/components/<string:elm_component>')
+def component(elm_component):
+    # component names and files are uppercase, like Elm.js
+    elm_component = elm_component[0].upper() + elm_component[1:]
 
-    template = 'bas%s.html' % flavor
-    return render_template(template, wordbank=session['base'].wordbank,
-        enemy=url_for('static', filename='images/cyclops.jpg'))
+    defined_components = ('Map', 'Loadout', 'Menu', 'Versus')
+    if elm_component not in defined_components:
+        return '<h3>fuck you</h3> <p>try one of %s</p>' % (defined_components,)
+        
+    # elif elm_component == 'Versus':
+    # some components need setup
+
+    else:
+        return render_template('base.html', elm_component=elm_component)
+        
+
+@app.route('/map')
+def default_map():
+    return redirect(url_for('custom_map', map_name='islands'))
+
+@app.route('/map/<string:map_name>')
+def custom_map(map_name):
+    # session['initialize'] is a function called by INITIALIZE message after elm loads
+    session['initialize'] = cmpd_web.initialize_map(map_name)
+    return render_template('base.html', elm_component='Map')
+
+@app.route('/harlowe/<string:harlowe_name')
+def launch_harlowe(harlowe_name):
+    GM = cmpd_web.GameMaster([], '', player)
+    GM.load_html('resources/harlowe/' + harlowe_name)
+    session['GM'] = GM
+    session['initialize'] = GM.initialize
+    return render_template('base.html', elm_component='Map')
+
 
 
 @app.route('/versus/')
@@ -69,7 +79,9 @@ def versus():
 
 @app.route('/versus/<string:enemy>')
 def versus_enemy(enemy):
-
+    """ Not currently working. Should render base.html with Versus component and set initialize function to create GameMaster and begin encounter.
+    Beginning encounter requires sending 
+    """
     print cmpd_web.stable
 
     if enemy not in cmpd_web.stable:
@@ -89,84 +101,40 @@ def versus_enemy(enemy):
     return render_template('versus.html')
 
 
-@socketio.on('INSULT', namespace='/base')
-def reply(insult):
-    session['base'].emit = emit
-    session['base'].reply(insult)
 
-
-@socketio.on('INSULT', namespace='/versus')
-def reply(insult):
-    session['versus'].emit = emit
-    session['versus'].reply(insult)
-
-
-@socketio.on('INSULT', namespace='/map')
+@socketio.on('INSULT')
 def insult(insult):
-    session['map_GM'].insult(insult, emit)
+    session['emit'] = emit
+    session['GM'].insult(insult)
 
 
-@socketio.on('INITIALIZE', namespace='/map')
-def initialize_map(message):
-    map_name = session['map']
-    print 'initializing map: %s' % map_name
+@socketio.on('INITIALIZE')
+def initialize(message):
+    # elm app triggers this when it is ready
+    session['emit'] = emit
+    session['initialize']()
 
-    map_image = cmpd_web.maps[map_name]['image']
-    places = cmpd_web.maps[map_name]['places']
-    places = [Place(*p) for p in places]
-    player_vocab = cmpd_web.load_vocab(cmpd_web.maps[map_name]['vocab'])
-    
-    new_vocab = []
-    for pos, words in player_vocab:
-        words = list(words)
-        random.shuffle(words)
-        new_vocab += [(pos, words[:12])]
-    player_vocab = new_vocab
-
-    map_src = url_for('static', filename=map_image)
-
-    enemies = {}
-    for enemy in cmpd_web.stable:
-        enemies[enemy] = dict(cmpd_web.stable[enemy])
-        enemies[enemy]['image'] = url_for('static', 
-                                            filename=enemies[enemy]['image'])
-
-    print player_vocab
-    player = cmpd_web.Player(player_vocab, None, capacity=6)
-    GM = cmpd_web.GameMaster(places, enemies, player, map_src)
-    GM.initialize(emit)
-    session['map_GM'] = GM
+@socketio.on('SEND_TRANSITION')
+def transition(message):
+    node = message['node']
+    session['GM'].transition(node)
 
 
-@socketio.on('REQUEST_ENCOUNTER', namespace='/map')
+@socketio.on('REQUEST_ENCOUNTER')
 def send_encounter(message):
-    print 'request encounter\n' , message
+    session['emit'] = emit
+
     enemy = message['enemy']
     player = message['player']
-    GM = session['map_GM']
+    GM = session['GM']
 
-    GM.player.update(player)
+    # updates the loaded vocab
+    # should probably do this when loaded changes
+    GM.player.model.update(player)
 
     # GM checks its enemies list, initializes w/ vocab
-    GM.request_encounter(enemy, emit)
+    GM.request_encounter(enemy)
 
-
-
-@socketio.on('REQUEST_ENCOUNTER', namespace='/versus')
-def send_encounter(message):
-
-    message['encounter']
-
-    enemy = session['versus_enemy']
-    print 'requested versus', enemy
-
-    enemy_image =  url_for('static', filename=enemy['image'])
-    emit('SEND_ENCOUNTER', {'image': enemy_image})
-
-    vocab = cmpd_web.load_vocab('DIDB')
-
-    # this will initialize, emitting UPDATE_WORDBANK
-    session['versus'] = enemy['class'](vocab, emit)
 
 
 if __name__ == '__main__':

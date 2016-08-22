@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CMPD-Base</title>
+
+	<!-- doesn't work on heroku -->
+	<script type="text/javascript" src="/static/Loadout.js"></script>
+
+    <script type="text/javascript" src="/static/fuse.js"></script>
+    <script type="text/javascript" src="/static/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/elm-helpers.js"></script>
+
+    <!-- needs native alternative to $.getScript -->
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+
+    <script src="/static/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+
+
+    <link href="/static/main.css" rel="stylesheet">
+    <link href="/static/menu.css" rel="stylesheet">
+    <link href="/static/loadout.css" rel="stylesheet">
+
+    <title></title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+    <script>
+
+    	var app
+
+		var local_elm_js = "/static/Loadout.js"
+		
+
+		function launchElm(){
+			app = Elm.Loadout.fullscreen()
+		}
+		$(document).ready(launchElm)
+
+    </script>
+</body>
+</html>

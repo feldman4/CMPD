@@ -107,7 +107,7 @@ initFromLongform words =
 
 sortWords : List Word -> List Word
 sortWords words =
-    List.sortBy (\w -> w.word) words
+    List.sortBy (\w -> ( w.partOfSpeech, w.word )) words
 
 
 sortWordsTuple : List ( Word, a ) -> List ( Word, a )
@@ -212,6 +212,9 @@ update msg model =
                         ( sortWords (model.loaded ++ [ model.selected ])
                         , List.Extra.remove model.selected model.unloaded
                         )
+
+                wordCompare word =
+                    ( .partOfSpeech word, .word word )
             in
                 if
                     (List.member model.selected model.unloaded)
@@ -255,9 +258,6 @@ getBeforeAfter predicate list backup =
                     backup
     in
         ( before, after )
-
-
-port scrollTop : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg

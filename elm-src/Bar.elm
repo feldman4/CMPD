@@ -2,26 +2,13 @@ module Bar exposing (Model, Msg(..), init, update, view)
 
 import Html exposing (text, div, button)
 import Html.Attributes exposing (id, class, style)
-import Html.Events exposing (onClick, onInput, keyCode, on, onSubmit)
-import Html.App as App
 import Time
-import List
 import String
 import AnimationFrame
 import Animation exposing (Animation, animation, from, to, duration, animate, static)
 
 
---main : Program Never
---main =
---    App.program
---        { init = ( init 0.5 True, Cmd.none )
---        , update =
---            (\msg model -> ( update msg model, Cmd.none ))
---        , view = view
---        , subscriptions = subscriptions
---        }
 -- MODEL
--- value from 0 to 1
 
 
 type alias AttributeList =
@@ -62,7 +49,7 @@ init value horizontal =
 
 
 type Msg
-    = Value Float
+    = ChangeValue Float
     | Tick Time.Time
     | Duration Time.Time
 
@@ -70,7 +57,7 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Value value ->
+        ChangeValue value ->
             let
                 newAnimation =
                     animation model.clock
@@ -104,10 +91,6 @@ defaultBoxClasses =
     [ "bar-box" ]
 
 
-
--- ++ [ style [ ( "backgroundColor", "gray" ) ] ]
-
-
 defaultSliderAttributes : AttributeList
 defaultSliderAttributes =
     []
@@ -118,11 +101,7 @@ defaultSliderClasses =
     [ "bar-slider" ]
 
 
-
--- ++ [ style [ ( "backgroundColor", "red" ) ] ]
---view : Model -> Html.Html Msg
-
-
+view : Model -> Html.Html Msg
 view model =
     let
         progress =

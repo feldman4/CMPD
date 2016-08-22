@@ -4,25 +4,27 @@
 elmJS = {
 	Map: ["/static/Map.js", "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mUFNpekI4QUVxdnM"],
 	Loadout: ["/static/Loadout.js", ""],
+	Menu: ["/static/Menu.js", ""],
+	Versus: ["/static/Versus.js", ""]
 }
 
 
 ////////////////////// SOCKET MESSAGES //////////////////////
 
 flask_to_js = {
-	'REMARK': 'REMARK',
-	'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
+	'SEND_REMARK': 'SEND_REMARK',
+	'SEND_WORDBANK': 'SEND_WORDBANK',
 	'SEND_ENCOUNTER': 'SEND_ENCOUNTER',
 	'SEND_MAP': 'SEND_MAP',
-	'CHANGE_ENEMY': 'CHANGE_ENEMY',
-	'SEND_PLAYER' : 'SEND_PLAYER'
+	'SEND_ENEMY': 'SEND_ENEMY',
+	'SEND_PLAYER' : 'SEND_PLAYER',
 }
 
 js_to_flask = {
-	'INSULT': 'INSULT', 
-	'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER',
-	'UPDATE_PLAYER': 'UPDATE_PLAYER',
-	'INITIALIZE': 'INITIALIZE'
+	'SEND_INSULT': 'SEND_INSULT', 
+	'SEND_TRANSITION': 'SEND_TRANSITION',
+	'SEND_LOADOUT': 'SEND_LOADOUT',
+	'INITIALIZE': 'INITIALIZE',
 }
 
 
@@ -52,21 +54,21 @@ function getScriptLocalHosted(local, hosted, success) {
 
 ////////////////////// FLASK -> ELM //////////////////////
 
-function updateWordbank(app) {
+function sendWordbank(app) {
 	// initializes wordbank from server
-	socket.on(flask_to_js.UPDATE_WORDBANK, function(data) {
-	        app.ports.newWordbank.send(data)
+	socket.on(flask_to_js.SEND_WORDBANK, function(data) {
+	        app.ports.setWordbank.send(data)
 	    })
 }
 
 
-function remark(app) {
-	socket.on(flask_to_js.REMARK, function(data) {
-			app.ports.remark.send(data)
+function sendRemark(app) {
+	socket.on(flask_to_js.SEND_REMARK, function(data) {
+			app.ports.addRemark.send(data)
 	})
 }
 
-function changeEnemy(app) {
+function sendEnemy(app) {
 	socket.on(flask_to_js.CHANGE_ENEMY, function(data) {
 		
 		app.ports.setEnemyImage.send(data.image)
@@ -75,7 +77,7 @@ function changeEnemy(app) {
 
 function sendEncounter(app) {
 	socket.on(flask_to_js.SEND_ENCOUNTER, function(data) {
-		app.ports.setEnemyImage.send(data.image)
+		app.ports.setEnemy.send(data)
 
 	})
 }
@@ -98,6 +100,8 @@ function initialize() {
 	socket.emit(js_to_flask.INITIALIZE, {})
 }
 
+
+
 ////////////////////// ELM -> FLASK //////////////////////
 
 // pass input words on to flask
@@ -105,7 +109,7 @@ function sendInsult(app) {
 	app.ports.sendInsult.subscribe(function(comm) {
 		var word = comm[0]
 		var progress = comm[1]
-		socket.emit(js_to_flask.INSULT, {
+		socket.emit(js_to_flask.SEND_INSULT, {
 			word: word,
 			progress: progress
 		})
@@ -113,20 +117,21 @@ function sendInsult(app) {
 
 }
 
-function requestEncounter(app) {
-	app.ports.requestEncounter.subscribe(function(comm) {
-		var enemy = comm[0]
-		var player = comm[1]
-		socket.emit(js_to_flask.REQUEST_ENCOUNTER, {
-			enemy: enemy,
-			player: player
+// transition Map, Encounter, Message, etc
+function sendTransition(app) {
+	app.ports.sendTransition.subscribe(function(comm) {
+		var name = comm[0]
+		socket.emit(js_to_flask.SEND_TRANSITION, {
+			name: name
 		})
 	})
-}
 
-function updatePlayer(app) {
-	app.ports.updatePlayer.subscribe(function(player) {
-		socket.emit(js_to_flask.UPDATE_PLAYER, player)
+}
+	 
+
+function sendLoadout(app) {
+	app.ports.sendLoadout.subscribe(function(player) {
+		socket.emit(js_to_flask.SEND_LOADOUT, player)
 	})
 }
 

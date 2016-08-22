@@ -20,8 +20,8 @@ import Char
 init : List Tile -> String -> Model
 init tiles id =
     { tiles = tiles
-    , id = id
     , lastKey = 0
+    , id = id
     , active = True
     }
 

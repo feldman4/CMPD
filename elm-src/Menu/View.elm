@@ -1,8 +1,8 @@
 module Menu.View exposing (view, viewMap)
 
 import Menu.Types exposing (..)
-import Html exposing (text, div, Html, span)
-import Html.Attributes exposing (id, class, attribute, style)
+import Html exposing (text, div, Html, span, img)
+import Html.Attributes exposing (id, class, attribute, style, src)
 import String
 import Char
 
@@ -36,7 +36,8 @@ viewMap model =
     in
         div [ id model.id, class "map-menu", lastKeyAtt ]
             (List.map getTileContents model.tiles)
-
+        
+        
 
 
 -- helper functions
@@ -51,7 +52,7 @@ viewTile tile selected =
             else
                 ""
     in
-        div [ id tile.id, class ("tile " ++ tile.label ++ tag) ]
+        div [ class ("tile " ++ tile.label ++ tag) ]
             [ div [ class "tile-key" ] [ span [] [ text (String.fromChar tile.key) ] ]
             , div [ class "tile-label" ] [ span [] [ text tile.label ] ]
             ]
@@ -73,7 +74,7 @@ viewTileXY tile selected =
                 , ( "top", tile.y |> toPercent )
                 ]
     in
-        div [ id tile.id, class ("tile " ++ tile.label ++ tag), placeStyle ]
+        div [ class ("tile " ++ tile.label ++ tag), placeStyle ]
             [ div [ class "tile-key" ] [ span [] [ text (String.fromChar tile.key) ] ]
             , div [ class "tile-label" ] [ span [] [ text tile.label ] ]
             ]

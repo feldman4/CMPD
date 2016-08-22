@@ -27,25 +27,32 @@
     	var elmComponent = "{{elm_component}}"
 
 		var app 
-		var socketRoom = '/map'
+		var socketRoom = '/'
 
 		function launchElm(){
-			app = Elm[elmComponent][elmComponent].fullscreen()
+            var elmApp = Elm[elmComponent]
+            // object structure here depends on path to elm module, e.g.,
+            // top-level Component vs Component.Component 
+            if (elmApp.hasOwnProperty(elmComponent)) {
+                elmApp = elmApp[elmComponent]
+            }
+			app = elmApp.fullscreen()
 
 			// register communication to/from elm, flask
-			
+			// ports missing from Elm component will throw an error in browser
+
 			//// FLASK -> ELM ////
-        	updateWordbank(app)
-            remark(app)
-            changeEnemy(app)
+            sendRemark(app)
+            sendWordbank(app)
+            sendEnemy(app)
             sendEncounter(app)
             sendMap(app)
             sendPlayer(app)
 
             //// ELM -> FLASK ////
             sendInsult(app)
-            requestEncounter(app)
-            updatePlayer(app)
+            sendTransition(app)
+            sendLoadout(app)
 
             //// ELM -> JS    ////
             scrollTop(app)

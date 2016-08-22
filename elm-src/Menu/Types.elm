@@ -12,7 +12,6 @@ type alias Model =
 type alias Tile =
     { label : String
     , key : Char
-    , id : String
     , x : Float
     , y : Float
     }
@@ -22,3 +21,7 @@ type Msg
     = KeyPress Int
     | Activate Bool
     | NoOp
+
+keycode : { escape : Int, shift : Int, space : Int, enter : Int }
+keycode =
+    { enter = 13, shift = 16, space = 32, escape = 27 }

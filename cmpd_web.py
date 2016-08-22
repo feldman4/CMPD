@@ -1,4 +1,4 @@
-from flask import url_for, Flask
+from flask import url_for, Flask, session
 from flask.sessions import SessionMixin, SessionInterface
 import re
 import random
@@ -12,13 +12,15 @@ from Crypto.Cipher import AES
 
 import pandas as pd
 
+from external.harlowe_extra import html_to_nodes, Map, Place
+
 
 local_app = Flask(__name__)
 json_key = ''
 
 flask_to_js = {
-  'REMARK': 'REMARK',
-  'UPDATE_WORDBANK': 'UPDATE_WORDBANK',
+  'SEND_REMARK': 'SEND_REMARK',
+  'SEND_WORDBANK': 'SEND_WORDBANK',
   'SEND_ENCOUNTER': 'SEND_ENCOUNTER',
   'SEND_MAP': 'SEND_MAP',
   'CHANGE_ENEMY': 'CHANGE_ENEMY',
@@ -30,6 +32,11 @@ js_to_flask = {
   'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER',
   'UPDATE_PLAYER': 'UPDATE_PLAYER'
 }
+
+Place  = namedtuple('Place',  'x y label enemy')
+Remark = namedtuple('Remark', 'insult retort score')
+Enemy  = namedtuple('Enemy',  'name image cls vocab')
+# Enemy = namedtuple('Enemy', 'image name health')
 
 
 
@@ -70,22 +77,20 @@ def load_elm_helpers(path):
     flask_to_js =  eval(match[0])
 
 
-Place = namedtuple('Place', 'x y label enemy')
-
-Remark = namedtuple('Remark', 'insult retort score')
-
 class Word(namedtuple('Word', 'word partOfSpeech tag')):
   # namedtuple with defaults
     def __new__(cls, word, partOfSpeech, tag=''):
         return super(Word, cls).__new__(cls, word, partOfSpeech, tag)
 
 
-class Enemy(object):
-    def __init__(self, vocab, view):
-        
+class Opponent(object):
+    def __init__(self, vocab, model):
+        """ Opponent has vocab, grammar, model (health etc). Created from 
+        Enemy template.
+        """
         self.vocab = vocab
         self.grammar = None
-        self.view = view
+        self.model = model
         
     def retort(self, insult, remarks):
         """ Retorts from provided vocab.
@@ -134,10 +139,6 @@ class Player(object):
 
         return next_words
 
-    def update(self, model):
-        model['loaded'] = sorted(model['loaded'])
-        model['unloaded'] = sorted(model['unloaded'])
-        self.model = model
 
 
 class VersusDerp(Enemy):
@@ -222,76 +223,118 @@ class StoreReturns(object):
         return self.func.__str__()
 
 
+def emit(*args, **kwargs):
+    """ Use the emit function bound to the current session. 
+    """
+    return session['emit'](*args, **kwargs)
+
+
 class GameMaster(object):
     
-    def __init__(self, places, enemies, player, map_src):
-        # coordinates and tag (key)
-        self.places = places
+    def __init__(self, nodes, starting_node, player):
+        # nodes dict can be obtained using html_to_nodes()
+
+        self.nodes = nodes
+        self.starting_node = starting_node
         self.player = player
-        
-        self.map_src = map_src
-        
-        self.enemies = enemies
-        
+
         self.current_enemy = None
         self.remarks = []
-        
-    def initialize(self, emit):
+
+
+    def initialize(self):
         """ 
         Send the map and player info. 
         Determines loadout and displayed map.
         Called when JS loads and emits INITIALIZE.
         """
-        map_data = {'image': self.map_src, 
-                    'places': [p._asdict() for p in self.places]}
+        self.transition(self.starting_node)
         
+
+    def load_html(self, html):
+        maps, encounters = html_to_nodes(html)
+        attrs, _, passages = harlowe_extra.parse_harlowe_html(html)
+
+
+        maps = {k: maps[k] for k in ['Dummy office']}
+        encounters = {k: encounters[k] for k in ['Challenge ctenophora']}
+        
+        passages = maps.keys() + encounters.keys()
+        for passage, m in maps.items():
+            for place in m.places:
+                assert (place.label in passages)
+
+        self.nodes = maps
+        self.nodes.update({k: stable[encounters[k]] for k in encounters})
+
+        self.starting_node = [n for n,p in passages.items() 
+                                if p.pid == attrs['startnode']][0]
+       
+
+    def transition(self, node, story_vars=None):
+        
+        self.node = self.nodes[node]
+        if isinstance(self.node, Map):
+            self.to_map()
+        if isinstance(self.node, Enemy):
+            self.to_encounter()
+            
+    def to_map(self):
         emit('SEND_PLAYER', self.player.model)
-        emit('SEND_MAP', map_data)
+        emit('SEND_MAP', self.node)
         
-    def request_encounter(self, enemy, emit):
-        """ Initializes enemy. Starts Player and asks to send an updated Wordbank.
+    def to_encounter(self):
+        """ Based on request_encounter()
+        Initializes enemy. Starts Player and asks to send an updated Wordbank.
         """
-        image = self.enemies[enemy]['image']
-        enemyClass = self.enemies[enemy]['class']
-
-        enemy_vocab = load_vocab(self.enemies[enemy]['vocab'])
-        enemy_view = {'image': image}
-
-        self.current_enemy = enemyClass(enemy_vocab, enemy_view)
+        enemyClass = self.node.cls
         
-        emit('SEND_ENCOUNTER', enemy_view)
+        enemy_vocab = load_vocab(self.node.vocab)
+        enemy_model = {'image': self.node.image, 
+                       'health': 1, 
+                       'name': self.node.name}
+
+        self.current_enemy = enemyClass(enemy_vocab, enemy_model)
+        
+        emit('SEND_ENCOUNTER', self.current_enemy.model)
 
         self.player_phrase = []
-        self.next_word(emit)
+        self.next_word()
 
-    def next_word(self, emit):
+
+    def next_word(self):
         """ Weird to have end-of-phrase logic here.
         """
+        # returns None if the phrase is complete
+        # doesn't work if player chooses to end phrase early
+        # fix with better insult UI
         new_wordbank = self.player.next_word(self.player_phrase)
         if new_wordbank:
             new_wordbank = [w._asdict() for w in new_wordbank]
             
-            emit('UPDATE_WORDBANK', new_wordbank)
+            emit('SEND_WORDBANK', new_wordbank)
         else:
-            self.reply(emit)
+            self.reply()
             self.player_phrase = []
-            self.next_word(emit)
+            self.next_word()
 
-    def insult(self, insult, emit):
+    def insult(self, insult):
         """ Responds to incoming insult. Called by socketio.on('INSULT').
         """
         insult['word'] = Word(**insult['word'])
         self.player_phrase += [insult['word']]
-        self.next_word(emit)
+        self.next_word()
         
-    def reply(self, emit):
+    def reply(self):
+        """ Send full remark (insult + retort + score).
+        """
         insult = ' '.join(w.word for w in self.player_phrase)
         retort = self.current_enemy.retort(insult, self.remarks)
         score = self.score(insult, retort)
         remark = Remark(insult, retort, score)
         self.remarks += [remark]
 
-        emit('REMARK', remark._asdict())
+        emit('SEND_REMARK', remark._asdict())
         
         
     def score(self, insult, retort):
@@ -307,28 +350,37 @@ class GameMaster(object):
         return 0.1
         
 
-class LocalEncounter(GameMaster):
-    def __init__(self, player, enemies=None):
-        self.player = player
-        self.enemies = enemies or stable
-        self.remarks = []
+class LocalGameMaster(GameMaster):
+    def __init__(self, *args, **kwargs):
 
+        self.app = Flask(__name__)
+        self.app.secret_key = 'fuck you'
+        self.app_context = self.app.test_request_context()
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).__init__(*args, **kwargs)
 
-        app = Flask(__name__)
-        self.app_context = app.test_request_context()
+    def initialize(self):
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).initialize()
+ 
+    def transition(self, node):
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).transition(node)
 
-        
-    def prompt(self, enemy):
-        # launch a prompt to interact with opponent, instead
-        # of elm
-    
-        self.request_encounter(enemy, self.emit)
-        print 'Enemy:', enemy
+    def to_encounter(self):
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).to_encounter()
+
+        print 'Enemy:', self.node
         print 'Enter text to insult, enter nothing to quit.'
         self.progress = 0.5
-        
+
         while True:
-            
+
             user_input = raw_input()
             if user_input == '':
                 break
@@ -337,29 +389,52 @@ class LocalEncounter(GameMaster):
             wordbank = self.player.next_word(self.player_phrase)
             wordbank_words = [w.word for w in wordbank]
             match = nearest_word(user_input, wordbank_words)
-          
+
             insult = {'word': wordbank[wordbank_words.index(match)], 
                       'progress': self.progress}
             # looks like it's coming from Elm
             insult['word'] = insult['word']._asdict()
-            
-            # mimic insult
-            # with self.app_context:
-            self.insult(insult, self.emit)
 
-            # if at end of phrase, reply
+            # mimic insult
+            with self.app_context:
+                session['emit'] = self.emit
+                self.insult(insult)
+
+
+    def to_map(self):
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).to_map()
+
+        places = [p.label for p in self.node.places]
+
+        print 'Current map:', self.node.name
+        print 'Go to'
+        print '\n'.join(places)
+
+        flag = True
+        while flag:
+            user_input = raw_input()
+            if user_input == '':
+                break
+
+            for p in places:
+                if p.startswith(user_input):
+                    self.transition(p)
+                    flag = False
+                    break
 
     
     def emit(self, message, data):
         """ Local simulation of sending message and data through socket.
         """
         
-        if message == flask_to_js['UPDATE_WORDBANK']:
+        if message == flask_to_js['SEND_WORDBANK']:
             wordbank = data
             wordbank = [w['word'] for w in wordbank]
             print 'Wordbank:', ', '.join(wordbank[:4] +  ['...'])
 
-        if message == flask_to_js['REMARK']:
+        if message == flask_to_js['SEND_REMARK']:
             
             width = 49
 
@@ -375,6 +450,53 @@ class LocalEncounter(GameMaster):
             print  '%s%s#' % (insult_message, insult_spacer)
             print '# %45s #' % data['retort'] 
             print '#' * width
+
+        if message == flask_to_js['SEND_MAP']:
+            print 'image:', data.image
+            print 'places:', data.places
+
+        if message == flask_to_js['SEND_ENCOUNTER']:
+            print 'Launching encounter with', data
+            print
+
+
+def initialize_map(map_name):
+    """ Wrapper for initialization function. Called after jQuery document ready emits INITIALIZE message.
+    """
+    def f():
+
+        print 'initializing map: %s' % map_name
+
+        map_image = maps[map_name]['image']
+        places = maps[map_name]['places']
+        places = [Place(*p) for p in places]
+        player_vocab = load_vocab(maps[map_name]['vocab'])
+
+        new_vocab = []
+        for pos, words in player_vocab:
+            words = list(words)
+            random.shuffle(words)
+            new_vocab += [(pos, words[:12])]
+        player_vocab = new_vocab
+
+        map_src = url_for('static', filename=map_image)
+
+        enemies = {}
+        for enemy in stable:
+            enemies[enemy] = dict(stable[enemy])
+            enemies[enemy]['image'] = url_for('static', 
+                                                filename=enemies[enemy]['image'])
+
+
+        player = Player(player_vocab, None, capacity=6)
+        player.model['image'] = url_for('static', filename='images/back.png')
+        player.model['name'] = 'player'
+        player.model['health'] = 0.5
+        GM = GameMaster(places, enemies, player, map_src)
+        GM.initialize()
+        session['GM'] = GM
+
+    return f
 
 
 
@@ -454,33 +576,31 @@ def make_row_phrases(vocab):
 
 make_DIDB_phrases = lambda: make_row_phrases(load_vocab('DIDB'))
 
-stable = frozendict({'ctenophora': frozendict({'image': 'images/ctenophora.png',
-                         'class': Enemy,
-                         'vocab': 'more'}),
-          'derp': frozendict({'image': 'images/derp-3.jpg',
-                         'class': VersusDerp,
-                         'vocab': 'DIDB'}),
-          'underground': frozendict({'image': 'images/underground.png',
-                         'class': Enemy,
-                         'vocab': 'high school shakespeare'}),
-          'buddha': frozendict({'image': 'images/buddha.jpg',
-                         'class': Enemy,
-                         'vocab': 'DIDB'}),
+stable = (
+    ('ctenophora',  'images/ctenophora.png',  Opponent,      'more'),
+    ('derp',        'images/derp-3.jpg',      VersusDerp, 'DIDB'),
+    ('underground', 'images/underground.png', Opponent,      'high school shakespeare'),
+    ('buddha',      'images/buddha.jpg',      Opponent,      'DIDB'),
+    )
 
-                         })
+stable = frozendict({s[0]: Enemy(*s) for s in stable})
 
 
-maps = frozendict({'islands': frozendict({
-              'places': 
+
+
+
+maps = frozendict({
+    'islands': frozendict({
+        'places': 
               [(0.24, 0.12, 'w', 'ctenophora'),
               (0.19, 0.68, 'x', 'ctenophora'), 
               (0.80, 0.22, 'y', 'derp'),
               (0.74, 0.71, 'z', 'underground')],
-              'image': 'images/islands.png',
-              'vocab': 'derp'}) ,
+        'image': 'images/islands.png',
+        'vocab': 'derp'}) ,
 
-                     'ovaloffice': frozendict({
-                        'places': 
+    'ovaloffice': frozendict({
+        'places': 
             [(0.235, 0.77, 'a', 'ctenophora'),
              (0.055, 0.46, 'b', 'ctenophora'),
              (0.265, 0.42, 'c', 'ctenophora'),
@@ -488,7 +608,7 @@ maps = frozendict({'islands': frozendict({
              (0.412, 0.22, 'e', 'ctenophora'),
              (0.798, 0.61, 'f', 'ctenophora')],
 
-              'image': 'images/ovaloffice.png',
-              'vocab': 'more'})
+        'image': 'images/ovaloffice.png',
+        'vocab': 'more'})
                         })
 
