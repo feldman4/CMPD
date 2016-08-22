@@ -89,7 +89,7 @@
     line-height: 50%;
 }
 
-#encounter {
+#encounter, versus {
     background-color: rgba(255,255,255,0.9);
     bottom: 0;
     height: 100%;

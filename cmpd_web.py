@@ -12,6 +12,7 @@ from Crypto.Cipher import AES
 
 import pandas as pd
 
+from external import harlowe_extra
 from external.harlowe_extra import html_to_nodes, Map, Place
 
 
@@ -118,6 +119,7 @@ class Player(object):
         self.model = {'loaded': sorted(loaded),
                        'unloaded': sorted(unloaded),
                        'capacity': capacity}
+                       
 
     def next_word(self, phrase):
         """ Provides list of possible next Words based on a phrase (list of Words)
@@ -259,15 +261,15 @@ class GameMaster(object):
         maps = {k: maps[k] for k in ['Dummy office']}
         encounters = {k: encounters[k] for k in ['Challenge ctenophora']}
         
-        passages = maps.keys() + encounters.keys()
+        passage_names = maps.keys() + encounters.keys()
         for passage, m in maps.items():
             for place in m.places:
-                assert (place.label in passages)
+                assert (place.label in passage_names)
 
         self.nodes = maps
         self.nodes.update({k: stable[encounters[k]] for k in encounters})
 
-        self.starting_node = [n for n,p in passages.items() 
+        self.starting_node = [n for n, p in passages.items()
                                 if p.pid == attrs['startnode']][0]
        
 
@@ -280,8 +282,10 @@ class GameMaster(object):
             self.to_encounter()
             
     def to_map(self):
+        map_ = self.node._asdict()
+        map_['places'] = [p._asdict() for p in map_['places']]
         emit('SEND_PLAYER', self.player.model)
-        emit('SEND_MAP', self.node)
+        emit('SEND_MAP', map_)
         
     def to_encounter(self):
         """ Based on request_encounter()
@@ -290,7 +294,8 @@ class GameMaster(object):
         enemyClass = self.node.cls
         
         enemy_vocab = load_vocab(self.node.vocab)
-        enemy_model = {'image': self.node.image, 
+        image = url_for('static', filename=self.node.image)
+        enemy_model = {'image': image, 
                        'health': 1, 
                        'name': self.node.name}
 

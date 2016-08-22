@@ -1,37 +1,47 @@
-#top-half {
-    height: 60%;
+#versus-main {
     width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+}
+
+#top-half {
+    height: 70%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+#bottom-half {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 30%;
+    width: 100%;
+    border-top: black 3px solid;
+    margin-top: 1%;
+}
+
+
+
+.enemy, .player {
+    display: flex;
+    flex-direction: row;
+    height: 50%;
 }
 
 .enemy {
     justify-content: flex-end;
-    height: 50%;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start
+    align-items: flex-start;
 }
 
 .player {
     justify-content: flex-start;
-    height: 50%;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
     align-items: flex-end;
-
 } 
 
-.enemy img {
-    
+.enemy img, .player img {
     height: 100%;
-    width: auto;
 }
 
-.player img {
-    height: 100%;
-    width: auto;
-
-} 
 
 .status
 {
@@ -83,15 +93,6 @@
     text-align: left;
 }
 
-#bottom-half {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    height: 40%;
-    width: 100%;
-    border-top: black 3px solid;
-    margin-top: 1%;
-}
 
 #bottom-left {
     border-right: black 3px solid;

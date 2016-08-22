@@ -9328,6 +9328,17 @@ var _user$project$Versus_View$view = function (model) {
 					]))
 			]));
 };
+var _user$project$Versus_View$viewMain = function (model) {
+	var versus = _user$project$Versus_View$view(model);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('main')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[versus]));
+};
 var _user$project$Versus_View$viewSimple = function (model) {
 	var output = A2(
 		_elm_lang$html$Html$div,
@@ -9439,6 +9450,23 @@ var _user$project$Versus_Versus$showWordbankWord = F2(
 			_user$project$Wordbank$Show(word),
 			model);
 	});
+var _user$project$Versus_Versus$testEnemy = {image: 'http://cdn1.askiitians.com/cms-content/biologyanimal-kingdomphylum-ctenophora-aschelminthes-and-platyhelminthes_1.jpg', name: 'test', health: 1};
+var _user$project$Versus_Versus$testCapacity = _elm_lang$core$Native_List.fromArray(
+	[
+		{ctor: '_Tuple2', _0: '2', _1: 2},
+		{ctor: '_Tuple2', _0: '1', _1: 1}
+	]);
+var _user$project$Versus_Versus$testWords2 = _elm_lang$core$Native_List.fromArray(
+	[
+		{word: 'Unloaded', partOfSpeech: '2', tag: 'asdf'}
+	]);
+var _user$project$Versus_Versus$testWords1 = _elm_lang$core$Native_List.fromArray(
+	[
+		{word: 'Test', partOfSpeech: '1', tag: 'whatevs'},
+		{word: 'Another Test', partOfSpeech: '1', tag: 'asdf'},
+		{word: 'ABC', partOfSpeech: '2', tag: 'alphabet'}
+	]);
+var _user$project$Versus_Versus$testPlayer = {loaded: _user$project$Versus_Versus$testWords1, unloaded: _user$project$Versus_Versus$testWords2, capacity: _user$project$Versus_Versus$testCapacity, health: 1, image: 'http://cdn.cnsnews.com/itfoe-reagan.png', name: 'player'};
 var _user$project$Versus_Versus$inputID = '#input-input';
 var _user$project$Versus_Versus$askFuse = _elm_lang$core$Native_Platform.outgoingPort(
 	'askFuse',
@@ -9477,12 +9505,14 @@ var _user$project$Versus_Versus$update = F2(
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 				case 'NewWordbank':
+					var _p1 = _p0._0;
+					var $debugger = A2(_elm_lang$core$Debug$log, 'NewWordbank with words', _p1);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								wordbank: A2(_user$project$Wordbank$init, _p0._0, model.maxToDisplay)
+								wordbank: A2(_user$project$Wordbank$init, _p1, model.maxToDisplay)
 							}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
@@ -9507,11 +9537,11 @@ var _user$project$Versus_Versus$update = F2(
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 				case 'UpdateAddInput':
-					var _p1 = _p0._0;
-					var _v1 = _user$project$Versus_Types$AskSuggestions(_p1),
+					var _p2 = _p0._0;
+					var _v1 = _user$project$Versus_Types$AskSuggestions(_p2),
 						_v2 = _elm_lang$core$Native_Utils.update(
 						model,
-						{addInput: _p1});
+						{addInput: _p2});
 					message = _v1;
 					model = _v2;
 					continue update;
@@ -9525,9 +9555,9 @@ var _user$project$Versus_Versus$update = F2(
 								_0: _p0._0,
 								_1: A2(
 									_elm_lang$core$List$map,
-									function (_p2) {
-										var _p3 = _p2;
-										return _p3._0.word;
+									function (_p3) {
+										var _p4 = _p3;
+										return _p4._0.word;
 									},
 									model.wordbank.words)
 							})
@@ -9536,15 +9566,15 @@ var _user$project$Versus_Versus$update = F2(
 					var wordbankWords = model.wordbank.words;
 					var suggestionWords = A2(
 						_elm_lang$core$List$map,
-						function (_p4) {
-							var _p5 = _p4;
-							return _p5._0;
+						function (_p5) {
+							var _p6 = _p5;
+							return _p6._0;
 						},
 						A2(
 							_elm_lang$core$List$filter,
-							function (_p6) {
-								var _p7 = _p6;
-								return A2(_elm_lang$core$List$member, _p7._0.word, _p0._0);
+							function (_p7) {
+								var _p8 = _p7;
+								return A2(_elm_lang$core$List$member, _p8._0.word, _p0._0);
 							},
 							wordbankWords));
 					return A2(
@@ -9566,20 +9596,20 @@ var _user$project$Versus_Versus$update = F2(
 							_elm_lang$core$Basics$fst,
 							A2(
 								_elm_lang$core$List$filter,
-								function (_p8) {
-									var _p9 = _p8;
-									return _p9._1;
+								function (_p9) {
+									var _p10 = _p9;
+									return _p10._1;
 								},
 								model.wordbank.words)));
-					var _p10 = maybe;
-					if (_p10.ctor === 'Just') {
+					var _p11 = maybe;
+					if (_p11.ctor === 'Just') {
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{addInput: ''}),
 							_1: _user$project$Versus_Versus$sendInsult(
-								{ctor: '_Tuple2', _0: _p10._0, _1: model.progressBar.value})
+								{ctor: '_Tuple2', _0: _p11._0, _1: model.progressBar.value})
 						};
 					} else {
 						return A2(
@@ -9589,10 +9619,10 @@ var _user$project$Versus_Versus$update = F2(
 								[]));
 					}
 				case 'AddRemark':
-					var _p11 = _p0._0;
+					var _p12 = _p0._0;
 					var progress = A2(
 						_elm_lang$core$Basics$max,
-						A2(_elm_lang$core$Basics$min, model.progressBar.value + _p11.score, 1),
+						A2(_elm_lang$core$Basics$min, model.progressBar.value + _p12.score, 1),
 						0);
 					return {
 						ctor: '_Tuple2',
@@ -9603,7 +9633,7 @@ var _user$project$Versus_Versus$update = F2(
 									_elm_lang$core$Basics_ops['++'],
 									model.conversation,
 									_elm_lang$core$Native_List.fromArray(
-										[_p11])),
+										[_p12])),
 								progressBar: A2(
 									_user$project$Bar$update,
 									_user$project$Bar$ChangeValue(progress),
@@ -9632,8 +9662,8 @@ var _user$project$Versus_Versus$update = F2(
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 				default:
-					var _p12 = _p0._0;
-					var elapsed = model.firstTick ? 0 : _elm_lang$core$Time$inSeconds(_p12 - model.clock);
+					var _p13 = _p0._0;
+					var elapsed = model.firstTick ? 0 : _elm_lang$core$Time$inSeconds(_p13 - model.clock);
 					var progress = A2(_elm_lang$core$Basics$max, model.progressBar.value - (model.drainRate * elapsed), 0);
 					var progressBar = A2(
 						_user$project$Bar$update,
@@ -9650,7 +9680,7 @@ var _user$project$Versus_Versus$update = F2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{clock: _p12, progressBar: progressBar2, firstTick: false}),
+							{clock: _p13, progressBar: progressBar2, firstTick: false}),
 						_elm_lang$core$Native_List.fromArray(
 							[]));
 			}
@@ -9752,9 +9782,14 @@ var _user$project$Versus_Versus$main = {
 			[]);
 		return _elm_lang$html$Html_App$program(
 			{
-				init: A4(_user$project$Versus_Versus$init, words, player, enemy, maxToDisplay),
+				init: A4(
+					_user$project$Versus_Versus$init,
+					A2(_elm_lang$core$Basics_ops['++'], _user$project$Versus_Versus$testWords1, _user$project$Versus_Versus$testWords2),
+					_user$project$Versus_Versus$testPlayer,
+					_user$project$Versus_Versus$testEnemy,
+					maxToDisplay),
 				update: _user$project$Versus_Versus$update,
-				view: _user$project$Versus_View$view,
+				view: _user$project$Versus_View$viewMain,
 				subscriptions: _user$project$Versus_Versus$subscriptions
 			});
 	}()

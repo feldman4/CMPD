@@ -2,7 +2,7 @@ port module Versus.Versus exposing (..)
 
 import Bar
 import Versus.Types exposing (..)
-import Versus.View exposing (view)
+import Versus.View exposing (view, viewMain)
 import Wordbank exposing (Word)
 import Html exposing (Html, button, div, text, img, input, Attribute)
 import Html.App as App
@@ -29,9 +29,9 @@ main =
             30
     in
         App.program
-            { init = init words player enemy maxToDisplay
+            { init = init (testWords1 ++ testWords2) testPlayer testEnemy maxToDisplay
             , update = update
-            , view = view
+            , view = viewMain
             , subscriptions = subscriptions
             }
 
@@ -60,6 +60,40 @@ inputID : String
 inputID =
     "#input-input"
 
+-- TEST
+
+testPlayer : Player
+testPlayer =
+    { 
+    loaded = testWords1, 
+    unloaded = testWords2, 
+    capacity = testCapacity, 
+    health = 1, 
+    image = "http://cdn.cnsnews.com/itfoe-reagan.png", 
+    name = "player" }
+
+
+testWords1 : List { partOfSpeech : String, tag : String, word : String }
+testWords1 =
+    [ { word = "Test", partOfSpeech = "1", tag = "whatevs" }
+    , { word = "Another Test", partOfSpeech = "1", tag = "asdf" }
+    , { word = "ABC", partOfSpeech = "2", tag = "alphabet" }
+    ]
+
+
+testWords2 : List { partOfSpeech : String, tag : String, word : String }
+testWords2 =
+    [ { word = "Unloaded", partOfSpeech = "2", tag = "asdf" } ]
+
+
+testCapacity : List ( String, number )
+testCapacity =
+    [ ( "2", 2 ), ( "1", 1 ) ]
+
+
+testEnemy : Enemy
+testEnemy =
+    { image = "http://cdn1.askiitians.com/cms-content/biologyanimal-kingdomphylum-ctenophora-aschelminthes-and-platyhelminthes_1.jpg", name = "test", health = 1 }
 
 
 -- UPDATE
@@ -72,7 +106,10 @@ update message model =
             model ! []
 
         NewWordbank words ->
-            { model | wordbank = Wordbank.init words model.maxToDisplay } ! []
+            let
+                debugger = Debug.log "NewWordbank with words" words
+            in
+                { model | wordbank = Wordbank.init words model.maxToDisplay } ! []
 
         UpdateWordbank msg ->
             { model
@@ -100,6 +137,7 @@ update message model =
                 suggestionWords =
                     List.filter (\( w, visible ) -> List.member w.word suggestions) wordbankWords
                         |> List.map (\( w, visible ) -> w)
+
             in
                 { model
                     | wordbank =

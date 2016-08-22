@@ -59,6 +59,14 @@ viewSimple model =
             , wordbank
             ]
 
+viewMain : Model -> Html Msg
+viewMain model = 
+    let
+        versus = 
+            view model
+    in
+        div [id "main"] [versus]
+
 
 view : Model -> Html Msg
 view model =

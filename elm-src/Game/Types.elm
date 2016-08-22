@@ -6,6 +6,7 @@ import Map.Types exposing (Map)
 import Loadout.Loadout as Loadout
 import Char
 
+
 type alias Model =
     { menu : Menu.Types.Model
     , loadout : Loadout.Model
@@ -31,8 +32,6 @@ type Msg
     | NoOp
 
 
-
-
 type alias Place =
     { x : Float
     , y : Float
@@ -41,7 +40,7 @@ type alias Place =
     }
 
 
-type alias Place_ = 
+type alias Place_ =
     { x : Float
     , y : Float
     , label : String
@@ -49,4 +48,7 @@ type alias Place_ =
     }
 
 
-type OverlayStatus = Active | Inactive | Hidden
+type OverlayStatus
+    = Active
+    | Inactive
+    | Hidden

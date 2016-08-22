@@ -62,13 +62,24 @@ def custom_map(map_name):
     session['initialize'] = cmpd_web.initialize_map(map_name)
     return render_template('base.html', elm_component='Map')
 
-@app.route('/harlowe/<string:harlowe_name')
+@app.route('/harlowe')
+def default_harlowe():
+    return redirect(url_for('launch_harlowe', harlowe_name='test'))
+
+@app.route('/harlowe/<string:harlowe_name>')
 def launch_harlowe(harlowe_name):
+    # TODO: specify starting vocab / player capacity in harlowe, or as custom in CMPD sheet
+    vocab = cmpd_web.load_vocab('DIDB')
+    player = cmpd_web.Player(vocab, None)
+    player.model['image'] = url_for('static', filename='images/back.png')
+    player.model['name'] = 'InquilineKea'
+    player.model['health'] = 0.3
+
     GM = cmpd_web.GameMaster([], '', player)
-    GM.load_html('resources/harlowe/' + harlowe_name)
+    GM.load_html('resources/harlowe/%s.html' % harlowe_name)
     session['GM'] = GM
     session['initialize'] = GM.initialize
-    return render_template('base.html', elm_component='Map')
+    return render_template('base.html', elm_component='Game')
 
 
 
@@ -98,12 +109,13 @@ def versus_enemy(enemy):
 
     session['versus_enemy'] = cmpd_web.stable[enemy]
 
-    return render_template('versus.html')
+    return render_template('base.html', elm_component='Versus')
 
 
 
-@socketio.on('INSULT')
+@socketio.on('SEND_INSULT')
 def insult(insult):
+    print 'received insult', insult
     session['emit'] = emit
     session['GM'].insult(insult)
 
@@ -118,6 +130,10 @@ def initialize(message):
 def transition(message):
     node = message['node']
     session['GM'].transition(node)
+
+@socketio.on('SEND_LOADOUT')
+def loadout(message):
+    session['GM'].player.model = message
 
 
 @socketio.on('REQUEST_ENCOUNTER')

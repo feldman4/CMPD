@@ -2,10 +2,11 @@
 ////////////////////// COMPONENTS //////////////////////
 
 elmJS = {
+	Game: ["/static/Game.js", ""],
 	Map: ["/static/Map.js", "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mUFNpekI4QUVxdnM"],
 	Loadout: ["/static/Loadout.js", ""],
 	Menu: ["/static/Menu.js", ""],
-	Versus: ["/static/Versus.js", ""]
+	Versus: ["/static/Versus.js", ""],
 }
 
 
@@ -44,8 +45,10 @@ function documentReady(socketRoom) {
 function getScriptLocalHosted(local, hosted, success) {
 	  if (document.domain === "localhost")
 		{
+			console.log(local)
 			$.getScript(local, success)
 		} else {
+			console.log(hosted)
 			$.getScript(hosted, success)
 		}
 
@@ -69,7 +72,7 @@ function sendRemark(app) {
 }
 
 function sendEnemy(app) {
-	socket.on(flask_to_js.CHANGE_ENEMY, function(data) {
+	socket.on(flask_to_js.SEND_ENEMY, function(data) {
 		
 		app.ports.setEnemyImage.send(data.image)
 	})
@@ -77,7 +80,7 @@ function sendEnemy(app) {
 
 function sendEncounter(app) {
 	socket.on(flask_to_js.SEND_ENCOUNTER, function(data) {
-		app.ports.setEnemy.send(data)
+		app.ports.setEncounter.send(data)
 
 	})
 }
@@ -107,6 +110,8 @@ function initialize() {
 // pass input words on to flask
 function sendInsult(app) {
 	app.ports.sendInsult.subscribe(function(comm) {
+		console.log('sending insult')
+		console.log(comm)
 		var word = comm[0]
 		var progress = comm[1]
 		socket.emit(js_to_flask.SEND_INSULT, {
@@ -120,9 +125,9 @@ function sendInsult(app) {
 // transition Map, Encounter, Message, etc
 function sendTransition(app) {
 	app.ports.sendTransition.subscribe(function(comm) {
-		var name = comm[0]
+		var node = comm
 		socket.emit(js_to_flask.SEND_TRANSITION, {
-			name: name
+			node: node
 		})
 	})
 

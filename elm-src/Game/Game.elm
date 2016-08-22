@@ -1,7 +1,7 @@
 port module Game.Game exposing (..)
 
 import Loadout.Loadout as Loadout
-import Versus.Versus as Versus
+import Versus.Versus as Versus exposing (testPlayer, testEnemy)
 import Versus.Types exposing (Player, Enemy)
 import Game.View exposing (view)
 import Game.Types exposing (..)
@@ -12,6 +12,7 @@ import Menu.Types
 import Html.App as App
 import Keyboard
 import Char
+import Debug
 
 
 main : Program Never
@@ -27,44 +28,19 @@ main =
 init : Player -> Enemy -> Map.Types.Map -> ( Model, Cmd Msg )
 init player enemy map =
     let
-
         model =
             { menu = initMenu
             , loadout = initLoadout player
-            , versus = initVersus player enemy 
+            , versus = initVersus player enemy
             , map = Map.init Map.testMap
-            , loadoutStatus = Active
-            , menuStatus = Hidden
+            , loadoutStatus = Hidden
+            , menuStatus = Active
             , mapStatus = Hidden
             , versusStatus = Hidden
             , player = player
             }
     in
         model ! []
-
-testPlayer : Player
-testPlayer =
-    { loaded = testWords1, unloaded = testWords2, capacity = testCapacity, health = 1, image = "", name = "player" }
-
-testWords1 : List { partOfSpeech : String, tag : String, word : String }
-testWords1 = [{ word = "Test", partOfSpeech = "1", tag = "whatevs"},
-              { word = "Another Test", partOfSpeech = "1", tag = "asdf"},
-              { word = "ABC", partOfSpeech = "2", tag = "alphabet"} ]
-
-testWords2 : List { partOfSpeech : String, tag : String, word : String }
-testWords2 = [{ word = "Unloaded", partOfSpeech = "2", tag = "asdf"}]
-
-testCapacity : List ( String, number )
-testCapacity = [("2", 2), ("1", 1)]
-
-testEnemy : Enemy
-testEnemy = 
-    { image = "static/images/ctenophora.png", name = "test", health = 1}
-
-testMap : Map.Types.Map
-testMap = 
-    Map.testMap
-
 
 
 initMenu : Menu.Types.Model
@@ -77,25 +53,34 @@ initLoadout player =
     Loadout.init player.loaded player.unloaded player.capacity
 
 
-
 initVersus : Player -> Enemy -> Versus.Types.Model
-initVersus player enemy = 
-    let 
+initVersus player enemy =
+    let
         maxToDisplay =
             30
+
         words =
             []
+
     in
         fst (Versus.init words player enemy maxToDisplay)
 
 
-
-
-
 tiles : List Menu.Types.Tile
 tiles =
-    [ { label = ": loadout", key = 'l',  x = 0, y = 0 }
+    [ { label = ": loadout", key = 'l', x = 0, y = 0 }
     ]
+
+
+
+-- TEST
+
+
+
+
+testMap : Map.Types.Map
+testMap =
+    Map.testMap
 
 
 
@@ -106,101 +91,160 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         UpdateVersus msg ->
-            let
-                ( newversus, newMsg ) =
-                    Versus.update msg model.versus
+            case model.versusStatus of
+                Active ->
+                    let
+                        ( newversus, newMsg ) =
+                            Versus.update msg model.versus
 
-                newModel =
-                    { model | versus = newversus }
-            in
-                case model.versusStatus of 
-                    Active ->
-                        ( newModel, Cmd.map UpdateVersus newMsg )
-                    _ -> 
-                        model ! []
+                        newModel =
+                            { model | versus = newversus }
+                    in
+                        
+                                ( newModel, Cmd.map UpdateVersus newMsg )
+
+                _ ->
+                    model ! []
 
         UpdateLoadout msg ->
+            case model.loadoutStatus of
+                Active ->
+                    let
+                        -- update model.loadout, then model.player
 
-             case model.loadoutStatus of
-                    Active ->
+                        ( newLoadout, newMsg ) =
+                            Loadout.update msg model.loadout
 
-                        let
-                            ( newLoadout, newMsg ) =
-                                Loadout.update msg model.loadout
+                        newModel =
+                            { model | loadout = newLoadout }
 
-                            newModel =
-                                { model | loadout = newLoadout }
+                        player =
+                            newModel.player
 
-                            player =
-                                newModel.player
+                        newPlayer =
+                            { player | loaded = newLoadout.loaded, unloaded = newLoadout.unloaded }
 
-                            newPlayer =
-                                { player | loaded = newLoadout.loaded, unloaded = newLoadout.unloaded }
+                        ( newModel2, newMsg2 ) =
+                            update (SetPlayer newPlayer) newModel
 
-                            ( newModel2, newMsg2 ) =
-                                update (SetPlayer newPlayer) newModel
+                        cmds =
+                            Cmd.batch
+                                [ Cmd.map UpdateLoadout newMsg
+                                , newMsg2
+                                , sendLoadout newModel2.player
+                                ]
+                    in
+                        ( newModel2, cmds )
 
-                            cmds =
-                                Cmd.batch
-                                    [ Cmd.map UpdateLoadout newMsg
-                                    , newMsg2
-                                    ]
-                        in
-                           
-                                    ( newModel2, cmds )
-                    _ -> 
-                        model ! []
-
+                _ ->
+                    model ! []
 
         UpdateMenu msg ->
-
-                model ! []
-
-        UpdateMap msg ->
-
-                let
-                    ( newMap, _, selection ) =
-                        Map.update msg model.map
-
-                in
-                    case selection of
-                        Just label ->
-                            ( model , sendTransition label)
-
-                        Nothing ->
-                            { model | map = newMap } ! []
-
+            case model.menuStatus of
+                Active ->
+                    let
+                        ( newMenu, selected ) =
+                            Menu.update msg model.menu
+                    in
+                        case selected of
+                            Just 'l' ->
+                                {model | menu = newMenu
+                                       , loadoutStatus = Active
+                                       , mapStatus = Inactive
+                                       , menuStatus = Hidden
+                                       , versusStatus = Hidden
+                                       , loadout = initLoadout model.player} ! []
+                            _ ->
+                                { model | menu = newMenu } ! []
                         
 
+                _ ->
+                    model ! []
+
+        UpdateMap msg ->
+            let
+                ( newMap, _, selection ) =
+                    Map.update msg model.map
+            in
+                case selection of
+                    Just label ->
+                        let 
+                            logger = Debug.log "sent transition" label
+                        in
+                            ( model, sendTransition label )
+
+                    Nothing ->
+                        { model | map = newMap } ! []
 
         SetMap map ->
-           { model | map = Map.init map } ! []
+            { model 
+            | map = Map.init map
+            , mapStatus = Active
+            , menuStatus = Hidden
+            , versusStatus = Hidden
+            , loadoutStatus = Hidden } ! []
 
         SetVersus versus ->
             let
                 newVersus =
                     initVersus model.player versus
+
+                logger = Debug.log "SetVersus" versus
+                --logger2 = Debug.log "Player is" model.player
+
+                logger3 = Debug.log "newVersus.wordbank.words is" newVersus.wordbank.words
             in
-                {model | versus = newVersus} ! []
+                { model | versus = newVersus
+                , mapStatus = Inactive
+                , menuStatus = Hidden
+                , versusStatus = Active
+                , loadoutStatus = Hidden } ! []
 
         SetPlayer player ->
-            {model | player = player} ! []
-
+            { model | player = player } ! []
 
         KeyPress key ->
-            if key == (Char.toCode ':') || key == (Char.toCode ';') then
+            let
+                keyFlag =
+                    key == (Char.toCode ':') || key == (Char.toCode ';')
 
-                case model.loadoutStatus of
-                    Active ->
-                        { model | loadoutStatus = Hidden } ! []
-                    _ ->
-                        { model | loadoutStatus = Active } ! []
-            else
-                model ! []
+                stateFlag =
+                    model.versusStatus == Hidden
+            in
+                if keyFlag then
+                    case model.menuStatus of
+                        Active ->
+                            { model
+                                | loadoutStatus = Hidden
+                                , mapStatus = Active
+                                , menuStatus = Hidden
+                                , versusStatus = Hidden
+                            }
+                                ! []
+
+                        _ ->
+                            case model.versusStatus of 
+                                Active ->
+                                    { model
+                                        | loadoutStatus = Hidden
+                                        , mapStatus = Active
+                                        , menuStatus = Hidden
+                                        , versusStatus = Hidden
+                                    }
+                                        ! []
+                                _ ->
+                                    { model
+                                        | loadoutStatus = Hidden
+                                        , mapStatus = Inactive
+                                        , menuStatus = Active
+                                        , versusStatus = Hidden
+                                    }
+                                        ! []
+                else
+                    model ! []
 
         NoOp ->
             model ! []
-
 
 
 
@@ -210,7 +254,7 @@ update msg model =
 port sendLoadout : Player -> Cmd msg
 
 
-port sendTransition: String -> Cmd msg
+port sendTransition : String -> Cmd msg
 
 
 port setFocus : String -> Cmd msg
@@ -221,6 +265,9 @@ port setFocus : String -> Cmd msg
 
 
 port setMap : (Map.Types.Map -> msg) -> Sub msg
+
+
+port setEncounter : (Enemy -> msg) -> Sub msg
 
 
 port setPlayer : (Player -> msg) -> Sub msg
@@ -236,6 +283,7 @@ subscriptions model =
         , Keyboard.presses KeyPress
         , setMap SetMap
         , setPlayer SetPlayer
+        , setEncounter SetVersus
         ]
 
 
