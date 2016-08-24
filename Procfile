@@ -1,1 +1,1 @@
-web: gunicorn -k eventlet nexus:app
+web: gunicorn -k eventlet app:app

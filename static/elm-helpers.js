@@ -2,7 +2,7 @@
 ////////////////////// COMPONENTS //////////////////////
 
 elmJS = {
-	Game: ["/static/Game.js", ""],
+	Game: ["/static/Game.js", "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mSFRHajdTMTlscTQ"],
 	Map: ["/static/Map.js", "https://drive.google.com/uc?export=download&id=0B3flOzQHFe1mUFNpekI4QUVxdnM"],
 	Loadout: ["/static/Loadout.js", ""],
 	Menu: ["/static/Menu.js", ""],
