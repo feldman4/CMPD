@@ -4,7 +4,6 @@ import Menu.Types exposing (..)
 import Html exposing (text, div, Html, span, img)
 import Html.Attributes exposing (id, class, attribute, style, src)
 import String
-import Char
 
 
 view : Model -> Html Msg
@@ -14,7 +13,7 @@ view model =
             attribute "lastKey" (toString model.lastKey)
 
         getTileContents =
-            (\t -> viewTile t (Char.toCode t.key == model.lastKey))
+            (\t -> viewTile t (t.key == model.lastKey))
     in
         div [ id model.id, class "menu", lastKeyAtt ]
             (List.map getTileContents model.tiles)
@@ -32,7 +31,7 @@ viewMap model =
             attribute "lastKey" (toString model.lastKey)
 
         getTileContents =
-            (\t -> viewTileXY t (Char.toCode t.key == model.lastKey))
+            (\t -> viewTileXY t (t.key == model.lastKey))
     in
         div [ id model.id, class "map-menu", lastKeyAtt ]
             (List.map getTileContents model.tiles)

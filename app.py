@@ -1,5 +1,6 @@
-from flask import Flask, render_template, url_for, redirect, session
+from flask import Flask, render_template, url_for, redirect, session, request
 from flask_socketio import emit, SocketIO
+from werkzeug import secure_filename
 from gspread import WorksheetNotFound
 import random
 from glob import glob
@@ -134,6 +135,29 @@ def transition(message):
 @socketio.on('SEND_LOADOUT')
 def loadout(message):
     session['GM'].player.model = message
+
+
+@app.route('/upload')
+def harlowe_upload():
+    return render_template('upload.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+
+    print 'uploading file'
+
+    def scrunch(s):
+        delchars = {c: None for c in map(chr, range(256)) if not c.isalnum()}
+        return s.translate(delchars)
+
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            filename = secure_filename(scrunch(file.filename))
+            file.save(os.path.join('resources/harlowe', filename))
+            return ''
+    return "ooooooppppppssss"
+
 
 
 @socketio.on('REQUEST_ENCOUNTER')

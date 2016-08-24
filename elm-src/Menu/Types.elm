@@ -4,8 +4,7 @@ module Menu.Types exposing (..)
 type alias Model =
     { tiles : List Tile
     , id : String
-    , lastKey : Int
-    , active : Bool
+    , lastKey : Char
     }
 
 
@@ -19,7 +18,6 @@ type alias Tile =
 
 type Msg
     = KeyPress Int
-    | Activate Bool
     | NoOp
 
 keycode : { escape : Int, shift : Int, space : Int, enter : Int }

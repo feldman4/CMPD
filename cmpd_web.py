@@ -119,7 +119,7 @@ class Player(object):
         self.model = {'loaded': sorted(loaded),
                        'unloaded': sorted(unloaded),
                        'capacity': capacity}
-                       
+
 
     def next_word(self, phrase):
         """ Provides list of possible next Words based on a phrase (list of Words)
@@ -258,13 +258,14 @@ class GameMaster(object):
         attrs, _, passages = harlowe_extra.parse_harlowe_html(html)
 
 
-        maps = {k: maps[k] for k in ['Dummy office']}
-        encounters = {k: encounters[k] for k in ['Challenge ctenophora']}
+        # TODO: check graph for completeness
+        # maps = {k: maps[k] for k in ['Dummy office', 'presidential library']}
+        # encounters = {k: encounters[k] for k in ['Challenge ctenophora']}
         
-        passage_names = maps.keys() + encounters.keys()
-        for passage, m in maps.items():
-            for place in m.places:
-                assert (place.label in passage_names)
+        # passage_names = maps.keys() + encounters.keys()
+        # for passage, m in maps.items():
+        #     for place in m.places:
+        #         assert (place.label in passage_names)
 
         self.nodes = maps
         self.nodes.update({k: stable[encounters[k]] for k in encounters})
@@ -583,9 +584,10 @@ make_DIDB_phrases = lambda: make_row_phrases(load_vocab('DIDB'))
 
 stable = (
     ('ctenophora',  'images/ctenophora.png',  Opponent,      'more'),
-    ('derp',        'images/derp-3.jpg',      VersusDerp, 'DIDB'),
+    ('derp',        'images/derp-3.jpg',      VersusDerp,    'DIDB'),
     ('underground', 'images/underground.png', Opponent,      'high school shakespeare'),
     ('buddha',      'images/buddha.jpg',      Opponent,      'DIDB'),
+    ('generalAbrams', 'images/abrams.jpg',    Opponent,      'dec2')
     )
 
 stable = frozendict({s[0]: Enemy(*s) for s in stable})

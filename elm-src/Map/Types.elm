@@ -24,5 +24,6 @@ type alias Place =
     , y : Float
     , label : String
     , key : String
+    , preview : String
     }
 

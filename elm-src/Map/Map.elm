@@ -66,9 +66,9 @@ stringToChar input =
 
 testPlaces : List Place
 testPlaces =
-    [ { label = "your", key = "y", x = 0, y = 0 }
-    , { label = "mums", key = "m", x = 0.5, y = 0 }
-    , { label = "house", key = "h", x = 0, y = 0.5 }
+    [ { label = "your", key = "y", x = 0, y = 0, preview = "one" }
+    , { label = "mums", key = "m", x = 0.5, y = 0, preview = "two" }
+    , { label = "house", key = "h", x = 0, y = 0.5, preview = "three" }
     ]
 
 

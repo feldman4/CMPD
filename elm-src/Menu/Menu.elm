@@ -20,9 +20,8 @@ import Char
 init : List Tile -> String -> Model
 init tiles id =
     { tiles = tiles
-    , lastKey = 0
+    , lastKey = ' '
     , id = id
-    , active = True
     }
 
 
@@ -34,16 +33,13 @@ update : Msg -> Model -> ( Model, Maybe Char )
 update msg model =
     case msg of
         KeyPress key ->
-            if model.active then
-                if key == model.lastKey then
-                    ( model, Just (Char.fromCode model.lastKey) )
+            let 
+                code = Char.fromCode key
+            in
+                if code == model.lastKey then
+                        ( model, Just model.lastKey )
                 else
-                    ( { model | lastKey = key }, Nothing )
-            else
-                ( model, Nothing )
-
-        Activate bool ->
-            ( { model | active = bool }, Nothing )
+                    ( { model | lastKey = code }, Nothing )
 
         NoOp ->
             ( model, Nothing )
