@@ -13,13 +13,12 @@ type Msg
     = UpdateMenu Menu.Types.Msg
 
 
-
 type alias Map =
     { image : String
-    , name: String
-    , places : List Place 
-    , intro: String}
-
+    , name : String
+    , places : List Place
+    , intro : String
+    }
 
 
 type alias Place =
@@ -29,4 +28,3 @@ type alias Place =
     , key : String
     , preview : String
     }
-

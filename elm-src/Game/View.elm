@@ -32,7 +32,8 @@ view model =
                 _ ->
                     div [ id "loadout" ] [ App.map UpdateLoadout (Loadout.view model.loadout) ]
 
-        menu =  div [ id "menu" ] [options, loadout]
+        menu =
+            div [ id "menu" ] [ options, loadout ]
 
         map =
             case model.mapStatus of
@@ -53,17 +54,16 @@ view model =
                 _ ->
                     App.map UpdateVersus (Versus.View.view model.versus)
 
-
-        gutter = 
-            case model.mapStatus of 
+        gutter =
+            case model.mapStatus of
                 Hidden ->
-                    div [id "gutter"] []
+                    div [ id "gutter" ] []
+
                 Active ->
                     App.map UpdateMap (Map.View.viewGutter model.map)
+
                 Inactive ->
-                    div [id "gutter"] []
-
+                    div [ id "gutter" ] []
     in
-
         div [ id "main" ]
             [ map, versus, menu, gutter ]

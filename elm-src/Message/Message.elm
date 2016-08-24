@@ -8,6 +8,7 @@ import Html.App as App
 import Markdown
 import String
 
+
 --main : Program Never
 --main =
 --    App.program
@@ -25,13 +26,15 @@ type alias Model =
     , class : String
     }
 
-type alias Message = 
+
+type alias Message =
     { text : String
     , choices : List Choice
     , class : String
     }
 
-type alias Choice = 
+
+type alias Choice =
     { label : String
     , key : String
     }
@@ -39,19 +42,21 @@ type alias Choice =
 
 init : Message -> Model
 init message =
-    let 
-        tiles = List.map choiceToTile message.choices
+    let
+        tiles =
+            List.map choiceToTile message.choices
 
-        id = "message"
-
+        id =
+            "message"
     in
         { text = message.text
-        , menu = Menu.init tiles id 
+        , menu = Menu.init tiles id
         , class = message.class
         }
 
+
 initDummy : Model
-initDummy = 
+initDummy =
     { text = "dummy"
     , menu = Menu.init [] ""
     , class = ""
@@ -59,19 +64,18 @@ initDummy =
 
 
 choiceToTile : Choice -> Tile
-choiceToTile choice = 
+choiceToTile choice =
     let
-        key = String.uncons choice.key
-              |> Maybe.withDefault (' ', "")
-              |> fst
-    in    
+        key =
+            String.uncons choice.key
+                |> Maybe.withDefault ( ' ', "" )
+                |> fst
+    in
         { label = choice.label
         , key = key
         , x = 0
         , y = 0
         }
-
-
 
 
 
@@ -82,35 +86,38 @@ type Msg
     = UpdateMenu Menu.Types.Msg
 
 
-update : Msg -> Model -> (Model, Maybe String)
+update : Msg -> Model -> ( Model, Maybe String )
 update msg model =
     case msg of
         UpdateMenu msg ->
             let
                 ( newMenu, selection ) =
                     Menu.update msg model.menu
-                newModel = 
+
+                newModel =
                     { model | menu = newMenu }
             in
                 case selection of
                     Nothing ->
-                        (newModel, Nothing)
+                        ( newModel, Nothing )
 
                     Just char ->
-                        let 
-                            label = List.filter (\tile -> tile.key == char) model.menu.tiles
-                                            |> List.map .label
-                                            |> List.head
-                        in 
-                            (newModel, label)
-
+                        let
+                            label =
+                                List.filter (\tile -> tile.key == char) model.menu.tiles
+                                    |> List.map .label
+                                    |> List.head
+                        in
+                            ( newModel, label )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [
-         Sub.map UpdateMenu (Menu.subscriptions model.menu)
+    Sub.batch
+        [ Sub.map UpdateMenu (Menu.subscriptions model.menu)
         ]
+
+
 
 -- VIEW
 

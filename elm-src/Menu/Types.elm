@@ -20,6 +20,7 @@ type Msg
     = KeyPress Int
     | NoOp
 
+
 keycode : { escape : Int, shift : Int, space : Int, enter : Int }
 keycode =
     { enter = 13, shift = 16, space = 32, escape = 27 }

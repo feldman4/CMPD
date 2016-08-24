@@ -15,29 +15,29 @@ import Markdown
 view : Model -> Html Msg
 view model =
     let
-        overlay =  
+        overlay =
             div [ id "empty-overlay" ]
                 [ App.map UpdateMenu (Menu.View.viewMap model.menu) ]
-
     in
         div [ class "map" ] [ img [ src model.map.image ] [], overlay ]
 
+
 viewInactive : Model -> Html Msg
-viewInactive model = 
-     div [ class "map" ] [ img [ src model.map.image ] [] ]
+viewInactive model =
+    div [ class "map" ] [ img [ src model.map.image ] [] ]
 
 
 viewGutter : Model -> Html Msg
 viewGutter model =
-        let
-            lastKey = String.fromChar model.menu.lastKey
+    let
+        lastKey =
+            String.fromChar model.menu.lastKey
 
-            gutterText = 
-                List.filter (\p -> p.key == lastKey) model.map.places
+        gutterText =
+            List.filter (\p -> p.key == lastKey) model.map.places
                 |> List.map .preview
                 |> List.head
                 |> (Maybe.withDefault model.map.intro)
-
-        in
-                div [ id "gutter" ]
-                    [ Markdown.toHtml [] gutterText]
+    in
+        div [ id "gutter" ]
+            [ Markdown.toHtml [] gutterText ]

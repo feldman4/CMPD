@@ -33,11 +33,12 @@ update : Msg -> Model -> ( Model, Maybe Char )
 update msg model =
     case msg of
         KeyPress key ->
-            let 
-                code = Char.fromCode key
+            let
+                code =
+                    Char.fromCode key
             in
                 if code == model.lastKey then
-                        ( model, Just model.lastKey )
+                    ( model, Just model.lastKey )
                 else
                     ( { model | lastKey = code }, Nothing )
 

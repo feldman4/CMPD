@@ -35,8 +35,7 @@ viewMap model =
     in
         div [ id model.id, class "map-menu", lastKeyAtt ]
             (List.map getTileContents model.tiles)
-        
-        
+
 
 
 -- helper functions

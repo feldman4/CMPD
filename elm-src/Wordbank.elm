@@ -22,11 +22,13 @@ init words maxToDisplay =
     }
 
 
-type alias Word = 
-    { word : String,
-      partOfSpeech: String,
-      tag: String
-  }
+type alias Word =
+    { word : String
+    , partOfSpeech : String
+    , tag : String
+    }
+
+
 
 -- UPDATE
 
@@ -161,7 +163,8 @@ view model =
 viewWord : ( Word, Bool ) -> Maybe (Html.Html msg)
 viewWord ( word, show ) =
     let
-        wordClass = String.join " " ["word", word.partOfSpeech, word.tag]
+        wordClass =
+            String.join " " [ "word", word.partOfSpeech, word.tag ]
     in
         case show of
             True ->

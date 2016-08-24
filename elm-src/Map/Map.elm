@@ -18,38 +18,41 @@ main =
         , subscriptions = subscriptions
         }
 
+
 programUpdate : Msg -> Model -> ( Model, Cmd Msg )
 programUpdate msg model =
-    let 
-        (newModel, newMsg, selection) = update msg model
+    let
+        ( newModel, newMsg, selection ) =
+            update msg model
     in
-        (newModel, newMsg)
+        ( newModel, newMsg )
 
 
 init : Map -> Model
 init map =
     let
-        
-        tiles = 
-            List.map placeToTile map.places 
+        tiles =
+            List.map placeToTile map.places
 
         model =
             { map = map
             , menu = Menu.init tiles "map-menu"
-
-        }
+            }
     in
         model
 
+
 testMap : Map
-testMap = 
-            { image = "static/images/islands.png"
-            , name = "test"
-            , places = testPlaces
-            , intro = "a test map"}
+testMap =
+    { image = "static/images/islands.png"
+    , name = "test"
+    , places = testPlaces
+    , intro = "a test map"
+    }
+
 
 placeToTile : Place -> Tile
-placeToTile place = 
+placeToTile place =
     { x = place.x
     , y = place.y
     , label = place.label
@@ -58,12 +61,14 @@ placeToTile place =
 
 
 stringToChar : String -> Char
-stringToChar input = 
+stringToChar input =
     case String.uncons input of
-        Just (c, s) ->
+        Just ( c, s ) ->
             c
+
         Nothing ->
             ' '
+
 
 testPlaces : List Place
 testPlaces =
@@ -80,39 +85,35 @@ testPlaces =
 update : Msg -> Model -> ( Model, Cmd Msg, Maybe String )
 update msg model =
     case msg of
- 
         UpdateMenu msg ->
-           
-                let
-                    ( newMenu, selection ) =
-                        Menu.update msg model.menu
-                    newModel = 
-                        { model | menu = newMenu }
-                in
-                    case selection of
-                        Nothing ->
-                            (newModel, Cmd.none, Nothing)
+            let
+                ( newMenu, selection ) =
+                    Menu.update msg model.menu
 
-                        Just char ->
-                            let 
-                                label = List.filter (\tile -> tile.key == char) model.menu.tiles
-                                                |> List.map .label
-                                                |> List.head
-                            in 
-                                (newModel, Cmd.none, label)
-                                    
-                    
+                newModel =
+                    { model | menu = newMenu }
+            in
+                case selection of
+                    Nothing ->
+                        ( newModel, Cmd.none, Nothing )
+
+                    Just char ->
+                        let
+                            label =
+                                List.filter (\tile -> tile.key == char) model.menu.tiles
+                                    |> List.map .label
+                                    |> List.head
+                        in
+                            ( newModel, Cmd.none, label )
+
 
 
 --OUTGOING
-
-
 -- INCOMING
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [
-         Sub.map UpdateMenu (Menu.subscriptions model.menu)
+    Sub.batch
+        [ Sub.map UpdateMenu (Menu.subscriptions model.menu)
         ]
-

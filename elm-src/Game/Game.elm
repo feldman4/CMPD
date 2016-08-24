@@ -64,7 +64,6 @@ initVersus player enemy =
 
         words =
             []
-
     in
         fst (Versus.init words player enemy maxToDisplay)
 
@@ -77,8 +76,6 @@ tiles =
 
 
 -- TEST
-
-
 
 
 testMap : Map.Types.Map
@@ -103,8 +100,7 @@ update msg model =
                         newModel =
                             { model | versus = newversus }
                     in
-                        
-                                ( newModel, Cmd.map UpdateVersus newMsg )
+                        ( newModel, Cmd.map UpdateVersus newMsg )
 
                 _ ->
                     model ! []
@@ -114,7 +110,6 @@ update msg model =
                 Active ->
                     let
                         -- update model.loadout, then model.player
-
                         ( newLoadout, newMsg ) =
                             Loadout.update msg model.loadout
 
@@ -151,15 +146,18 @@ update msg model =
                     in
                         case selected of
                             Just 'l' ->
-                                {model | menu = newMenu
-                                       , loadoutStatus = Active
-                                       , mapStatus = Inactive
-                                       , menuStatus = Hidden
-                                       , versusStatus = Hidden
-                                       , loadout = initLoadout model.player} ! []
+                                { model
+                                    | menu = newMenu
+                                    , loadoutStatus = Active
+                                    , mapStatus = Inactive
+                                    , menuStatus = Hidden
+                                    , versusStatus = Hidden
+                                    , loadout = initLoadout model.player
+                                }
+                                    ! []
+
                             _ ->
                                 { model | menu = newMenu } ! []
-                        
 
                 _ ->
                     model ! []
@@ -171,8 +169,9 @@ update msg model =
             in
                 case selection of
                     Just label ->
-                        let 
-                            logger = Debug.log "sent transition" label
+                        let
+                            logger =
+                                Debug.log "sent transition" label
                         in
                             ( model, sendTransition label )
 
@@ -181,51 +180,61 @@ update msg model =
 
         UpdateMessage msg ->
             let
-                (newMessage, selection) = 
+                ( newMessage, selection ) =
                     Message.update msg model.message
             in
                 case selection of
                     Just label ->
-                        let 
-                            logger = Debug.log "sent transition" label
+                        let
+                            logger =
+                                Debug.log "sent transition" label
                         in
                             ( model, sendTransition label )
+
                     Nothing ->
-                        { model | message = newMessage} ! []
+                        { model | message = newMessage } ! []
 
         SetMap map ->
-            { model 
-            | map = Map.init map
-            , mapStatus = Active
-            , menuStatus = Hidden
-            , versusStatus = Hidden
-            , loadoutStatus = Hidden } ! []
+            { model
+                | map = Map.init map
+                , mapStatus = Active
+                , menuStatus = Hidden
+                , versusStatus = Hidden
+                , loadoutStatus = Hidden
+            }
+                ! []
 
         SetMessage message ->
             { model
-            | message = Message.init message
-            , messageStatus = Active
-            , mapStatus = Inactive
-            , menuStatus = Hidden
-            , versusStatus = Hidden
-            , loadoutStatus = Hidden
-            } ! []
+                | message = Message.init message
+                , messageStatus = Active
+                , mapStatus = Inactive
+                , menuStatus = Hidden
+                , versusStatus = Hidden
+                , loadoutStatus = Hidden
+            }
+                ! []
 
         SetVersus versus ->
             let
                 newVersus =
                     initVersus model.player versus
 
-                logger = Debug.log "SetVersus" versus
-                --logger2 = Debug.log "Player is" model.player
+                logger =
+                    Debug.log "SetVersus" versus
 
-                logger3 = Debug.log "newVersus.wordbank.words is" newVersus.wordbank.words
+                --logger2 = Debug.log "Player is" model.player
+                logger3 =
+                    Debug.log "newVersus.wordbank.words is" newVersus.wordbank.words
             in
-                { model | versus = newVersus
-                , mapStatus = Inactive
-                , menuStatus = Hidden
-                , versusStatus = Active
-                , loadoutStatus = Hidden } ! []
+                { model
+                    | versus = newVersus
+                    , mapStatus = Inactive
+                    , menuStatus = Hidden
+                    , versusStatus = Active
+                    , loadoutStatus = Hidden
+                }
+                    ! []
 
         SetPlayer player ->
             { model | player = player } ! []
@@ -250,7 +259,7 @@ update msg model =
                                 ! []
 
                         _ ->
-                            case model.versusStatus of 
+                            case model.versusStatus of
                                 Active ->
                                     { model
                                         | loadoutStatus = Hidden
@@ -259,6 +268,7 @@ update msg model =
                                         , versusStatus = Hidden
                                     }
                                         ! []
+
                                 _ ->
                                     { model
                                         | loadoutStatus = Hidden
@@ -293,10 +303,11 @@ port setFocus : String -> Cmd msg
 
 port setMap : (Map.Types.Map -> msg) -> Sub msg
 
+
 port setMessage : (Message.Message -> msg) -> Sub msg
 
-port setEncounter : (Enemy -> msg) -> Sub msg
 
+port setEncounter : (Enemy -> msg) -> Sub msg
 
 
 port setPlayer : (Player -> msg) -> Sub msg

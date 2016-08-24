@@ -59,17 +59,20 @@ inputID : String
 inputID =
     "#input-input"
 
+
+
 -- TEST
+
 
 testPlayer : Player
 testPlayer =
-    { 
-    loaded = testWords1, 
-    unloaded = testWords2, 
-    capacity = testCapacity, 
-    health = 1, 
-    image = "http://cdn.cnsnews.com/itfoe-reagan.png", 
-    name = "player" }
+    { loaded = testWords1
+    , unloaded = testWords2
+    , capacity = testCapacity
+    , health = 1
+    , image = "http://cdn.cnsnews.com/itfoe-reagan.png"
+    , name = "player"
+    }
 
 
 testWords1 : List { partOfSpeech : String, tag : String, word : String }
@@ -93,6 +96,7 @@ testCapacity =
 testEnemy : Enemy
 testEnemy =
     { image = "http://cdn1.askiitians.com/cms-content/biologyanimal-kingdomphylum-ctenophora-aschelminthes-and-platyhelminthes_1.jpg", name = "test", health = 1 }
+
 
 
 -- UPDATE
@@ -133,7 +137,6 @@ update message model =
                 suggestionWords =
                     List.filter (\( w, visible ) -> List.member w.word suggestions) wordbankWords
                         |> List.map (\( w, visible ) -> w)
-
             in
                 { model
                     | wordbank =
@@ -245,7 +248,6 @@ port scrollTop : String -> Cmd msg
 
 
 -- SUBSCRIPTIONS
-
 
 
 port setWordbank : (List Word -> msg) -> Sub msg
