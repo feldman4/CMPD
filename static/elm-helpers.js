@@ -19,6 +19,7 @@ flask_to_js = {
 	'SEND_MAP': 'SEND_MAP',
 	'SEND_ENEMY': 'SEND_ENEMY',
 	'SEND_PLAYER' : 'SEND_PLAYER',
+	'SEND_MESSAGE' : 'SEND_MESSAGE'
 }
 
 js_to_flask = {
@@ -88,6 +89,12 @@ function sendEncounter(app) {
 function sendMap(app) {
 	socket.on(flask_to_js.SEND_MAP, function(data) {
 		app.ports.setMap.send(data)
+	})
+}
+
+function sendMessage(app) {
+	socket.on(flask_to_js.SEND_MESSAGE, function(data) {
+		app.ports.setMessage.send(data)
 	})
 }
 

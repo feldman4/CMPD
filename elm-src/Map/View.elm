@@ -6,6 +6,7 @@ import Html exposing (text, div, Html, img, span)
 import Html.Attributes exposing (id, class, attribute, src, style)
 import Html.App as App
 import String
+import Markdown
 
 
 -- VIEW
@@ -18,21 +19,25 @@ view model =
             div [ id "empty-overlay" ]
                 [ App.map UpdateMenu (Menu.View.viewMap model.menu) ]
 
-        lastKey = String.fromChar model.menu.lastKey
-
-        gutterText = 
-            List.filter (\p -> p.key == lastKey) model.map.places
-            |> List.map .preview
-            |> List.head
-            |> (Maybe.withDefault "")
-
-        gutter = 
-            div [ id "gutter" ]
-                [ text gutterText]
-
     in
-        div [ class "map" ] [ img [ src model.map.image ] [], overlay, gutter ]
+        div [ class "map" ] [ img [ src model.map.image ] [], overlay ]
 
 viewInactive : Model -> Html Msg
 viewInactive model = 
      div [ class "map" ] [ img [ src model.map.image ] [] ]
+
+
+viewGutter : Model -> Html Msg
+viewGutter model =
+        let
+            lastKey = String.fromChar model.menu.lastKey
+
+            gutterText = 
+                List.filter (\p -> p.key == lastKey) model.map.places
+                |> List.map .preview
+                |> List.head
+                |> (Maybe.withDefault model.map.intro)
+
+        in
+                div [ id "gutter" ]
+                    [ Markdown.toHtml [] gutterText]

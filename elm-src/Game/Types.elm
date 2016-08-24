@@ -1,5 +1,6 @@
 module Game.Types exposing (..)
 
+import Message.Message as Message exposing (Message)
 import Versus.Types exposing (Player, Enemy)
 import Menu.Types
 import Map.Types exposing (Map)
@@ -12,10 +13,12 @@ type alias Model =
     , loadout : Loadout.Model
     , versus : Versus.Types.Model
     , map : Map.Types.Model
+    , message : Message.Model
     , loadoutStatus : OverlayStatus
     , menuStatus : OverlayStatus
     , mapStatus : OverlayStatus
     , versusStatus : OverlayStatus
+    , messageStatus : OverlayStatus
     , player : Player
     }
 
@@ -25,9 +28,11 @@ type Msg
     | UpdateLoadout Loadout.Msg
     | UpdateMenu Menu.Types.Msg
     | UpdateMap Map.Types.Msg
+    | UpdateMessage Message.Msg
     | SetMap Map
     | SetPlayer Player
     | SetVersus Enemy
+    | SetMessage Message
     | KeyPress Char.KeyCode
     | NoOp
 

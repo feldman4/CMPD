@@ -7,7 +7,7 @@ from collections import namedtuple
 
 
 # move to types definition file
-Map = namedtuple('Map', 'name image places')
+Map = namedtuple('Map', 'name image places intro')
 Place = namedtuple('Place', 'x y key label preview')
 default_places = tuple((0.75, 0.75, c) for c in 'abcdefgh')
 
@@ -122,8 +122,14 @@ def find_map(passage, image_urls):
 
     # fill in defaults if needed
     place_records = [Place(*p + l) for l, p in zip(links, places)]
+
+    # optional intro text
+    intro_hook = get_named_hooks(passage, 'intro')
+    intro_text = intro_hook[0].hook[0] if intro_hook else ''
+
     print 'map with %d places in %s' % (len(place_records), passage.name) 
-    return Map(name=passage.name, image=url, places=place_records)
+    return Map(name=passage.name, image=url, 
+               places=place_records, intro=intro_text)
 
 
 

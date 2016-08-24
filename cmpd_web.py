@@ -287,6 +287,7 @@ class GameMaster(object):
         map_['places'] = [p._asdict() for p in map_['places']]
         emit('SEND_PLAYER', self.player.model)
         emit('SEND_MAP', map_)
+        print 'sent map', map_
         
     def to_encounter(self):
         """ Based on request_encounter()

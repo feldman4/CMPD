@@ -10,7 +10,6 @@ import Html.Events exposing (onClick, onInput, keyCode, on)
 import Json.Decode as Json
 import Time
 import AnimationFrame
-import Debug
 
 
 main : Program Never
@@ -106,10 +105,7 @@ update message model =
             model ! []
 
         NewWordbank words ->
-            let
-                debugger = Debug.log "NewWordbank with words" words
-            in
-                { model | wordbank = Wordbank.init words model.maxToDisplay } ! []
+            { model | wordbank = Wordbank.init words model.maxToDisplay } ! []
 
         UpdateWordbank msg ->
             { model

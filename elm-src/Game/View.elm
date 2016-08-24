@@ -16,13 +16,13 @@ import Html.App as App
 view : Model -> Html Msg
 view model =
     let
-        menu =
+        options =
             case model.menuStatus of
                 Hidden ->
-                    div [ id "menu" ] []
+                    div [] []
 
                 _ ->
-                    div [ id "menu" ] [ App.map UpdateMenu (Menu.View.view model.menu) ]
+                    App.map UpdateMenu (Menu.View.view model.menu)
 
         loadout =
             case model.loadoutStatus of
@@ -31,6 +31,8 @@ view model =
 
                 _ ->
                     div [ id "loadout" ] [ App.map UpdateLoadout (Loadout.view model.loadout) ]
+
+        menu =  div [ id "menu" ] [options, loadout]
 
         map =
             case model.mapStatus of
@@ -51,6 +53,17 @@ view model =
                 _ ->
                     App.map UpdateVersus (Versus.View.view model.versus)
 
+
+        gutter = 
+            case model.mapStatus of 
+                Hidden ->
+                    div [id "gutter"] []
+                Active ->
+                    App.map UpdateMap (Map.View.viewGutter model.map)
+                Inactive ->
+                    div [id "gutter"] []
+
     in
+
         div [ id "main" ]
-            [ map, versus, menu, loadout ]
+            [ map, versus, menu, gutter ]

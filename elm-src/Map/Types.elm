@@ -15,7 +15,10 @@ type Msg
 
 
 type alias Map =
-    { image : String, name: String, places : List Place }
+    { image : String
+    , name: String
+    , places : List Place 
+    , intro: String}
 
 
 

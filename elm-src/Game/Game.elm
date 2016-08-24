@@ -5,6 +5,7 @@ import Versus.Versus as Versus exposing (testPlayer, testEnemy)
 import Versus.Types exposing (Player, Enemy)
 import Game.View exposing (view)
 import Game.Types exposing (..)
+import Message.Message as Message
 import Map.Map as Map
 import Map.Types
 import Menu.Menu as Menu
@@ -33,10 +34,12 @@ init player enemy map =
             , loadout = initLoadout player
             , versus = initVersus player enemy
             , map = Map.init Map.testMap
+            , message = Message.initDummy
             , loadoutStatus = Hidden
             , menuStatus = Active
             , mapStatus = Hidden
             , versusStatus = Hidden
+            , messageStatus = Hidden
             , player = player
             }
     in
@@ -45,7 +48,7 @@ init player enemy map =
 
 initMenu : Menu.Types.Model
 initMenu =
-    Menu.init tiles "my-menu"
+    Menu.init tiles "options"
 
 
 initLoadout : Player -> Loadout.Model
@@ -176,6 +179,20 @@ update msg model =
                     Nothing ->
                         { model | map = newMap } ! []
 
+        UpdateMessage msg ->
+            let
+                (newMessage, selection) = 
+                    Message.update msg model.message
+            in
+                case selection of
+                    Just label ->
+                        let 
+                            logger = Debug.log "sent transition" label
+                        in
+                            ( model, sendTransition label )
+                    Nothing ->
+                        { model | message = newMessage} ! []
+
         SetMap map ->
             { model 
             | map = Map.init map
@@ -183,6 +200,16 @@ update msg model =
             , menuStatus = Hidden
             , versusStatus = Hidden
             , loadoutStatus = Hidden } ! []
+
+        SetMessage message ->
+            { model
+            | message = Message.init message
+            , messageStatus = Active
+            , mapStatus = Inactive
+            , menuStatus = Hidden
+            , versusStatus = Hidden
+            , loadoutStatus = Hidden
+            } ! []
 
         SetVersus versus ->
             let
@@ -266,8 +293,10 @@ port setFocus : String -> Cmd msg
 
 port setMap : (Map.Types.Map -> msg) -> Sub msg
 
+port setMessage : (Message.Message -> msg) -> Sub msg
 
 port setEncounter : (Enemy -> msg) -> Sub msg
+
 
 
 port setPlayer : (Player -> msg) -> Sub msg
@@ -284,6 +313,7 @@ subscriptions model =
         , setMap SetMap
         , setPlayer SetPlayer
         , setEncounter SetVersus
+        , setMessage SetMessage
         ]
 
 

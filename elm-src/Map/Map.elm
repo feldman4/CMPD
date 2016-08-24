@@ -41,11 +41,12 @@ init map =
     in
         model
 
-testMap : { image : String, name : String, places : List Place }
+testMap : Map
 testMap = 
             { image = "static/images/islands.png"
             , name = "test"
-            , places = testPlaces}
+            , places = testPlaces
+            , intro = "a test map"}
 
 placeToTile : Place -> Tile
 placeToTile place = 

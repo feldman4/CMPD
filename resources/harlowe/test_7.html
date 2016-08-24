@@ -11,7 +11,25 @@
 
 <tw-story></tw-story>
 
-<tw-storydata name="test" startnode="1" creator="Twine" creator-version="2.0.11" ifid="37F3D652-3356-4DFF-BCA1-81F99141AE1B" format="Harlowe" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Gallery of Heroes" tags="" position="581,100">
+<tw-storydata name="test" startnode="2" creator="Twine" creator-version="2.0.11" ifid="37F3D652-3356-4DFF-BCA1-81F99141AE1B" format="Harlowe" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">.image-holder {
+		width : 600px;	
+	  display: flex;
+    flex-direction: column;
+    margin: auto;
+    z-index: -1;
+    align-items: center;
+    justify-content: center;
+}
+
+.tile {
+				color: gray;
+				font-family: helvetica;
+        font-size: 48px;
+        background-color: rgba(50, 50, 50, 0.1);
+        width: 8%;
+        text-align: center;
+		
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Gallery of Heroes" tags="" position="581,100">
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $galleryImage)
@@ -23,9 +41,9 @@ Gallery of Heroes
 
 [[March 20, 1925 - February 14, 1999-&gt;Ehrlichman]] 
 
-[[October 16, 1931 – April 21, 2012-&gt;Colson]]
+[[October 16, 1931 - April 21, 2012-&gt;Colson]]
 
-[[October 27, 1926 – November 12, 1993-&gt;Haldeman]]
+[[October 27, 1926 - November 12, 1993-&gt;Haldeman]]
 
 (set: $places to 
 	(a:
@@ -36,27 +54,25 @@ Gallery of Heroes
 		
 	)
 )	</tw-passagedata>
-<tw-passagedata pid="2" name="RMN" tags="message" position="471,256">Here lies
+<tw-passagedata pid="2" name="RMN" tags="message" position="472,256">[Here lies Richard Milhous Nixon, our greatest President]&lt;intro|
 
-=&gt;&lt;=
+
 []&lt;map|
 (set: $mapImage to $nixonImage)
-Richard Milhous Nixon
-&lt;=
 
-Our greatest president
+&lt;=
 
 [[Step into the Oval Office-&gt;Oval Office]] 
 [[Return to the Gallery of Heroes-&gt;Gallery of Heroes]] 
 
 (set: $places to 
 	(a:
-		(a: 0.2, 0.75, &#39;o&#39;),
-		(a: 0.2, 0.25, &#39;h&#39;),
+		(a: 0.1, 0.75, &#39;o&#39;),
+		(a: 0.1, 0.25, &#39;h&#39;),
 	)
 )		 
 			 </tw-passagedata>
-<tw-passagedata pid="3" name="Images" tags="header" position="50,50">{
+<tw-passagedata pid="3" name="Images" tags="header" position="50,49">{
 (set: $nixonImage to &#39;&lt;img src=&quot;http://www.savingjackiek.com/who/nixon-no-kick.jpg&quot; 
 height=&quot;300&quot;&gt;&#39;)
 
@@ -69,7 +85,7 @@ height=&quot;300&quot;&gt;&#39;)
 height=&quot;300&quot;&gt;&#39;)
 
 
-(set: $haldemanImage to &#39;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/7/7a/John_Ehrlichman_in_1969.png&quot; 
+(set: $haldemanImage to &#39;&lt;img src=&quot;https://www.totalmedia.com/images/halderman.jpg&quot; 
 height=&quot;300&quot;&gt;&#39;)
 
 
@@ -90,57 +106,55 @@ width=&quot;600&quot;&gt;&#39;)
 (set: $libraryImage to &#39;&lt;img src=&quot;http://i.imgur.com/SynCm1K.jpg&quot; 
 width=&quot;600&quot;&gt;&#39;)
 
-
+(set: $christmasCardImage to &#39;&lt;img src=&quot;http://ronwade.freeservers.com/Carter1977.jpg&quot; 
+width=&quot;600&quot;&gt;&#39;)
 
 
 }</tw-passagedata>
 <tw-passagedata pid="4" name="Ehrlichman" tags="" position="848,308">
 
-Final resting place of
+Final resting place of John Ehrlichman, as honest an American as ever lived
 
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $ehrlichmanImage)
-John Ehrlichman
+
 &lt;=
 
-As honest an American as ever lived
+
 
 [[Return to the Gallery of Heroes-&gt;Gallery of Heroes]] 
 
 (set: $places to 
 	(a:
-		(a: -0.2, 0.25, &#39;h&#39;),
+		(a: 0.1, 0.25, &#39;h&#39;),
 	)
 )		</tw-passagedata>
-<tw-passagedata pid="5" name="Colson" tags="" position="988,237">
-Here lies
+<tw-passagedata pid="5" name="Colson" tags="" position="988,235">
+Here lies Charles Colson, Man of God
 
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $colsonImage)
-Charles Colson
-&lt;=
 
-Man of God
+&lt;=
 
 [[Return to the Gallery of Heroes-&gt;Gallery of Heroes]] 
 
 (set: $places to 
 	(a:
-		(a: -0.2, 0.25, &#39;h&#39;),
+		(a: 0.1, 0.25, &#39;h&#39;),
 	)
 )		</tw-passagedata>
-<tw-passagedata pid="6" name="Haldeman" tags="" position="1087,102">
-The grave of
+<tw-passagedata pid="6" name="Haldeman" tags="" position="1086,102">
+The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $haldemanImage)
-H. R. Haldeman
+
 &lt;=
 
-Rest in peace, &quot;Bob&quot;
 
 [$haldeman]&lt;enemy|
 
@@ -148,21 +162,19 @@ Rest in peace, &quot;Bob&quot;
 
 (set: $places to 
 	(a:
-		(a: -0.2, 0.25, &#39;h&#39;),
+		(a: 0.1, 0.25, &#39;h&#39;),
 	)
 )		</tw-passagedata>
 <tw-passagedata pid="7" name="Hall of Champions" tags="" position="240,813">You stand within the hall of champions.</tw-passagedata>
-<tw-passagedata pid="8" name="Oval Office" tags="" position="584,418">The President beckons.
+<tw-passagedata pid="8" name="Oval Office" tags="" position="582,417">The President beckons.
 
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $ovalOfficeImage)
 &lt;=
-(if: $mission is &#39;accomplished&#39;)[ [[Enter the War Room-&gt;War room]] 
-]
 [[Answer the phone-&gt;President&#39;s phone]]
 
-[[View the New Year&#39;s card-&gt;Presidential rocking chair]] 
+[[View the Christmas card-&gt;Christmas card]] 
 
 [[Inspect the cowboy-&gt;Cowboy statue]]
 
@@ -179,30 +191,39 @@ Rest in peace, &quot;Bob&quot;
 		(a: 0.24, 0.77, &#39;a&#39;),
 		(a: 0.06, 0.46, &#39;v&#39;),
 		(a: 0.27, 0.42, &#39;i&#39;),
-		(a: 0.72, 0.27, &#39;g&#39;),
 		(a: 0.61, 0.22, &#39;s&#39;),
+		(a: 0.50, 0.54, &#39;g&#39;),
 		(a: 0.50, 0.90, &#39;d&#39;),
 		
 	)
 )		 
 			 </tw-passagedata>
-<tw-passagedata pid="9" name="President&#39;s phone" tags="overlay" position="300,498">//Central command speaking//
+<tw-passagedata pid="9" name="President&#39;s phone" tags="overlay" position="301,497">//Central command speaking//
 
 //Over to you, General Abrams//
-
+[]&lt;map|
+(set: $mapImage to $ovalOfficeImage)
 
 
 [[Put down the phone-&gt;Oval Office]] 
 
 [[Give the General a piece of your mind-&gt;Fight general]]
 
-[[Topple the aquarium, releasing the beast within-&gt;Fight ctenophora]]</tw-passagedata>
-<tw-passagedata pid="10" name="Cowboy statue" tags="" position="713,553">
+[[Topple the aquarium, releasing the beast within-&gt;Fight ctenophora]]
 
 
-=&gt;&lt;=
-$johnWayneImage
-
+(set: $places to 
+	(a:
+		(a: 0.24, 0.77, &#39;p&#39;),
+		(a: 0.06, 0.46, &#39;g&#39;),
+		(a: 0.27, 0.42, &#39;t&#39;)
+		
+	)
+)		 
+			 </tw-passagedata>
+<tw-passagedata pid="10" name="Cowboy statue" tags="" position="713,552">=&gt;&lt;=
+[]&lt;map|
+(set: $mapImage to $johnWayneImage)
 &lt;==
 //Courage is being scared to death but saddling up anyway.//
 
@@ -210,20 +231,47 @@ $johnWayneImage
 //Marion Mitchell Morrison//
 &lt;==
 
-[[Step away from the Duke -&gt;Oval Office]] </tw-passagedata>
-<tw-passagedata pid="11" name="Presidential rocking chair" tags="" position="891,552">You feel rested.
+[[Step away from the Duke -&gt;Oval Office]] 
 
-[[Stand and deliver-&gt;Oval Office]] </tw-passagedata>
+
+
+(set: $places to 
+	(a:
+		(a: 0.24, 0.77, &#39;s&#39;)
+		
+	)
+)		 
+			 </tw-passagedata>
+<tw-passagedata pid="11" name="Christmas card" tags="" position="890,552">[]&lt;map|
+(set: $mapImage to $christmasCardImage)
+
+You feel rested.
+
+[[Stand and deliver-&gt;Oval Office]] 
+
+(set: $places to 
+	(a:
+		(a: 0.24, 0.77, &#39;s&#39;)
+		
+	)
+)		 
+			 </tw-passagedata>
 <tw-passagedata pid="12" name="Flag of Nixon" tags="" position="1056,499">
-
 It is truly an honor.
 
-=&gt;&lt;=
-$nixonFlagImage
+[]&lt;map|
+(set: $mapImage to $nixonFlagImage)
 
-&lt;=
 
-[[Step away from the flag-&gt;Oval Office]] </tw-passagedata>
+[[Step away from the flag-&gt;Oval Office]] 
+
+(set: $places to 
+	(a:
+		(a: 0.24, 0.77, &#39;s&#39;)
+		
+	)
+)		 
+			 </tw-passagedata>
 <tw-passagedata pid="13" name="Fight general" tags="encounter" position="238,658">
 =&gt;&lt;=
 $generalAbramsImage
@@ -237,9 +285,7 @@ $generalAbramsImage
 ]
 }
 
-[[Defeat-&gt;Hall of Champions]]
-
-</tw-passagedata>
+[[Defeat-&gt;Hall of Champions]]</tw-passagedata>
 <tw-passagedata pid="14" name="War room" tags="" position="583,655">(set: $mission to &#39;incomplete&#39;)
 
 [[Face off with the Veep-&gt;Spiro Agnew]]</tw-passagedata>
@@ -285,9 +331,9 @@ height=&quot;300&quot;&gt;&#39;)
 
 
 
-(set: $divopen to &#39;&lt;div class=&quot;image-holder&quot; style=&quot;position: relative; display: inline-block;&quot;&gt;&#39;)
+(set: $divopen to &#39;&lt;div class=&quot;image-holder&quot;&gt;&#39;)
 
-(set: $a to &#39;&lt;span style=&quot;position: absolute; left:&#39;)
+(set: $a to &#39;&lt;span class=&quot;tile&quot; style=&quot;position: absolute; left:&#39;)
 
 (set: $b to &#39;%; top:&#39;)
 
@@ -345,60 +391,6 @@ height=&quot;300&quot;&gt;&#39;)
 <tw-passagedata pid="21" name="Map Links header" tags="header" position="50,350">{
 (set: $places to (a:))
 }</tw-passagedata>
-<tw-passagedata pid="22" name="Dummy office" tags="" position="1200.0001,248">An office for losers.
-=&gt;&lt;=
-[]&lt;map|
-(set: $mapImage to $ovalOfficeImage)
-&lt;=
-
-[[Challenge the beast-&gt;Challenge ctenophora]]
-
-[[Return to the library-&gt;presidential library]] 
-
-
-(set: $places to 
-	(a:
-		(a: 0.24, 0.77, &#39;c&#39;),
-		(a: 0.06, 0.46, &#39;v&#39;),
-		(a: 0.27, 0.42, &#39;i&#39;),
-		(a: 0.72, 0.27, &#39;g&#39;),
-		(a: 0.61, 0.22, &#39;s&#39;),
-		(a: 0.50, 0.90, &#39;d&#39;),
-		
-	)
-)		 
-			 </tw-passagedata>
-<tw-passagedata pid="23" name="Challenge ctenophora" tags="" position="1393,243">
-=&gt;&lt;=
-$ctenophoraImage
-&lt;=
-
-
-[$ctenophora]&lt;enemy|
-
-[[Victory-&gt;Dummy office]] </tw-passagedata>
-<tw-passagedata pid="24" name="presidential library" tags="" position="1298,376">A trampled scrap of paper reads, &quot;Center for Decision-Making Studies&quot;
-=&gt;&lt;=
-[]&lt;map|
-(set: $mapImage to $libraryImage)
-&lt;=
-
-[[Challenge the beast-&gt;Challenge ctenophora]]
-
-[[Step into the office-&gt;Dummy office]] 
-
-(set: $places to 
-	(a:
-		(a: 0.24, 0.77, &#39;e&#39;),
-		(a: 0.06, 0.46, &#39;d&#39;),
-		(a: 0.27, 0.42, &#39;i&#39;),
-		(a: 0.72, 0.27, &#39;g&#39;),
-		(a: 0.61, 0.22, &#39;s&#39;),
-		(a: 0.50, 0.90, &#39;d&#39;),
-		
-	)
-)		 
-			 </tw-passagedata>
 </tw-storydata>
 
 
