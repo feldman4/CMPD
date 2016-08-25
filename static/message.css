@@ -1,0 +1,40 @@
+#message {
+    display: flex;
+}
+
+#message .message {
+    margin: auto;
+    margin-top: 5%;
+    width: 80%;
+    background-color: rgba(250,250,250,0.9);
+    border-radius: 25px;
+    padding: 2%; 
+    border: 3px solid black
+}
+
+#message .markdown p
+{
+    margin-top: 2%;
+}
+
+/* CHOICES */
+
+#message .tile {
+    display: flex;
+    padding-left: 5%;
+}
+
+#message .tile-key
+{
+}
+
+#message div.tile-label {
+    border-left: solid 2px gray;
+    padding-left: 2%;
+    margin-left: 2%;
+}
+
+
+
+
+

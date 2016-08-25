@@ -1,0 +1,42 @@
+.map { 
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    position: absolute;
+    z-index: -1;
+    width: 100%; 
+    height: 83.3%;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+
+} 
+
+.map img {
+    max-height: 100%;
+    flex-grow: 0;
+}   
+
+#map-menu {
+    background-color: transparent;
+    height: 100%;
+    width: 100%;
+}
+
+#map-menu .tile {
+    background-color: transparent;
+    font-size: 8vw;
+}
+
+#map-menu .tile-label {
+    display: none;
+}
+
+@media (min-width: 600px) {
+    #map-menu .tile {
+        font-size: 48px;
+        background-color: rgba(50, 50, 50, 0.1);
+        width: 8%;
+        text-align: center;
+    }
+}
