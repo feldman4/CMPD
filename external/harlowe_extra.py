@@ -7,9 +7,47 @@ from collections import namedtuple
 
 
 # move to types definition file
-Map = namedtuple('Map', 'name image places intro')
-Place = namedtuple('Place', 'x y key label preview')
+Map     = namedtuple('Map', 'name image places intro')
+Place   = namedtuple('Place', 'x y key label preview')
+Message = namedtuple('Message', 'name text choices')
+Choice  = namedtuple('Choice', 'key label name')
 default_places = tuple((0.75, 0.75, c) for c in 'abcdefgh')
+
+
+def html_to_nodes(html):
+    attrs, non_passages, passages = parse_harlowe_html(html)
+    
+    # find global image variables
+    image_passages = [p for n,p in passages.items() if 'Images' in n]
+    image_urls = {}
+    [image_urls.update(get_image_urls(p)) for p in image_passages]
+    
+    filter_out = 'header', 'footer', 'startup'
+    remaining_passages = [p for p in passages.values()
+                             if not any(f in p.tags for f in filter_out)]
+    
+    # find maps
+    maps = [find_map(p, image_urls) for p in remaining_passages]
+    maps = {m.name: m for m in maps if m}
+    
+    # find encounters
+    remaining_passages = [p for p in passages.values() 
+                            if p.name not in maps]
+    encounters = {p.name: find_encounter(p) for p in remaining_passages}
+    encounters = {k: v for k,v in encounters.items() if v}
+
+    # find messages
+    remaining_passages = [p for p in passages.values()
+                            if p.name not in encounters]
+    messages = {p.name: find_message(p) for p in remaining_passages}
+    messages = {k: v for k,v in messages.items() if v}
+
+    print 'all messages', messages
+    # check graph integrity
+    # missing links, ...
+
+    
+    return maps, encounters, messages
 
 
 def parse_harlowe_html(html_file):
@@ -36,27 +74,6 @@ def parse_harlowe_html(html_file):
 
     return attrs, non_passages, passages
 
-
-
-
-def get_set_args(macro):
-    return [c for c in macro.code if not isinstance(c, harlowe.text_type)]
-
-
-def get_image_urls(passage):
-    # extract dict of $varImage to URL
-    images = [m for m in passage.parsed_contents 
-                  if isinstance(m, HarloweMacro)]
-
-    urls = {}
-    for hm in images:
-        hrh = hm.code[-2]
-        url = re.findall('src="(.*)"', hrh.tag)[0]
-        hv = hm.code[1]
-        name = hv.name
-        urls[name] = url
-        
-    return urls
 
 def find_links(passage):
     return list(passage.find_matches(lambda x: isinstance(x, HarloweLink)))
@@ -152,29 +169,39 @@ def find_encounter(passage):
     return enemy_name
 
 
-def html_to_nodes(html):
-    attrs, non_passages, passages = parse_harlowe_html(html)
-    
-    # find global image variables
-    image_passages = [p for n,p in passages.items() if 'Images' in n]
-    image_urls = {}
-    [image_urls.update(get_image_urls(p)) for p in image_passages]
-    
-    filter_out = 'header', 'footer', 'startup'
-    remaining_passages = [p for p in passages.values()
-                             if not any(f in p.tags for f in filter_out)]
-    
-    # find maps
-    maps = [find_map(p, image_urls) for p in remaining_passages]
-    maps = {m.name: m for m in maps if m}
-    
-    # find encounters
-    remaining_passages = [p for p in passages.values() 
-                              if p.name not in maps]
-    encounters = {p.name: find_encounter(p) for p in remaining_passages}
-    encounters = {k: v for k,v in encounters.items() if v}
-    
-    # check graph integrity
-    # missing links, ...
-    
-    return maps, encounters
+def find_message(passage):
+    if 'message' not in passage.tags:
+        return None
+
+    text = ''.join([x for x in passage.parsed_contents if isinstance(x, str)])
+
+    # want to track key, choiceText, and passage_name
+    choices = []
+    for l, key in zip(find_links(passage), 'abcdefghiklmnop'):
+        choices += [Choice(key=key, label=l.link_text[0], name=l.passage_name[0])]
+
+    print 'message with %d choices %s in %s' % (len(choices), choices, passage.name)
+
+    return Message(name=passage.name, text=text, choices=choices)
+
+
+
+
+def get_set_args(macro):
+    return [c for c in macro.code if not isinstance(c, harlowe.text_type)]
+
+
+def get_image_urls(passage):
+    # extract dict of $varImage to URL
+    images = [m for m in passage.parsed_contents 
+                  if isinstance(m, HarloweMacro)]
+
+    urls = {}
+    for hm in images:
+        hrh = hm.code[-2]
+        url = re.findall('src="(.*)"', hrh.tag)[0]
+        hv = hm.code[1]
+        name = hv.name
+        urls[name] = url
+        
+    return urls

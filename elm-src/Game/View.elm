@@ -4,6 +4,7 @@ import Versus.View
 import Game.Types exposing (..)
 import Menu.View
 import Loadout.Loadout as Loadout
+import Message.Message as Message
 import Map.View
 import Html exposing (text, div, Html, img, span)
 import Html.Attributes exposing (id, class, attribute, src, style)
@@ -16,6 +17,13 @@ import Html.App as App
 view : Model -> Html Msg
 view model =
     let
+        message = 
+            case model.messageStatus of
+                Active ->
+                    div [ id "message" ] [App.map UpdateMessage (Message.view model.message)]
+                _ -> 
+                    div [ id "message" ] []
+
         options =
             case model.menuStatus of
                 Hidden ->
@@ -33,7 +41,11 @@ view model =
                     div [ id "loadout" ] [ App.map UpdateLoadout (Loadout.view model.loadout) ]
 
         menu =
-            div [ id "menu" ] [ options, loadout ]
+                if model.menuStatus == Hidden
+                && model.loadoutStatus == Hidden then
+                    div [] []
+                else
+                   div [ id "menu" ] [ options, loadout ]
 
         map =
             case model.mapStatus of
@@ -60,10 +72,10 @@ view model =
                     div [ id "gutter" ] []
 
                 Active ->
-                    App.map UpdateMap (Map.View.viewGutter model.map)
+                    div [ id "gutter"] [App.map UpdateMap (Map.View.viewGutter model.map)]
 
                 Inactive ->
                     div [ id "gutter" ] []
     in
         div [ id "main" ]
-            [ map, versus, menu, gutter ]
+            [ map, versus, message, menu, gutter ]

@@ -13,7 +13,7 @@ from Crypto.Cipher import AES
 import pandas as pd
 
 from external import harlowe_extra
-from external.harlowe_extra import html_to_nodes, Map, Place
+from external.harlowe_extra import html_to_nodes, Map, Place, Message
 
 
 local_app = Flask(__name__)
@@ -254,7 +254,7 @@ class GameMaster(object):
         
 
     def load_html(self, html):
-        maps, encounters = html_to_nodes(html)
+        maps, encounters, messages = html_to_nodes(html)
         attrs, _, passages = harlowe_extra.parse_harlowe_html(html)
 
 
@@ -269,6 +269,7 @@ class GameMaster(object):
 
         self.nodes = maps
         self.nodes.update({k: stable[encounters[k]] for k in encounters})
+        self.nodes.update(messages)
 
         self.starting_node = [n for n, p in passages.items()
                                 if p.pid == attrs['startnode']][0]
@@ -281,9 +282,19 @@ class GameMaster(object):
             self.to_map()
         if isinstance(self.node, Enemy):
             self.to_encounter()
+        if isinstance(self.node, Message):
+            self.to_message()
+
+    def to_message(self):
+        message = self.node._asdict()
+        # deal with nested namedtuple
+        message['choices'] = [c._asdict() for c in message['choices']]
+        emit('SEND_MESSAGE', message)
+        print 'sent message', message
             
     def to_map(self):
         map_ = self.node._asdict()
+        # deal with nested namedtuple
         map_['places'] = [p._asdict() for p in map_['places']]
         emit('SEND_PLAYER', self.player.model)
         emit('SEND_MAP', map_)

@@ -1,12 +1,15 @@
-module Message.Message exposing (Model, Msg(..), init, initDummy, update, view, Message)
+module Message.Message exposing (Model, Msg, init, 
+                                 initDummy, update, view, 
+                                 Message, subscriptions)
 
 import Menu.Menu as Menu
 import Menu.Types exposing (keycode, Tile)
+import Menu.View exposing (view)
 import Html exposing (text, div, Html)
 import Html.Attributes exposing (id, class)
-import Html.App as App
 import Markdown
 import String
+import Html.App as App
 
 
 --main : Program Never
@@ -23,20 +26,22 @@ import String
 type alias Model =
     { text : String
     , menu : Menu.Types.Model
-    , class : String
+    , name : String
+    , choices : List Choice
     }
 
 
 type alias Message =
     { text : String
     , choices : List Choice
-    , class : String
+    , name : String
     }
 
 
 type alias Choice =
     { label : String
     , key : String
+    , name : String
     }
 
 
@@ -47,19 +52,21 @@ init message =
             List.map choiceToTile message.choices
 
         id =
-            "message"
+            "message-menu"
     in
         { text = message.text
         , menu = Menu.init tiles id
-        , class = message.class
+        , name = message.name
+        , choices = message.choices
         }
 
 
 initDummy : Model
 initDummy =
-    { text = "dummy"
+    { text = "dummy-message-text"
     , menu = Menu.init [] ""
-    , class = ""
+    , name = "dummy-message"
+    , choices = []
     }
 
 
@@ -107,8 +114,15 @@ update msg model =
                                 List.filter (\tile -> tile.key == char) model.menu.tiles
                                     |> List.map .label
                                     |> List.head
+
+                            getName label = 
+                                List.filter (\choice -> choice.label == label) model.choices
+                                    |> List.map .name
+                                    |> List.head
+
+                            name = label `Maybe.andThen` getName
                         in
-                            ( newModel, label )
+                            ( newModel, name )
 
 
 subscriptions : Model -> Sub Msg
@@ -124,4 +138,8 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div [ class ("message " ++ model.class) ] [ Markdown.toHtml [] model.text ]
+    let 
+        choices = 
+            App.map UpdateMenu (Menu.View.view model.menu)
+    in
+        div [ class "message" ] [ Markdown.toHtml [class "markdown"] model.text, choices ]

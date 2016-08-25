@@ -39,5 +39,4 @@ viewGutter model =
                 |> List.head
                 |> (Maybe.withDefault model.map.intro)
     in
-        div [ id "gutter" ]
-            [ Markdown.toHtml [] gutterText ]
+        Markdown.toHtml [] gutterText

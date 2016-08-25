@@ -163,36 +163,49 @@ update msg model =
                     model ! []
 
         UpdateMap msg ->
-            let
-                ( newMap, _, selection ) =
-                    Map.update msg model.map
-            in
-                case selection of
-                    Just label ->
-                        let
-                            logger =
-                                Debug.log "sent transition" label
-                        in
-                            ( model, sendTransition label )
+            case model.mapStatus of
+                Active ->
+                    let
+                        ( newMap, _, selection ) =
+                            Map.update msg model.map
+                    in
+                        case selection of
+                            Just name ->
+                                let
+                                    logger =
+                                        Debug.log "sent transition" name
+                                in
+                                    ( model, sendTransition name )
 
-                    Nothing ->
-                        { model | map = newMap } ! []
+                            Nothing ->
+                                { model | map = newMap } ! []
+                _ ->
+                    model ! []
 
         UpdateMessage msg ->
-            let
-                ( newMessage, selection ) =
-                    Message.update msg model.message
-            in
-                case selection of
-                    Just label ->
-                        let
-                            logger =
-                                Debug.log "sent transition" label
-                        in
-                            ( model, sendTransition label )
+            case model.messageStatus of 
+                Active ->
+                    let
+                        ( newMessage, selection ) =
+                            Message.update msg model.message
+                    in
+                        case selection of
+                            Just name ->
+                                let
+                                    newModel = 
+                                        { model
+                                        | message = newMessage
+                                        , mapStatus = Active
+                                        , messageStatus = Hidden
+                                        }
+                                    logger = Debug.log "fuck you" "fuck you"
+                                in
+                                    ( newModel, sendTransition name )
 
-                    Nothing ->
-                        { model | message = newMessage } ! []
+                            Nothing ->
+                                { model | message = newMessage } ! []
+                _ ->
+                    model ! []
 
         SetMap map ->
             { model
@@ -320,6 +333,7 @@ subscriptions model =
         , Sub.map UpdateLoadout (Loadout.subscriptions model.loadout)
         , Sub.map UpdateVersus (Versus.subscriptions model.versus)
         , Sub.map UpdateMap (Map.subscriptions model.map)
+        , Sub.map UpdateMessage (Message.subscriptions model.message)
         , Keyboard.presses KeyPress
         , setMap SetMap
         , setPlayer SetPlayer
