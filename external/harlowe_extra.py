@@ -187,9 +187,14 @@ def find_message(passage):
 
     text = ''.join([x for x in passage.parsed_contents if isinstance(x, str)])
 
+    letters = 'abcdefghiklmnop'
+    # splash tag = any key to dismiss, always go to first link
+    if 'splash' in passage.tags:
+        letters = '*'
+
     # want to track key, choiceText, and passage_name
     choices = []
-    for l, key in zip(find_links(passage), 'abcdefghiklmnop'):
+    for l, key in zip(find_links(passage), letters):
         choices += [Choice(key=key, label=l.link_text[0], name=l.passage_name[0])]
 
     print 'message with %d choices %s in %s' % (len(choices), choices, passage.name)

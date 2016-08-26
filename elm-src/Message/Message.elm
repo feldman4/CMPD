@@ -28,6 +28,7 @@ type alias Model =
     , menu : Menu.Types.Model
     , name : String
     , choices : List Choice
+    , isSplash : Bool
     }
 
 
@@ -53,11 +54,16 @@ init message =
 
         id =
             "message-menu"
+
+        isSplash = tiles |> List.filter (\t->t.key == '*')
+                         |> List.isEmpty
+                         |> not
     in
         { text = message.text
         , menu = Menu.init tiles id
         , name = message.name
         , choices = message.choices
+        , isSplash = isSplash
         }
 
 
@@ -67,6 +73,7 @@ initDummy =
     , menu = Menu.init [] ""
     , name = "dummy-message"
     , choices = []
+    , isSplash = False
     }
 
 
@@ -103,26 +110,33 @@ update msg model =
 
                 newModel =
                     { model | menu = newMenu }
+
+                getLabel c =
+                    List.filter (\tile -> tile.key == c) model.menu.tiles
+                        |> List.map .label
+                        |> List.head
+
+                getName label = 
+                    List.filter (\choice -> choice.label == label) model.choices
+                        |> List.map .name
+                        |> List.head
+
             in
-                case selection of
-                    Nothing ->
-                        ( newModel, Nothing )
+                if model.isSplash then
+                    let
+                        name =  List.head model.choices |> Maybe.map .name
+                    in
+                        (newModel , name )
+                else
+                    case selection of
+                        Nothing ->
+                            ( newModel, Nothing )
 
-                    Just char ->
-                        let
-                            label =
-                                List.filter (\tile -> tile.key == char) model.menu.tiles
-                                    |> List.map .label
-                                    |> List.head
-
-                            getName label = 
-                                List.filter (\choice -> choice.label == label) model.choices
-                                    |> List.map .name
-                                    |> List.head
-
-                            name = label `Maybe.andThen` getName
-                        in
-                            ( newModel, name )
+                        Just char ->
+                            let
+                                name = (getLabel char) `Maybe.andThen` getName
+                            in
+                                ( newModel, name )
 
 
 subscriptions : Model -> Sub Msg
@@ -139,7 +153,9 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let 
-        choices = 
-            App.map UpdateMenu (Menu.View.view model.menu)
+        choices = if model.isSplash then
+                        div [] []
+                  else 
+                        App.map UpdateMenu (Menu.View.view model.menu)
     in
         div [ class "message" ] [ Markdown.toHtml [class "markdown"] model.text, choices ]
