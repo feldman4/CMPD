@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, session, request
+from flask import Flask, render_template, url_for, redirect, session, request, send_from_directory
 from flask_socketio import emit, SocketIO
 from werkzeug import secure_filename
 from gspread import WorksheetNotFound
@@ -65,19 +65,41 @@ def custom_map(map_name):
 
 @app.route('/harlowe')
 def default_harlowe():
-    return redirect(url_for('launch_harlowe', harlowe_name='test'))
+    return redirect(url_for('launch_harlowe', harlowe_name='index'))
 
 @app.route('/harlowe/<string:harlowe_name>')
 def launch_harlowe(harlowe_name):
-    # TODO: specify starting vocab / player capacity in harlowe, or as custom in CMPD sheet
     vocab = cmpd_web.load_vocab('DIDB')
     player = cmpd_web.Player(vocab, None)
+    GM = cmpd_web.GameMaster([], '', player)
+
+    try:
+        GM.load_html('resources/harlowe/%s.html' % harlowe_name)
+    except IOError:
+        maps = [os.path.splitext(os.path.basename(m))[0] 
+                    for m in  glob('resources/harlowe/*.html')]
+        
+
+        hrefs = []
+        for map_ in sorted(maps):
+            url_play     = url_for('launch_harlowe',   harlowe_name=map_)
+            url_download = url_for('download_harlowe', harlowe_name=map_ + '.html')
+            hrefs += """<li>%s: 
+                        <a href=%s>play</a> <a href=%s>twine</a> 
+                        <a href=%s download>download</a></li>""" % \
+                            (map_, url_play, url_download, url_download)
+
+        return """<h1>404 %s not a map</h1>
+                <h3><a href=%s>upload one</a> 
+                or try:</h3><ul>%s</ul>""" % \
+                (harlowe_name, url_for('harlowe_upload'), ''.join(hrefs))
+
+    # TODO: specify starting vocab / player capacity in harlowe, or as custom in CMPD sheet
     player.model['image'] = url_for('static', filename='images/back.png')
     player.model['name'] = 'InquilineKea'
     player.model['health'] = 0.3
 
-    GM = cmpd_web.GameMaster([], '', player)
-    GM.load_html('resources/harlowe/%s.html' % harlowe_name)
+
     session['GM'] = GM
     session['initialize'] = GM.initialize
     return render_template('base.html', elm_component='Game')
@@ -136,6 +158,10 @@ def transition(message):
 def loadout(message):
     session['GM'].player.model = message
 
+
+@app.route('/download/<string:harlowe_name>')
+def download_harlowe(harlowe_name):
+    return send_from_directory('resources/harlowe', harlowe_name)
 
 @app.route('/upload')
 def harlowe_upload():

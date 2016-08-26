@@ -26,6 +26,7 @@
     display: flex;
     align-content: stretch;
     padding-left: 5%;
+    padding-bottom: 0.5%;
 }
 
 #message .tile-key
