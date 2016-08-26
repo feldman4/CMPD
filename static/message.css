@@ -24,6 +24,7 @@
 
 #message .tile {
     display: flex;
+    align-content: stretch;
     padding-left: 5%;
 }
 
@@ -36,6 +37,7 @@
     padding-left: 2%;
     margin-left: 2%;
     flex-grow: 1;
+    width: 80%;
 }
 
 
