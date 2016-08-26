@@ -1,11 +1,11 @@
 #message {
     display: flex;
-    height: 83.3%;
+    height: 90%;
 }
 
 #message .message {
     margin: auto;
-    margin-top: 5%;
+    margin-top: 2%;
     width: 80%;
     background-color: rgba(250,250,250,0.9);
     border-radius: 25px;
