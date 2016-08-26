@@ -21,7 +21,7 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def index():
-    return redirect(url_for('custom_map', map_name='ovaloffice'))
+    return redirect(url_for('default_harlowe'))
 
 
 @app.route('/vocab/<string:vocab>')
