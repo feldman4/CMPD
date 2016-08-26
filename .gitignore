@@ -1,3 +1,5 @@
 elm-stuff
 *.DS_Store
 *.pyc
+resources/dec*
+harlowe/test*html

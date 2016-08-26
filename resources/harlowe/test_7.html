@@ -11,7 +11,7 @@
 
 <tw-story></tw-story>
 
-<tw-storydata name="test" startnode="2" creator="Twine" creator-version="2.0.11" ifid="37F3D652-3356-4DFF-BCA1-81F99141AE1B" format="Harlowe" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">.image-holder {
+<tw-storydata name="test" startnode="8" creator="Twine" creator-version="2.0.11" ifid="37F3D652-3356-4DFF-BCA1-81F99141AE1B" format="Harlowe" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">.image-holder {
 		width : 600px;	
 	  display: flex;
     flex-direction: column;
@@ -29,12 +29,12 @@
         width: 8%;
         text-align: center;
 		
-}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Gallery of Heroes" tags="" position="581,100">
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Gallery of Heroes" tags="" position="582,100">
 =&gt;&lt;=
 []&lt;map|
 (set: $mapImage to $galleryImage)
 
-Gallery of Heroes
+[Gallery of Heroes]&lt;intro|
 
 
 [[January 9, 1913 - April 22, 1994-&gt;RMN]]
@@ -47,14 +47,14 @@ Gallery of Heroes
 
 (set: $places to 
 	(a:
-		(a: 0.24, 0.77, &#39;n&#39;),
-		(a: 0.06, 0.46, &#39;e&#39;),
-		(a: 0.27, 0.42, &#39;c&#39;),
-		(a: 0.72, 0.27, &#39;h&#39;),
+		(a: 0.26, 0.65, &#39;n&#39;),
+		(a: 0.42, 0.63, &#39;e&#39;),
+		(a: 0.65, 0.63, &#39;c&#39;),
+		(a: 0.85, 0.55, &#39;h&#39;),
 		
 	)
 )	</tw-passagedata>
-<tw-passagedata pid="2" name="RMN" tags="message" position="472,256">[Here lies Richard Milhous Nixon, our greatest President]&lt;intro|
+<tw-passagedata pid="2" name="RMN" tags="" position="472,254">[Here lies Richard Milhous Nixon, our greatest President]&lt;intro|
 
 
 []&lt;map|
@@ -63,12 +63,14 @@ Gallery of Heroes
 &lt;=
 
 [[Step into the Oval Office-&gt;Oval Office]] 
-[[Return to the Gallery of Heroes-&gt;Gallery of Heroes]] 
+[[Return to the Gallery of Heroes-&gt;Gallery of Heroes]]
+[[Look closer-&gt;RMN detail]]
 
 (set: $places to 
 	(a:
 		(a: 0.1, 0.75, &#39;o&#39;),
 		(a: 0.1, 0.25, &#39;h&#39;),
+		(a: 0.9, 0.35, &#39;l&#39;),
 	)
 )		 
 			 </tw-passagedata>
@@ -111,9 +113,9 @@ width=&quot;600&quot;&gt;&#39;)
 
 
 }</tw-passagedata>
-<tw-passagedata pid="4" name="Ehrlichman" tags="" position="848,308">
+<tw-passagedata pid="4" name="Ehrlichman" tags="" position="848,307">
 
-Final resting place of John Ehrlichman, as honest an American as ever lived
+[In memory of John Ehrlichman, as honest an American as ever lived]&lt;intro|
 
 =&gt;&lt;=
 []&lt;map|
@@ -131,7 +133,7 @@ Final resting place of John Ehrlichman, as honest an American as ever lived
 	)
 )		</tw-passagedata>
 <tw-passagedata pid="5" name="Colson" tags="" position="988,235">
-Here lies Charles Colson, Man of God
+[The final resting place of Charles Colson, Man of God]&lt;intro|
 
 =&gt;&lt;=
 []&lt;map|
@@ -141,13 +143,17 @@ Here lies Charles Colson, Man of God
 
 [[Return to the Gallery of Heroes-&gt;Gallery of Heroes]] 
 
+
+[[Pray-&gt;A special place]]
+
 (set: $places to 
 	(a:
-		(a: 0.1, 0.25, &#39;h&#39;),
+		(a: 0.1 , 0.25, &#39;h&#39;),
+		(a: 0.85, 0.25, &#39;p&#39;),
 	)
 )		</tw-passagedata>
 <tw-passagedata pid="6" name="Haldeman" tags="" position="1086,102">
-The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
+[The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.]&lt;intro|
 
 =&gt;&lt;=
 []&lt;map|
@@ -166,7 +172,7 @@ The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 	)
 )		</tw-passagedata>
 <tw-passagedata pid="7" name="Hall of Champions" tags="" position="240,813">You stand within the hall of champions.</tw-passagedata>
-<tw-passagedata pid="8" name="Oval Office" tags="" position="582,417">The President beckons.
+<tw-passagedata pid="8" name="Oval Office" tags="" position="582,417">[The President beckons]&lt;intro|
 
 =&gt;&lt;=
 []&lt;map|
@@ -180,7 +186,7 @@ The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 
 [[Salute the flag-&gt;Flag of Nixon]]
 
-[[Genuflect before the patriarch-&gt;RMN]]
+[[Genuflect before the patriarch-&gt;The mission, pt 1]]
 
 [[Depart-&gt;Gallery of Heroes]] 
 
@@ -198,12 +204,11 @@ The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 	)
 )		 
 			 </tw-passagedata>
-<tw-passagedata pid="9" name="President&#39;s phone" tags="overlay" position="301,497">//Central command speaking//
-
-//Over to you, General Abrams//
-[]&lt;map|
+<tw-passagedata pid="9" name="President&#39;s phone" tags="overlay" position="302,497">[]&lt;map|
 (set: $mapImage to $ovalOfficeImage)
+[*Central command speaking*
 
+*Over to you, General Abrams*]&lt;intro|
 
 [[Put down the phone-&gt;Oval Office]] 
 
@@ -221,14 +226,13 @@ The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 	)
 )		 
 			 </tw-passagedata>
-<tw-passagedata pid="10" name="Cowboy statue" tags="" position="713,552">=&gt;&lt;=
-[]&lt;map|
-(set: $mapImage to $johnWayneImage)
+<tw-passagedata pid="10" name="Cowboy statue" tags="message" position="728.3333333333334,588.3333333333334">=&gt;&lt;=
+$johnWayneImage
 &lt;==
-//Courage is being scared to death but saddling up anyway.//
+*Courage is being scared to death but saddling up anyway.*
 
 ==&gt;&lt;=
-//Marion Mitchell Morrison//
+*Marion Mitchell Morrison*
 &lt;==
 
 [[Step away from the Duke -&gt;Oval Office]] 
@@ -245,7 +249,7 @@ The grave of H. R. Haldeman. Rest in peace, &quot;Bob&quot;.
 <tw-passagedata pid="11" name="Christmas card" tags="" position="890,552">[]&lt;map|
 (set: $mapImage to $christmasCardImage)
 
-You feel rested.
+[You feel rested]&lt;intro|
 
 [[Stand and deliver-&gt;Oval Office]] 
 
@@ -257,7 +261,7 @@ You feel rested.
 )		 
 			 </tw-passagedata>
 <tw-passagedata pid="12" name="Flag of Nixon" tags="" position="1056,499">
-It is truly an honor.
+[It is truly an honor]&lt;intro|
 
 []&lt;map|
 (set: $mapImage to $nixonFlagImage)
@@ -286,7 +290,7 @@ $generalAbramsImage
 }
 
 [[Defeat-&gt;Hall of Champions]]</tw-passagedata>
-<tw-passagedata pid="14" name="War room" tags="" position="583,655">(set: $mission to &#39;incomplete&#39;)
+<tw-passagedata pid="14" name="War room" tags="" position="462,789">(set: $mission to &#39;incomplete&#39;)
 
 [[Face off with the Veep-&gt;Spiro Agnew]]</tw-passagedata>
 <tw-passagedata pid="15" name="Enemies" tags="header" position="48,197">{
@@ -321,7 +325,7 @@ height=&quot;300&quot;&gt;&#39;)
 (set: $mission to &#39;incomplete&#39;)
 
 }</tw-passagedata>
-<tw-passagedata pid="19" name="Spiro Agnew" tags="" position="583,803">Double-click this passage to edit it.</tw-passagedata>
+<tw-passagedata pid="19" name="Spiro Agnew" tags="" position="462,937">Double-click this passage to edit it.</tw-passagedata>
 <tw-passagedata pid="20" name="Map Links footer" tags="footer" position="200,349">{
 
 (set: $places to $places + (a: 
@@ -388,9 +392,43 @@ height=&quot;300&quot;&gt;&#39;)
 (replace: ?map)[(text: $divopen + $mapImage + $first + $second + $third + $fourth + $fifth + $sixth + $divend)]
 
 }</tw-passagedata>
-<tw-passagedata pid="21" name="Map Links header" tags="header" position="50,350">{
-(set: $places to (a:))
-}</tw-passagedata>
+<tw-passagedata pid="21" name="A special place" tags="message" position="988,374">*No greater love than this*
+
+[[Rise-&gt;Colson]]</tw-passagedata>
+<tw-passagedata pid="22" name="The mission, pt 1" tags="message" position="586,659">Certain deputies...
+
+Certain deputies have betrayed the trust invested in them.
+
+[[Accept-&gt;President&#39;s phone]] </tw-passagedata>
+<tw-passagedata pid="23" name="The mission, pt 2" tags="" position="587,809">Double-click this passage to edit it.</tw-passagedata>
+<tw-passagedata pid="24" name="RMN detail" tags="message" position="336.6666666666667,255">*Fresh turned dirt. An empty grave.*
+
+[[OK-&gt;RMN]]</tw-passagedata>
+<tw-passagedata pid="25" name="August. Indoors." tags="" position="1565.0001,25">August. Indoors. The smell of creased linen.
+
+White hallway. 
+
+</tw-passagedata>
+<tw-passagedata pid="26" name="the door ajar" tags="" position="1500,358.33333333333337">
+
+[[A force questions you.-&gt;force]]</tw-passagedata>
+<tw-passagedata pid="27" name="force" tags="" position="1498.3333333333335,508.33333333333337">[[the open door-&gt;the open door]]</tw-passagedata>
+<tw-passagedata pid="28" name="the open door" tags="" position="1498.3333333333335,655">trinket, Galloway, amaneunsis
+
+Step aside
+
+</tw-passagedata>
+<tw-passagedata pid="29" name="enter the office" tags="" position="1501.6666666666667,808.3333333333334">Double-click this passage to edit it.</tw-passagedata>
+<tw-passagedata pid="30" name="Virginia at 20,000 feet" tags="" position="1405,135">Double-click this passage to edit it.</tw-passagedata>
+<tw-passagedata pid="31" name="Untitled Passage" tags="" position="1690.0002,126.66666666666667">Double-click this passage to edit it.</tw-passagedata>
+<tw-passagedata pid="32" name="Mission: CREEP" tags="message" position="1663.3333333333335,891.6666666666667">Mitchell, Magruder, Colson, Liddy...
+
+Call together an executive session...
+
+=&gt;&lt;=
+**Goal: Convene the Committee to Re-elect the President**
+
+[[OK-&gt;Oval Office]]</tw-passagedata>
 </tw-storydata>
 
 

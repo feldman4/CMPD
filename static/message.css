@@ -1,5 +1,6 @@
 #message {
     display: flex;
+    height: 83.3%;
 }
 
 #message .message {
@@ -9,7 +10,9 @@
     background-color: rgba(250,250,250,0.9);
     border-radius: 25px;
     padding: 2%; 
-    border: 3px solid black
+    border: 3px solid black;
+    max-height: 80%;
+    overflow: scroll;
 }
 
 #message .markdown p
@@ -32,6 +35,7 @@
     border-left: solid 2px gray;
     padding-left: 2%;
     margin-left: 2%;
+    flex-grow: 1;
 }
 
 

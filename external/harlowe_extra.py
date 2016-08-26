@@ -1,6 +1,7 @@
 # extra functions for parsing exported Harlowe HTML
 from . import harlowe
-from .harlowe import HarloweMacro, HarloweVariable, HarloweLink, HarloweHook
+from .harlowe import (HarloweMacro, HarloweVariable, 
+                      HarloweLink, HarloweHook, RawHtml)
 
 import re
 from collections import namedtuple
@@ -17,11 +18,15 @@ default_places = tuple((0.75, 0.75, c) for c in 'abcdefgh')
 def html_to_nodes(html):
     attrs, non_passages, passages = parse_harlowe_html(html)
     
-    # find global image variables
-    image_passages = [p for n,p in passages.items() if 'Images' in n]
+    # find global variables
+    global_vars = find_global_vars(passages.values())
+
     image_urls = {}
-    [image_urls.update(get_image_urls(p)) for p in image_passages]
-    
+    for v in global_vars:
+        if v.endswith('Image'):
+            image_urls[v] = re.findall('src="(.*?)"', global_vars[v])[0]
+
+
     filter_out = 'header', 'footer', 'startup'
     remaining_passages = [p for p in passages.values()
                              if not any(f in p.tags for f in filter_out)]
@@ -37,8 +42,12 @@ def html_to_nodes(html):
     encounters = {k: v for k,v in encounters.items() if v}
 
     # find messages
-    remaining_passages = [p for p in passages.values()
-                            if p.name not in encounters]
+    arr = []
+    for p in remaining_passages:
+        if p.name not in encounters:
+            p.parsed_contents = substitute_globals(p, global_vars)
+            arr += [p]
+    remaining_passages = arr
     messages = {p.name: find_message(p) for p in remaining_passages}
     messages = {k: v for k,v in messages.items() if v}
 
@@ -87,6 +96,9 @@ def get_set_macros(passage, name):
                                           and re.findall(name, get_set_args(x)[0].name ))
     return list(hits)
     
+def get_set_args(macro):
+    return [c for c in macro.code if not isinstance(c, harlowe.text_type)]
+
 
 def get_named_hooks(passage, name):
     hits = passage.find_matches(lambda x: isinstance(x, HarloweHook) 
@@ -185,10 +197,36 @@ def find_message(passage):
     return Message(name=passage.name, text=text, choices=choices)
 
 
+def find_global_vars(passages):
+    variables = {}
+    passages = sorted(passages,key=lambda x: x.name)
 
+    for p in passages:
+        if 'header' in p.tags:
+            vars_ = {}
+            macros = get_set_macros(p, '.*')
+            for macro in macros:
+                codes = []
+                for c in macro.code:
+                    if isinstance(c, harlowe.text_type):
+                        # eliminate ' to ' surrounded by variable spaces
+                        if c.lstrip().startswith('to '):
+                            c = c.lstrip()[3:]
+                            codes += [c.lstrip()[1:-1]]
+                    else:
+                        codes += [c]
+                name, value = [c for c in codes if c]
+                # don't deal with this crap
+                if not isinstance(name, HarloweVariable):
+                    continue
+                if isinstance(value, harlowe.text_type):
+                    vars_[name.name] = value
+                elif isinstance(value, RawHtml):
+                    vars_[name.name] = '<' + value.tag + '>'
+            print 'in %s, found variables: %s' % (p.name, ', '.join(vars_.keys()))
+            variables.update(vars_)
+    return variables
 
-def get_set_args(macro):
-    return [c for c in macro.code if not isinstance(c, harlowe.text_type)]
 
 
 def get_image_urls(passage):
@@ -205,3 +243,26 @@ def get_image_urls(passage):
         urls[name] = url
         
     return urls
+
+
+alignment = { '==>':  '<div align="right">'
+            , '<==':  '<div align="left">'
+            , '=><=': '<div align="center">'
+            , '==><=': '<div style="text-align: center; max-width:50%; margin-left: 33%;">'
+            , '=><==': '<div style="text-align: center; max-width:50%; margin-left: 17%;">'
+            }
+
+def substitute_globals(passage, global_vars):
+    # top-level only
+    contents = []
+    for c in passage.parsed_contents:
+        if isinstance(c, HarloweVariable):
+            contents += [global_vars.get(c.name, c)]
+        if isinstance(c, harlowe.text_type):
+            pat = re.compile(r'(' + '|'.join(alignment.keys()) + r')')
+            c = pat.sub(lambda x: alignment[x.group()], c)
+            contents += [c]
+        else:
+            contents += [c]
+    contents += []
+    return contents
