@@ -29,6 +29,7 @@ type alias Remark =
     { insult : String
     , retort : String
     , score : Float
+    , health: Float
     }
 
 

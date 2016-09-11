@@ -9,11 +9,15 @@ from frozendict import frozendict
 import json
 import os
 from Crypto.Cipher import AES
+from urlparse import urlparse
 
 import pandas as pd
 
 from external import harlowe_extra
-from external.harlowe_extra import html_to_nodes, Map, Place, Message
+from external.harlowe_extra import html_to_nodes, html_to_trees
+
+from external.types import (Opponent, Enemy, Remark, 
+                            Word, Map, Place, Message)
 
 
 local_app = Flask(__name__)
@@ -33,11 +37,6 @@ js_to_flask = {
   'REQUEST_ENCOUNTER': 'REQUEST_ENCOUNTER',
   'UPDATE_PLAYER': 'UPDATE_PLAYER'
 }
-
-Place  = namedtuple('Place',  'x y label enemy')
-Remark = namedtuple('Remark', 'insult retort score')
-Enemy  = namedtuple('Enemy',  'name image cls vocab')
-# Enemy = namedtuple('Enemy', 'image name health')
 
 
 
@@ -77,27 +76,6 @@ def load_elm_helpers(path):
     match = re.findall(pat_1, js_code)
     flask_to_js =  eval(match[0])
 
-
-class Word(namedtuple('Word', 'word partOfSpeech tag')):
-  # namedtuple with defaults
-    def __new__(cls, word, partOfSpeech, tag=''):
-        return super(Word, cls).__new__(cls, word, partOfSpeech, tag)
-
-
-class Opponent(object):
-    def __init__(self, vocab, model):
-        """ Opponent has vocab, grammar, model (health etc). Created from 
-        Enemy template.
-        """
-        self.vocab = vocab
-        self.grammar = None
-        self.model = model
-        
-    def retort(self, insult, remarks):
-        """ Retorts from provided vocab.
-        """
-        retorts = zip(*[w for _, w in self.vocab])
-        return ' '.join(random.choice(retorts))
 
         
 class Player(object):
@@ -202,27 +180,7 @@ def nearest_word(word, wordbank, case=False):
     hit = wordbank[distances.index(max(distances))]
     return hit
 
-            
 
-class StoreReturns(object):
-    """Decorator that caches a function's return value each time it is called.
-    If called later with the same arguments, the cached value is returned, and
-    not re-evaluated.
-    """
-    def __init__(self, func):
-        self.func = func
-        self.returns = []
-
-    def __call__(self, *args, **kwargs):
-        value = self.func(*args, **kwargs)
-        self.returns += [value]
-        return value
-
-    def __repr__(self):
-        """Return the function's docstring."""
-        if self.func.__doc__:
-            return self.func.__doc__
-        return self.func.__str__()
 
 
 def emit(*args, **kwargs):
@@ -233,15 +191,17 @@ def emit(*args, **kwargs):
 
 class GameMaster(object):
     
-    def __init__(self, nodes, starting_node, player):
+    def __init__(self, player):
         # nodes dict can be obtained using html_to_nodes()
 
-        self.nodes = nodes
-        self.starting_node = starting_node
         self.player = player
-
         self.current_enemy = None
         self.remarks = []
+
+        self.passage_trees = {}
+        self.story_vars = {}
+        self.node = None
+        self.current_passage = None
 
 
     def initialize(self):
@@ -250,12 +210,22 @@ class GameMaster(object):
         Determines loadout and displayed map.
         Called when JS loads and emits INITIALIZE.
         """
-        self.transition(self.starting_node)
+        self._transition(self.current_passage)
         
 
     def load_html(self, html):
-        maps, encounters, messages = html_to_nodes(html)
+        # maps, encounters, messages = html_to_nodes(html)
         attrs, _, passages = harlowe_extra.parse_harlowe_html(html)
+
+        # startups and headers not used, for now
+        startups, headers, passages, story_vars = html_to_trees(html)
+
+        self.story_vars = story_vars
+        self.passage_trees = passages # {name: (passage, tree)}
+
+        self.current_passage = [n for n, (p,_) in passages.items()
+                                if p.pid == attrs['startnode']][0]
+
 
 
         # TODO: check graph for completeness
@@ -267,30 +237,56 @@ class GameMaster(object):
         #     for place in m.places:
         #         assert (place.label in passage_names)
 
-        self.nodes = maps
-        self.nodes.update({k: stable[encounters[k]] for k in encounters})
-        self.nodes.update(messages)
+        # self.nodes = maps
+        # # use enemy definitions in stable
+        # # self.nodes.update({k: stable[encounters[k]] for k in encounters})
+        # self.nodes.update(encounters)
+        # self.nodes.update(messages)
 
-        self.starting_node = [n for n, p in passages.items()
-                                if p.pid == attrs['startnode']][0]
-       
+    def _transition(self, passage_name):
+        passage, tree = self.passage_trees[passage_name]
+        node, links, story_vars = harlowe_extra.enter(passage, tree, self.story_vars)
+        self.node = node
+        self.story_vars = story_vars
+        self.current_passage = passage_name
 
-    def transition(self, node, story_vars=None):
-        
-        self.node = self.nodes[node]
-        if isinstance(self.node, Map):
-            self.to_map()
-        if isinstance(self.node, Enemy):
-            self.to_encounter()
-        if isinstance(self.node, Message):
+        if isinstance(node, Message):
             self.to_message()
+        if isinstance(node, Enemy):
+            self.to_encounter()
+        if isinstance(node, Map):
+            self.to_map()
+
+    def transition(self, name):
+        
+        # pick out HarloweLink from evaluated tree
+        # call its on_transition method with global_vars
+        # now check the HarloweLink.passage_name
+        
+        # the transition could point nowhere!!!
+        # don't let evaluate mutate global_vars until we are sure it worked!!!
+        # we are in dangerous territory
+        # can't allow stupid shit in Harlowe
+
+        passage, tree = self.passage_trees[self.current_passage]
+        links = harlowe_extra.find_links(passage)
+        self.story_vars, destination = links[int(name)].do_transition(self.story_vars)
+        self._transition(destination)
+        
+
+        # if isinstance(self.node, Map):
+        #     self.to_map()
+        # if isinstance(self.node, Enemy):
+        #     print 'sending enemy', self.node, 'victory', 
+        #     self.to_encounter()
+        # if isinstance(self.node, Message):
+        #     self.to_message()
 
     def to_message(self):
         message = self.node._asdict()
         # deal with nested namedtuple
         message['choices'] = [c._asdict() for c in message['choices']]
         emit('SEND_MESSAGE', message)
-        print 'sent message', message
             
     def to_map(self):
         map_ = self.node._asdict()
@@ -298,7 +294,6 @@ class GameMaster(object):
         map_['places'] = [p._asdict() for p in map_['places']]
         emit('SEND_PLAYER', self.player.model)
         emit('SEND_MAP', map_)
-        print 'sent map', map_
         
     def to_encounter(self):
         """ Based on request_encounter()
@@ -307,9 +302,15 @@ class GameMaster(object):
         enemyClass = self.node.cls
         
         enemy_vocab = load_vocab(self.node.vocab)
-        image = url_for('static', filename=self.node.image)
+
+        netloc = urlparse(self.node.image).netloc
+        if 'localhost' in netloc:
+            image = url_for('static', filename=self.node.image)
+        else:
+            image = self.node.image
+        
         enemy_model = {'image': image, 
-                       'health': 1, 
+                       'health': 0.5, 
                        'name': self.node.name}
 
         self.current_enemy = enemyClass(enemy_vocab, enemy_model)
@@ -349,10 +350,17 @@ class GameMaster(object):
         insult = ' '.join(w.word for w in self.player_phrase)
         retort = self.current_enemy.retort(insult, self.remarks)
         score = self.score(insult, retort)
-        remark = Remark(insult, retort, score)
+        self.current_enemy.model['health'] += score
+        remark = Remark(insult=insult, retort=retort, 
+                        score=score, health=self.current_enemy.model['health'])
         self.remarks += [remark]
 
         emit('SEND_REMARK', remark._asdict())
+
+        print 'health is', self.current_enemy.model['health']
+        if self.current_enemy.model['health'] > 0.7:
+            self.transition(self.node.victory)
+
         
         
     def score(self, insult, retort):
@@ -389,11 +397,14 @@ class LocalGameMaster(GameMaster):
             super(LocalGameMaster, self).transition(node)
 
     def to_encounter(self):
+        from IPython.display import clear_output, display, Image
+        clear_output()
+
         with self.app_context:
             session['emit'] = self.emit
             super(LocalGameMaster, self).to_encounter()
 
-        print 'Enemy:', self.node
+        # print 'Enemy:', self.node
         print 'Enter text to insult, enter nothing to quit.'
         self.progress = 0.5
 
@@ -420,11 +431,14 @@ class LocalGameMaster(GameMaster):
 
 
     def to_map(self):
+        from IPython.display import clear_output
+        clear_output()
+
         with self.app_context:
             session['emit'] = self.emit
             super(LocalGameMaster, self).to_map()
 
-        places = [p.label for p in self.node.places]
+        places = ['%s | %s' % (p.key, p.preview) for p in self.node.places]
 
         print 'Current map:', self.node.name
         print 'Go to'
@@ -436,16 +450,48 @@ class LocalGameMaster(GameMaster):
             if user_input == '':
                 break
 
-            for p in places:
-                if p.startswith(user_input):
-                    self.transition(p)
+            for p in self.node.places:
+                if p.key.startswith(user_input):
+                    self.transition(p.label)
                     flag = False
                     break
+
+    def to_message(self):
+        from IPython.display import clear_output, HTML, display
+        from markdown import markdown
+
+        clear_output()
+
+        with self.app_context:
+            session['emit'] = self.emit
+            super(LocalGameMaster, self).to_message()
+
+        print 'Current message:', self.node.name
+
+        display(HTML(markdown(self.node.text)))
+        s = '\n'.join('%s | %s' % (c.key, c.label) for c in self.node.choices)
+        print 'Choose:\n' + s
+
+        flag = True
+        while flag:
+            user_input = raw_input()
+            if user_input == '':
+                break
+
+            for c in self.node.choices:
+                if c.key == user_input or c.key == '*':
+                    self.transition(c.name)
+                    flag = False
+                    break           
+
+
 
     
     def emit(self, message, data):
         """ Local simulation of sending message and data through socket.
         """
+        from IPython.display import Image, display, HTML
+        from markdown import markdown
         
         if message == flask_to_js['SEND_WORDBANK']:
             wordbank = data
@@ -470,52 +516,16 @@ class LocalGameMaster(GameMaster):
             print '#' * width
 
         if message == flask_to_js['SEND_MAP']:
-            print 'image:', data.image
-            print 'places:', data.places
+            display(Image(data['image'], width=200))
+            if data['intro']:
+                display(HTML(markdown(data['intro'])))
+            # print 'places:', data['places']
 
         if message == flask_to_js['SEND_ENCOUNTER']:
             print 'Launching encounter with', data
-            print
-
-
-def initialize_map(map_name):
-    """ Wrapper for initialization function. Called after jQuery document ready emits INITIALIZE message.
-    """
-    def f():
-
-        print 'initializing map: %s' % map_name
-
-        map_image = maps[map_name]['image']
-        places = maps[map_name]['places']
-        places = [Place(*p) for p in places]
-        player_vocab = load_vocab(maps[map_name]['vocab'])
-
-        new_vocab = []
-        for pos, words in player_vocab:
-            words = list(words)
-            random.shuffle(words)
-            new_vocab += [(pos, words[:12])]
-        player_vocab = new_vocab
-
-        map_src = url_for('static', filename=map_image)
-
-        enemies = {}
-        for enemy in stable:
-            enemies[enemy] = dict(stable[enemy])
-            enemies[enemy]['image'] = url_for('static', 
-                                                filename=enemies[enemy]['image'])
-
-
-        player = Player(player_vocab, None, capacity=6)
-        player.model['image'] = url_for('static', filename='images/back.png')
-        player.model['name'] = 'player'
-        player.model['health'] = 0.5
-        GM = GameMaster(places, enemies, player, map_src)
-        GM.initialize()
-        session['GM'] = GM
-
-    return f
-
+            # some bs with image width
+            display(HTML('<img src="%s" width="200">' % data['image']))
+            # display(Image(data['image']), width=200)
 
 
 def load_sheet(worksheet, g_file='CMPD'):
@@ -549,36 +559,64 @@ def load_sheet(worksheet, g_file='CMPD'):
     return xs_values
 
 
-def load_vocab(sheet, reload=False):
-  """ Load columns of google sheet into vocab of type [(header, [word])]. 
-  No entry for empty header. Empty and duplicate words removed.
+def load_vocab(sheet, reload=False, subset=None):
+    """ Load columns of google sheet into vocab of type [(header, [word])]. 
+    No entry for empty header. Empty and duplicate words removed.
 
-  Uses local cached json if reload is False and file exists.
-  """
-  path = 'resources/vocab/%s.json' % sheet
+    Uses local cached json if reload is False and file exists.
+    """
+    path = 'resources/vocab/%s.json' % sheet
 
-  def load_remote(sheet):
 
-      sheet = load_sheet(sheet)
-      df = pd.DataFrame(sheet[1:], columns=sheet[0])
-      vocab = []
-      for col in df:
-          if col:
-              words = sorted(set([w for w in df[col] if w]))
-              vocab += [(col, words)]
 
-      with open(path, 'w') as fh:
-          json.dump(vocab, fh, indent=4)
-      return vocab
+    def load_remote(sheet):
 
-  if reload:
-    return load_remote(sheet)
+        sheet = load_sheet(sheet)
+        df = pd.DataFrame(sheet[1:], columns=sheet[0])
+        vocab, subsets = [], []
+        for col in df:
+            if col:
+                words = list(df[col])
+                vocab += [(col, words)]
 
-  try:
-      with open(path, 'r') as fh:
-          return json.load(fh)
-  except (IOError, ValueError):
-      return load_remote(sheet)
+        with open(path, 'w') as fh:
+            json.dump(vocab, fh, indent=4)
+        return vocab
+
+    def filter_vocab(vocab, subset):
+        """ If subset is None, all words returned.
+        """
+        if subset is None:
+            subset = ''
+        actual_vocab = []
+        subset_index = []
+        for (col, words) in vocab:
+            if col.startswith('_') and re.findall(subset, col):
+                subset_index += [i for i,x in enumerate(words) if x]
+        subset_index = sorted(set(subset_index))
+        
+        for (col, words) in vocab:
+            if not col.startswith('_'):
+                if subset:
+                    words = [w for i, w in enumerate(words) 
+                               if i in subset_index]
+                words = sorted(set(words))
+                actual_vocab += [(col, words)]
+
+        return actual_vocab
+
+
+    if reload:
+        vocab = load_remote(sheet)
+    else:
+        try:
+            with open(path, 'r') as fh:
+                vocab = json.load(fh)
+        except (IOError, ValueError):
+            vocab = load_remote(sheet)
+
+    return filter_vocab(vocab, subset)
+
 
 
 def make_all_phrases(vocab):
@@ -592,20 +630,8 @@ def make_row_phrases(vocab):
   return phrases
 
 
+
 make_DIDB_phrases = lambda: make_row_phrases(load_vocab('DIDB'))
-
-stable = (
-    ('ctenophora',  'images/ctenophora.png',  Opponent,      'more'),
-    ('derp',        'images/derp-3.jpg',      VersusDerp,    'DIDB'),
-    ('underground', 'images/underground.png', Opponent,      'high school shakespeare'),
-    ('buddha',      'images/buddha.jpg',      Opponent,      'DIDB'),
-    ('generalAbrams', 'images/abrams.jpg',    Opponent,      'dec2')
-    )
-
-stable = frozendict({s[0]: Enemy(*s) for s in stable})
-
-
-
 
 
 maps = frozendict({

@@ -236,18 +236,15 @@ update msg model =
                 logger =
                     Debug.log "SetVersus" versus
 
-                --logger2 = Debug.log "Player is" model.player
-                logger3 =
-                    Debug.log "newVersus.wordbank.words is" newVersus.wordbank.words
             in
-                { model
+                ({ model
                     | versus = newVersus
                     , mapStatus = Inactive
                     , menuStatus = Hidden
                     , versusStatus = Active
                     , loadoutStatus = Hidden
                 }
-                    ! []
+                    , setFocus "#input-input")
 
         SetPlayer player ->
             { model | player = player } ! []
@@ -273,14 +270,9 @@ update msg model =
 
                         _ ->
                             case model.versusStatus of
+                                -- do nothing if in Versus
                                 Active ->
-                                    { model
-                                        | loadoutStatus = Hidden
-                                        , mapStatus = Active
-                                        , menuStatus = Hidden
-                                        , versusStatus = Hidden
-                                    }
-                                        ! []
+                                    model ! []
 
                                 _ ->
                                     { model

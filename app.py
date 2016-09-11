@@ -69,9 +69,9 @@ def default_harlowe():
 
 @app.route('/harlowe/<string:harlowe_name>')
 def launch_harlowe(harlowe_name):
-    vocab = cmpd_web.load_vocab('DIDB')
+    vocab = cmpd_web.load_vocab('DIDB', subset='start')
     player = cmpd_web.Player(vocab, None)
-    GM = cmpd_web.GameMaster([], '', player)
+    GM = cmpd_web.GameMaster(player)
 
     try:
         GM.load_html('resources/harlowe/%s.html' % harlowe_name)

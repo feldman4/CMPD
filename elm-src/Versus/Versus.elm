@@ -163,7 +163,7 @@ update message model =
         AddRemark remark ->
             let
                 progress =
-                    max (min (model.progressBar.value + remark.score) 1) 0
+                    max (min remark.health 1) 0
             in
                 ( { model
                     | conversation = model.conversation ++ [ remark ]

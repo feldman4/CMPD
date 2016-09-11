@@ -201,6 +201,7 @@ function scrollParent(selector) {
 }
 
 function focusSelector(selector) {
+	console.log(selector)
 	setTimeout(function() {
 		$(selector).focus()
 	}, timeoutDelay )
