@@ -201,7 +201,7 @@ def find_encounter(passage, global_vars):
     else:   
         return
 
-    vocab        = get_named_hooks(passage, '^vocab$')
+    grammar      = get_named_hooks(passage, '^grammar$')
     enemy_class  = get_named_hooks(passage, '^class$')
     image        = get_named_hooks(passage, '^enemyImage$')
 
@@ -211,10 +211,10 @@ def find_encounter(passage, global_vars):
     defeat       = [l.link_text for l in links].index('Defeat')
 
 
-    if vocab:
-        vocab = reverse_lookup(vocab[0].hook[0])
+    if grammar:
+        grammar = reverse_lookup(grammar[0].hook[0])
     else:
-        vocab = 'derp'
+        grammar = 'basic'
 
     if enemy_class:
         enemy_class = reverse_lookup(enemy_class[0].hook[0])
@@ -233,7 +233,7 @@ def find_encounter(passage, global_vars):
     
     print '%s found in %s' % (name, passage.name)
 
-    return Enemy(name, image, enemy_class, vocab, str(victory))
+    return Enemy(name, image, enemy_class, grammar, str(victory))
 
 
 def find_message(passage):
@@ -313,11 +313,11 @@ def get_img_tag_url(tag):
         return match[0]
 
 
-alignment = { '==>':  '<div align="right">'
-            , '<==':  '<div align="left">'
-            , '=><=': '<div align="center">'
-            , '==><=': '<div style="text-align: center; max-width:50%; margin-left: 33%;">'
-            , '=><==': '<div style="text-align: center; max-width:50%; margin-left: 17%;">'
+alignment = { '==>':  '<div align="right" markdown="1">'
+            , '<==':  '<div align="left" markdown="1">'
+            , '=><=': '<div align="center" markdown="1">'
+            , '==><=': '<div style="text-align: center; max-width:50%; margin-left: 33%; markdown="1">'
+            , '=><==': '<div style="text-align: center; max-width:50%; margin-left: 17%; markdown="1">'
             }
 
 def substitute_globals(passage, global_vars):

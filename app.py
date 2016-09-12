@@ -69,8 +69,8 @@ def default_harlowe():
 
 @app.route('/harlowe/<string:harlowe_name>')
 def launch_harlowe(harlowe_name):
-    vocab = cmpd_web.load_vocab('DIDB', subset='start')
-    player = cmpd_web.Player(vocab, None)
+    grammar = cmpd_web.load_grammar('DIDB', column_regex='start')
+    player = cmpd_web.Player(grammar)
     GM = cmpd_web.GameMaster(player)
 
     try:
